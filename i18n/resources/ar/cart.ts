@@ -1,0 +1,113 @@
+import type { CartDict } from "../fr/cart";
+
+/** Texts of the cart page /panier (Arabic). Must have exactly the same keys as fr/cart.ts. */
+export const cart: CartDict = {
+  meta: {
+    title: "سلّتي",
+    description:
+      "سلّة CeliacCare: منتجات خالية من الغلوتين من حرفيّينا أو أطباق من مطعم شريك، تصلك إلى باب منزلك والدفع عند الاستلام.",
+  },
+  hero: {
+    eyebrow: "الطلب",
+    title: "سلّتي",
+    description: "راجع مشترياتك ثم أكمل الطلب: دون حساب، والدفع عند الاستلام.",
+  },
+  breadcrumb: "السلّة",
+  loading: "جارٍ تحميل سلّتك…",
+  empty: {
+    title: "سلّتك فارغة",
+    text: "اكتشف المنتجات الخالية من الغلوتين لدى حرفيّينا أو اطلب طبقًا من أحد المطاعم الشريكة.",
+    products: "تصفّح المنتجات",
+    restaurants: "تصفّح المطاعم",
+  },
+  header: {
+    shop: "بقالة حرفيّينا",
+    shopHint: "منتجات منتجين تونسيين صغار، توصلها إليك CeliacCare.",
+    restaurant: "المطعم: {name}",
+    restaurantHint: "أطباق يحضّرها المطعم ويتولّى توصيلها.",
+    seeMenu: "عرض قائمة الطعام",
+  },
+  // Only "one" / "other" are chosen here: "العدد: N" stays correct for 2, 3–10, 11+ (Arabic plurals).
+  count: {
+    one: "عنصر واحد",
+    other: "عدد العناصر: {count}",
+  },
+  line: {
+    by: "من {name}",
+    unitPrice: "{price} للوحدة",
+    quantity: "الكمية",
+    decrease: "إنقاص الكمية",
+    increase: "زيادة الكمية",
+    remove: "حذف",
+    removeLabel: "حذف «{name}» من السلّة",
+    max: "{max} كحدّ أقصى لكل عنصر",
+  },
+  clear: {
+    button: "إفراغ السلّة",
+    title: "إفراغ السلّة؟",
+    text: "ستُحذف كل العناصر من سلّتك.",
+    confirm: "نعم، أفرغ السلّة",
+    cancel: "إلغاء",
+    close: "إغلاق",
+  },
+  summary: {
+    title: "الملخّص",
+    subtotal: "المجموع الفرعي",
+    delivery: "التوصيل",
+    deliveryFrom: "ابتداءً من {price}",
+    deliveryByZone: "حسب ولايتك",
+    free: "مجاني",
+    total: "المجموع التقديري",
+    totalHint: "نتحقّق من الأسعار مرّة أخيرة عند إرسال الطلب.",
+    checkout: "إتمام الطلب",
+    continueShopping: "مواصلة التسوّق",
+    reassurance: "دون حساب · الدفع عند الاستلام",
+  },
+  minOrder: {
+    title: "الحدّ الأدنى للطلب: {min}",
+    text: "أضف أطباقًا بقيمة {missing} أخرى لتتمكّن من الطلب من هذا المطعم.",
+    action: "إضافة أطباق",
+  },
+  restaurantClosed: {
+    title: "الطلب عبر الإنترنت غير متاح",
+    text: "هذا المطعم لا يستقبل الطلبات عبر الإنترنت حاليًا. أفرغ السلّة لتطلب من مكان آخر.",
+  },
+  noDelivery: {
+    title: "التوصيل متاح قريبًا",
+    text: "ستُفتح مناطق التوصيل قريبًا جدًا. في الأثناء، تواصل معنا لتقديم طلبك.",
+  },
+  tooManyLines: {
+    title: "عدد كبير من العناصر المختلفة",
+    text: "يمكن أن يضمّ الطلب {max} عنصرًا مختلفًا على الأكثر. احذف بعضها.",
+  },
+  dailyLimit: {
+    title: "{max} طلبات في اليوم كحدّ أقصى",
+    text: "لتفادي التجاوزات، يمكن لكل رقم هاتف أن يقدّم {max} طلبات في اليوم على الأكثر. يعود العدّاد إلى الصفر عند منتصف الليل بتوقيت تونس.",
+  },
+  delivery: {
+    title: "التوصيل والدفع",
+    intro: "كل ما تحتاج إلى معرفته قبل الطلب.",
+    zonesTitle: "المناطق المشمولة بالتوصيل",
+    zonesIntro: "نوصل حاليًا إلى الولايات التالية ({count}). المعاليم ومدّة التوصيل:",
+    governorate: "الولاية",
+    fee: "المعلوم",
+    delay: "المدّة",
+    freeFrom: "مجاني ابتداءً من {price}",
+    zonesMissing: "ولايتك غير موجودة في القائمة؟ نفتح مناطق جديدة بانتظام: راسلنا.",
+    noZones: "لا توجد أي منطقة توصيل مفتوحة حاليًا.",
+    restaurantTitle: "التوصيل من المطعم",
+    restaurantArea: "التوصيل داخل ولاية {governorate} فقط (المطعم في {city}).",
+    restaurantFee: "معلوم التوصيل",
+    restaurantTime: "مدّة التوصيل",
+    restaurantMin: "الحدّ الأدنى للطلب",
+    paymentTitle: "الدفع عند الاستلام",
+    paymentText: "لا دفع عبر الإنترنت: تدفع عند استلام طلبك.",
+    contactTitle: "لديك سؤال؟",
+    contactShop: "خدمة الحرفاء تجيب عن أسئلتك حول طلب أو منتج.",
+    contactRestaurant: "لأي سؤال حول طبق، تواصل مباشرة مع المطعم:",
+    restaurantContact: "التواصل مع {name}",
+    call: "اتصال",
+    whatsapp: "واتساب",
+    email: "البريد الإلكتروني",
+  },
+};

@@ -2,25 +2,51 @@
   "name": "celiaccare",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "next typegen && tsc --noEmit",
+    "db:emit": "prisma contract emit",
+    "db:init": "prisma db init",
+    "db:push": "prisma db update",
+    "db:migrate:plan": "prisma migration plan",
+    "db:migrate": "prisma db migrate",
+    "db:seed": "node --env-file-if-exists=.env --import tsx prisma/seed.ts",
+    "admin:create": "node --env-file-if-exists=.env --import tsx scripts/create-admin.ts",
+    "postinstall": "prisma skills sync || exit 0"
   },
   "dependencies": {
+    "@node-rs/argon2": "^2.2.2",
+    "@prisma/orm-postgres": "8.0.0-rc.23",
+    "cloudinary": "^2.11.0",
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.73.0",
     "next": "16.4.6",
+    "otpauth": "^9.6.0",
+    "qrcode": "^1.5.4",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "react-is": "19.3.0",
+    "recharts": "^3.10.1",
+    "server-only": "^0.0.1",
+    "tailwind-merge": "^3.7.0",
+    "temporal-polyfill": "^1.0.8",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "4.3.3",
     "@types/node": "^20",
+    "@types/qrcode": "^1.5.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
+    "prisma": "8.0.0-rc.33",
     "tailwindcss": "4.3.3",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   },
   "packageManager": "pnpm@11.15.1"

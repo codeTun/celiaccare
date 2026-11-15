@@ -1,0 +1,589 @@
+// use prisma-8
+
+// ============================================================================
+//  CeliacCare — data contract (database schema)
+//  Every model below becomes a PostgreSQL table.
+//  Money is stored in MILLIMES (1 DT = 1000 millimes) as whole numbers,
+//  so 12,500 DT is stored as 12500. This avoids rounding errors.
+// ============================================================================
+
+// ---------------------------------------------------------------------------
+//  Enumerations (fixed lists of values)
+// ---------------------------------------------------------------------------
+
+/// Gluten-free guarantee level shown on every product / address sheet.
+enum GuaranteeLevel {
+  @@type("pg/text@1")
+  CERTIFIED    = "CERTIFIED"    // Certifié sans gluten
+  NATURALLY_GF = "NATURALLY_GF" // Naturellement sans gluten / option sans gluten
+  TRACES_RISK  = "TRACES_RISK"  // Risque de traces / contamination croisée possible
+}
+
+/// Kind of small business (artisan) we work with.
+enum ProducerType {
+  @@type("pg/text@1")
+  BAKERY         = "BAKERY"         // Pâtisserie & boulangerie
+  SPECIALTY_SHOP = "SPECIALTY_SHOP" // Boutique spécialisée / épicerie fine
+  GROCERY        = "GROCERY"        // Épicerie de quartier / supérette
+  HOME_SELLER    = "HOME_SELLER"    // Vendeur·se à domicile (fait maison)
+  COOPERATIVE    = "COOPERATIVE"    // Coopérative / producteur agricole
+}
+
+/// Section of a restaurant menu.
+enum DishCourse {
+  @@type("pg/text@1")
+  STARTER = "STARTER"
+  MAIN    = "MAIN"
+  DESSERT = "DESSERT"
+  DRINK   = "DRINK"
+}
+
+enum OrderType {
+  @@type("pg/text@1")
+  SHOP       = "SHOP"       // products from our small businesses
+  RESTAURANT = "RESTAURANT" // dishes from a partner restaurant
+}
+
+enum OrderStatus {
+  @@type("pg/text@1")
+  PENDING          = "PENDING"
+  CONFIRMED        = "CONFIRMED"
+  PREPARING        = "PREPARING"
+  OUT_FOR_DELIVERY = "OUT_FOR_DELIVERY"
+  DELIVERED        = "DELIVERED"
+  CANCELLED        = "CANCELLED"
+}
+
+enum PaymentMethod {
+  @@type("pg/text@1")
+  CASH_ON_DELIVERY = "CASH_ON_DELIVERY"
+  CARD_ON_DELIVERY = "CARD_ON_DELIVERY"
+}
+
+enum ItemKind {
+  @@type("pg/text@1")
+  PRODUCT = "PRODUCT"
+  DISH    = "DISH"
+}
+
+enum VehicleType {
+  @@type("pg/text@1")
+  MOTO = "MOTO"
+  CAR  = "CAR"
+  BIKE = "BIKE"
+}
+
+enum MessageTopic {
+  @@type("pg/text@1")
+  GENERAL     = "GENERAL"
+  PARTNERSHIP = "PARTNERSHIP" // a restaurant / producer wants to work with us
+  ORDER       = "ORDER"
+  SUGGESTION  = "SUGGESTION"  // "Proposer une adresse"
+  OTHER       = "OTHER"
+}
+
+enum MessageStatus {
+  @@type("pg/text@1")
+  NEW         = "NEW"
+  IN_PROGRESS = "IN_PROGRESS"
+  RESOLVED    = "RESOLVED"
+  ARCHIVED    = "ARCHIVED"
+}
+
+enum ReportTarget {
+  @@type("pg/text@1")
+  PRODUCT    = "PRODUCT"
+  PRODUCER   = "PRODUCER"
+  RESTAURANT = "RESTAURANT"
+}
+
+enum ReportReason {
+  @@type("pg/text@1")
+  WRONG_INFO     = "WRONG_INFO"
+  GLUTEN_CONCERN = "GLUTEN_CONCERN"
+  CLOSED         = "CLOSED"
+  PRICE          = "PRICE"
+  OTHER          = "OTHER"
+}
+
+enum ReportStatus {
+  @@type("pg/text@1")
+  OPEN      = "OPEN"
+  IN_REVIEW = "IN_REVIEW"
+  RESOLVED  = "RESOLVED"
+  REJECTED  = "REJECTED"
+}
+
+enum ReviewStatus {
+  @@type("pg/text@1")
+  PENDING  = "PENDING"
+  APPROVED = "APPROVED"
+  REJECTED = "REJECTED"
+}
+
+enum PhoneRuleType {
+  @@type("pg/text@1")
+  BLOCKED   = "BLOCKED"   // this number may not order at all
+  EXCEPTION = "EXCEPTION" // this number may order more than 3 times a day
+}
+
+enum RefusalReason {
+  @@type("pg/text@1")
+  DAILY_LIMIT = "DAILY_LIMIT"
+  BLOCKED     = "BLOCKED"
+  RATE_LIMIT  = "RATE_LIMIT"
+}
+
+// ---------------------------------------------------------------------------
+//  Catalogue
+// ---------------------------------------------------------------------------
+
+model Category {
+  id            Int      @id @default(autoincrement())
+  slug          String   @unique
+  name          String
+  nameAr        String?
+  description   String?
+  descriptionAr String?
+  icon          String   @default("package") // icon key, see lib/icons.ts
+  imageUrl      String?
+  imagePublicId String?
+  sortOrder     Int      @default(0)
+  products      Product[]
+  createdAt     DateTime @default(now()) @onCreate(now())
+  updatedAt     temporal.UpdatedAt
+}
+
+model Ingredient {
+  id         Int                 @id @default(autoincrement())
+  slug       String              @unique
+  name       String
+  nameAr     String?
+  isAllergen Boolean             @default(false) // milk, eggs, nuts, sesame...
+  products   Product[]          // many-to-many, through ProductIngredient
+  dishes     Dish[]             // many-to-many, through DishIngredient
+  createdAt  DateTime            @default(now()) @onCreate(now())
+}
+
+/// A small business (artisan, bakery, cooperative...) whose products we sell.
+model Producer {
+  id                 Int            @id @default(autoincrement())
+  slug               String         @unique
+  name               String
+  type               ProducerType
+  description        String?
+  descriptionAr      String?
+  city               String
+  governorate        String
+  address            String?
+  latitude           Float?
+  longitude          Float?
+  phone              String?
+  whatsapp           String?
+  email              String?
+  website            String?
+  instagram          String?
+  facebook           String?
+  openingHours       String?
+  guaranteeLevel     GuaranteeLevel
+  dedicatedSpace     Boolean        @default(false) // separate gluten-free workshop
+  dedicatedUtensils  Boolean        @default(false)
+  trainedStaff       Boolean        @default(false)
+  verificationSource String         // e.g. "Visite sur place", "Appel téléphonique"
+  verifiedAt         DateTime
+  imageUrl           String?
+  imagePublicId      String?
+  isActive           Boolean        @default(true)
+  products           Product[]
+  createdAt          DateTime       @default(now()) @onCreate(now())
+  updatedAt          temporal.UpdatedAt
+
+  @@index([governorate])
+}
+
+model Product {
+  id             Int                 @id @default(autoincrement())
+  slug           String              @unique
+  name           String
+  nameAr         String?
+  description    String
+  descriptionAr  String?
+  price          Int                 // millimes
+  unit           String?             // "500 g", "La pièce", "Boîte de 12"
+  imageUrl       String?
+  imagePublicId  String?
+  categoryId     Int
+  category       Category            @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  producerId     Int
+  producer       Producer            @relation(fields: [producerId], references: [id], onDelete: Restrict)
+  guaranteeLevel GuaranteeLevel
+  certification  String?             // body + number, e.g. "INNORPI — n° 2026-114"
+  mayContain     String?             // "Peut contenir des traces de : ..."
+  isAvailable    Boolean             @default(true)
+  isFeatured     Boolean             @default(false)
+  isActive       Boolean             @default(true)
+  verifiedAt     DateTime
+  searchText     String              @default("") // normalised text used by the search box
+  ingredients    Ingredient[]        // many-to-many, through ProductIngredient
+  orderItems     OrderItem[]
+  reviews        Review[]
+  createdAt      DateTime            @default(now()) @onCreate(now())
+  updatedAt      temporal.UpdatedAt
+
+  @@index([categoryId])
+  @@index([producerId])
+  @@index([isActive, isFeatured])
+}
+
+/// Join table: which ingredients a product contains (many-to-many).
+model ProductIngredient {
+  productId    Int
+  product      Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  ingredientId Int
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+
+  @@id([productId, ingredientId])
+  @@index([ingredientId])
+}
+
+// ---------------------------------------------------------------------------
+//  Partner restaurants ("conventionnés")
+// ---------------------------------------------------------------------------
+
+model Restaurant {
+  id                 Int            @id @default(autoincrement())
+  slug               String         @unique
+  name               String
+  description        String?
+  descriptionAr      String?
+  cuisine            String?
+  city               String
+  governorate        String
+  address            String
+  latitude           Float?
+  longitude          Float?
+  phone              String
+  whatsapp           String?
+  email              String?
+  website            String?
+  instagram          String?
+  facebook           String?
+  openingHours       String?
+  guaranteeLevel     GuaranteeLevel
+  dedicatedKitchen   Boolean        @default(false)
+  dedicatedUtensils  Boolean        @default(false)
+  trainedStaff       Boolean        @default(false)
+  verificationSource String
+  verifiedAt         DateTime
+  imageUrl           String?
+  imagePublicId      String?
+  priceRange         Int            @default(2) // 1 = €, 2 = €€, 3 = €€€
+  isPartner          Boolean        @default(false) // convention signed -> online ordering
+  partnerSince       DateTime?
+  deliveryFee        Int            @default(3000) // millimes
+  deliveryTime       String         @default("30–45 min")
+  minOrder           Int            @default(0)    // millimes
+  isActive           Boolean        @default(true)
+  dishes             Dish[]
+  orders             Order[]
+  reviews            Review[]
+  createdAt          DateTime       @default(now()) @onCreate(now())
+  updatedAt          temporal.UpdatedAt
+
+  @@index([governorate])
+}
+
+model Dish {
+  id            Int              @id @default(autoincrement())
+  name          String
+  nameAr        String?
+  description   String?
+  descriptionAr String?
+  price         Int              // millimes
+  imageUrl      String?
+  imagePublicId String?
+  course        DishCourse
+  restaurantId  Int
+  restaurant    Restaurant       @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  isAvailable   Boolean          @default(true)
+  sortOrder     Int              @default(0)
+  ingredients   Ingredient[]     // many-to-many, through DishIngredient
+  orderItems    OrderItem[]
+  createdAt     DateTime         @default(now()) @onCreate(now())
+  updatedAt     temporal.UpdatedAt
+
+  @@index([restaurantId])
+}
+
+model DishIngredient {
+  dishId       Int
+  dish         Dish       @relation(fields: [dishId], references: [id], onDelete: Cascade)
+  ingredientId Int
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+
+  @@id([dishId, ingredientId])
+  @@index([ingredientId])
+}
+
+// ---------------------------------------------------------------------------
+//  Delivery
+// ---------------------------------------------------------------------------
+
+/// Delivery price and delay for one governorate (shown before ordering).
+model DeliveryZone {
+  id          Int      @id @default(autoincrement())
+  governorate String   @unique
+  fee         Int      // millimes
+  delay       String   // "24–48 h"
+  freeFrom    Int?     // free delivery from this subtotal (millimes)
+  isActive    Boolean  @default(true)
+  orders      Order[]
+  createdAt   DateTime @default(now()) @onCreate(now())
+  updatedAt   temporal.UpdatedAt
+}
+
+/// A delivery person (livreur).
+model Deliverer {
+  id        Int         @id @default(autoincrement())
+  name      String
+  phone     String      @unique
+  vehicle   VehicleType
+  zone      String?     // governorate(s) covered, free text
+  isActive  Boolean     @default(true)
+  notes     String?
+  orders    Order[]
+  createdAt DateTime    @default(now()) @onCreate(now())
+  updatedAt temporal.UpdatedAt
+}
+
+// ---------------------------------------------------------------------------
+//  Orders (EF-30 → EF-39)
+// ---------------------------------------------------------------------------
+
+model Order {
+  id             Int           @id @default(autoincrement())
+  reference      String        @unique // e.g. "CC-7K2P9Q"
+  type           OrderType
+  status         OrderStatus
+  paymentMethod  PaymentMethod
+  customerName   String
+  phone          String        // normalised 8-digit Tunisian number
+  governorate    String
+  city           String
+  street         String
+  addressDetails String?
+  note           String?
+  restaurantId   Int?
+  restaurant     Restaurant?   @relation(fields: [restaurantId], references: [id], onDelete: SetNull)
+  zoneId         Int?
+  zone           DeliveryZone? @relation(fields: [zoneId], references: [id], onDelete: SetNull)
+  delivererId    Int?
+  deliverer      Deliverer?    @relation(fields: [delivererId], references: [id], onDelete: SetNull)
+  subtotal       Int           // millimes
+  deliveryFee    Int           // millimes
+  total          Int           // millimes
+  dayKey         String        // "2026-11-15" — the order day in Tunis time
+  ipHash         String?
+  items          OrderItem[]
+  confirmedAt    DateTime?
+  deliveredAt    DateTime?
+  cancelledAt    DateTime?
+  createdAt      DateTime      @default(now()) @onCreate(now())
+  updatedAt      temporal.UpdatedAt
+
+  @@index([phone, dayKey])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id           Int      @id @default(autoincrement())
+  orderId      Int
+  order        Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  kind         ItemKind
+  productId    Int?
+  product      Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  dishId       Int?
+  dish         Dish?    @relation(fields: [dishId], references: [id], onDelete: SetNull)
+  name         String   // snapshot of the name at order time
+  merchantName String   // producer or restaurant name at order time
+  unitPrice    Int      // millimes
+  quantity     Int
+  lineTotal    Int      // millimes
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+/// EF-36: how many orders a phone number placed on a given day (Tunis time).
+model OrderCounter {
+  id      Int    @id @default(autoincrement())
+  phone   String
+  dayKey  String
+  count   Int    @default(0)
+  refused Int    @default(0)
+
+  @@unique([phone, dayKey])
+}
+
+/// EF-38: refused order attempts, visible in the admin panel.
+model OrderAttempt {
+  id           Int           @id @default(autoincrement())
+  phone        String
+  customerName String?
+  dayKey       String
+  reason       RefusalReason
+  ipHash       String?
+  createdAt    DateTime      @default(now()) @onCreate(now())
+
+  @@index([createdAt])
+  @@index([phone])
+}
+
+/// EF-39: block an abusive number, or allow a justified exception.
+model PhoneRule {
+  id        Int           @id @default(autoincrement())
+  phone     String        @unique
+  type      PhoneRuleType
+  maxPerDay Int?          // only for EXCEPTION
+  reason    String?
+  expiresAt DateTime?
+  createdAt DateTime      @default(now()) @onCreate(now())
+  updatedAt temporal.UpdatedAt
+}
+
+// ---------------------------------------------------------------------------
+//  Community: contact messages, error reports, reviews
+// ---------------------------------------------------------------------------
+
+model ContactMessage {
+  id        Int           @id @default(autoincrement())
+  name      String
+  email     String?
+  phone     String?
+  topic     MessageTopic
+  subject   String
+  message   String
+  status    MessageStatus
+  adminNote String?
+  ipHash    String?
+  handledAt DateTime?
+  createdAt DateTime      @default(now()) @onCreate(now())
+  updatedAt temporal.UpdatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+/// EF-20 / EF-23: "Signaler une erreur" queue.
+model Report {
+  id         Int          @id @default(autoincrement())
+  targetType ReportTarget
+  targetId   Int
+  targetName String
+  targetSlug String?
+  reason     ReportReason
+  message    String
+  contact    String?
+  status     ReportStatus
+  adminNote  String?
+  ipHash     String?
+  resolvedAt DateTime?
+  createdAt  DateTime     @default(now()) @onCreate(now())
+  updatedAt  temporal.UpdatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+/// EF-22: ratings & comments, published only after moderation.
+model Review {
+  id           Int          @id @default(autoincrement())
+  productId    Int?
+  product      Product?     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  restaurantId Int?
+  restaurant   Restaurant?  @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  authorName   String
+  rating       Int          // 1..5
+  comment      String
+  status       ReviewStatus
+  ipHash       String?
+  moderatedAt  DateTime?
+  createdAt    DateTime     @default(now()) @onCreate(now())
+
+  @@index([productId, status])
+  @@index([restaurantId, status])
+  @@index([status])
+  @@check(expression: sql`rating >= 1 AND rating <= 5`, name: "review_rating_range")
+}
+
+// ---------------------------------------------------------------------------
+//  Admin security
+// ---------------------------------------------------------------------------
+
+model AdminUser {
+  id                Int            @id @default(autoincrement())
+  email             String         @unique
+  name              String
+  passwordHash      String         // argon2id hash — never the password itself
+  totpSecret        String?        // encrypted (AES-256-GCM) TOTP secret
+  totpEnabled       Boolean        @default(false)
+  failedAttempts    Int            @default(0)
+  lockedUntil       DateTime?
+  lastLoginAt       DateTime?
+  passwordChangedAt DateTime?
+  sessions          AdminSession[]
+  createdAt         DateTime       @default(now()) @onCreate(now())
+  updatedAt         temporal.UpdatedAt
+}
+
+/// A logged-in browser. The cookie holds a random token; we only store its SHA-256 hash.
+model AdminSession {
+  id         String    @id // sha256(token), hex
+  adminId    Int
+  admin      AdminUser @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  pending2fa Boolean   @default(false) // password OK, waiting for the 6-digit code
+  expiresAt  DateTime
+  lastSeenAt DateTime
+  ipHash     String?
+  userAgent  String?
+  createdAt  DateTime  @default(now()) @onCreate(now())
+
+  @@index([adminId])
+}
+
+model LoginAttempt {
+  id        Int      @id @default(autoincrement())
+  email     String
+  ipHash    String
+  success   Boolean
+  reason    String?
+  createdAt DateTime @default(now()) @onCreate(now())
+
+  @@index([email, createdAt])
+  @@index([ipHash, createdAt])
+}
+
+model AuditLog {
+  id         Int      @id @default(autoincrement())
+  adminId    Int?
+  adminEmail String
+  action     String   // "create" | "update" | "delete" | "login" | ...
+  entity     String   // "product", "order", ...
+  entityId   String?
+  details    String?
+  ipHash     String?
+  createdAt  DateTime @default(now()) @onCreate(now())
+
+  @@index([createdAt])
+}
+
+/// One row per protected action (contact form, review, order, login...).
+/// Used to limit how often the same visitor (hashed IP) can repeat an action.
+model RateLimitHit {
+  id        Int      @id @default(autoincrement())
+  key       String   // e.g. "contact:<ipHash>"
+  createdAt DateTime @default(now()) @onCreate(now())
+
+  @@index([key, createdAt])
+}

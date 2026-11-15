@@ -1,26 +1,174 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ==========================================================================
+   CeliacCare — design system
+   White & green, simple and professional, with a Tunisian touch:
+   - greens taken from the logo (Sidi Bou Said door + jasmine)
+   - a saffron accent (the jasmine heart) used sparingly
+   - "khatam" 8-point-star pattern inspired by Tunisian zellige tiles
+   - arch-shaped image frames inspired by Tunisian doorways
+   ========================================================================== */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@theme {
+  /* Brand greens */
+  --color-brand-50: #effaf4;
+  --color-brand-100: #d9f2e4;
+  --color-brand-200: #b4e4ca;
+  --color-brand-300: #82d0a8;
+  --color-brand-400: #3dbb7e;
+  --color-brand-500: #1a9f62;
+  --color-brand-600: #128552;
+  --color-brand-700: #0e6a42;
+  --color-brand-800: #0b5536;
+  --color-brand-900: #09452d;
+  --color-brand-950: #04261a;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  /* Saffron accent (jasmine heart) */
+  --color-saffron-50: #fef8e8;
+  --color-saffron-100: #fdedc4;
+  --color-saffron-300: #f7cf6d;
+  --color-saffron-400: #f2b93b;
+  --color-saffron-500: #e2a11f;
+  /* Text on saffron-50/100 (warning alerts, badges): 4.7:1 even at 90 % opacity on saffron-50 (WCAG AA) */
+  --color-saffron-700: #865709;
+
+  /* Neutrals with a hint of green. Text tokens pass WCAG AA (4.5:1) on white, canvas and brand-50. */
+  --color-ink: #0f1f17;
+  --color-ink-muted: #4a5d53;
+  --color-ink-subtle: #62736a;
+  --color-canvas: #f6f9f7;
+  --color-line: #e3eae6;
+  --color-line-strong: #cfd9d3;
+
+  /* Typography (variables are set by next/font in the layouts) */
+  --font-sans: var(--font-latin), var(--font-arabic), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-latin), var(--font-arabic), ui-sans-serif, system-ui, sans-serif;
+
+  /* Radii & shadows */
+  --radius-card: 1.25rem;
+  --shadow-soft: 0 1px 2px rgb(15 31 23 / 0.04), 0 4px 16px rgb(15 31 23 / 0.06);
+  --shadow-lift: 0 2px 4px rgb(15 31 23 / 0.05), 0 12px 32px rgb(15 31 23 / 0.1);
+
+  /* Motion */
+  --animate-fade-up: fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Arabic pages use the Arabic font first. */
+:root[dir="rtl"] {
+  --font-sans: var(--font-arabic), var(--font-latin), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-arabic), var(--font-latin), ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    background-color: #ffffff;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  :root[dir="rtl"] h1,
+  :root[dir="rtl"] h2,
+  :root[dir="rtl"] h3,
+  :root[dir="rtl"] h4 {
+    letter-spacing: 0;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background-color: var(--color-brand-200);
+    color: var(--color-brand-950);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand-600);
+    outline-offset: 2px;
+    border-radius: 0.375rem;
+  }
+
+  /* Prices and numbers line up nicely */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Tunisian zellige "khatam" (8-point star) pattern — use on light backgrounds */
+@utility bg-khatam {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cg fill='none' stroke='%2314915A' stroke-opacity='.13' stroke-width='1'%3E%3Cpath d='M13.5 13.5h17v17h-17z'/%3E%3Cpath d='M22 10l12 12-12 12-12-12z'/%3E%3C/g%3E%3Cg fill='%2314915A' fill-opacity='.16'%3E%3Ccircle cx='0' cy='0' r='1.6'/%3E%3Ccircle cx='44' cy='0' r='1.6'/%3E%3Ccircle cx='0' cy='44' r='1.6'/%3E%3Ccircle cx='44' cy='44' r='1.6'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 44px 44px;
+}
+
+/* Same pattern in white, for dark green backgrounds */
+@utility bg-khatam-light {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='.09' stroke-width='1'%3E%3Cpath d='M13.5 13.5h17v17h-17z'/%3E%3Cpath d='M22 10l12 12-12 12-12-12z'/%3E%3C/g%3E%3Cg fill='%23ffffff' fill-opacity='.12'%3E%3Ccircle cx='0' cy='0' r='1.6'/%3E%3Ccircle cx='44' cy='0' r='1.6'/%3E%3Ccircle cx='0' cy='44' r='1.6'/%3E%3Ccircle cx='44' cy='44' r='1.6'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 44px 44px;
+}
+
+/* Tunisian doorway arch frame for images */
+@utility arch {
+  border-radius: 999px 999px 1.25rem 1.25rem;
+}
+
+/* A row of door studs, used as a decorative divider */
+@utility studs {
+  background-image: radial-gradient(circle, var(--color-brand-300) 1.6px, transparent 1.8px);
+  background-size: 14px 6px;
+  background-repeat: repeat-x;
+  background-position: center;
+}
+
+/* Hide scrollbars on horizontal chip rows while keeping them scrollable */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Arrow of native <select> elements (appearance-none removes the browser arrow) */
+@layer components {
+  .select-chevron {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234a5d53' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: 1.1rem;
+    background-position: right 0.85rem center;
+  }
+  [dir="rtl"] .select-chevron {
+    background-position: left 0.85rem center;
+  }
 }

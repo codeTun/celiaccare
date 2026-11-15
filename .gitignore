@@ -39,3 +39,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# every dot file and dot folder stays out of git (.cl, .claude, .env*, .next, editor settings...),
+# except this file
+.*
+!.gitignore
+
+# Prisma / tooling
+/.prisma-composer
+
+# scratch scripts written by assistants
+/zz-*
