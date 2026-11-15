@@ -81,6 +81,7 @@ pnpm dev                       # http://localhost:3000  (admin: http://localhost
 | `NEXT_PUBLIC_SITE_URL` | public URL of the site (`https://...` in production enables secure cookies & HSTS) |
 | `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | Cloudinary account (photos uploaded from the admin) |
 | `ADMIN_EMAIL`, `ADMIN_PASSWORD` | first admin account created by `pnpm db:seed` (password ≥ 12 characters) |
+| `DATABASE_POOL_MAX` (optional) | database connections per server process (default 5; hosted plans allow few in total) |
 | `TRUSTED_IP_HEADER` (optional) | header set by your reverse proxy with the client IP (e.g. `x-real-ip`) |
 
 ### Useful commands

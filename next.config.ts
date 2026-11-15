@@ -53,6 +53,11 @@ const nextConfig: NextConfig = {
     serverActions: { bodySizeLimit: "6mb" },
     // One 404 page for URLs that match no route (we have two root layouts).
     globalNotFound: true,
+    // The build pre-renders pages from the database. Each build worker has its own pool of
+    // connections (lib/prisma.ts), and hosted databases accept few: 4 workers x 5 = 20 at most.
+    cpus: 4,
+    // A page that hits a passing database hiccup is tried again instead of failing the build.
+    staticGenerationRetryCount: 2,
   },
 
   headers() {

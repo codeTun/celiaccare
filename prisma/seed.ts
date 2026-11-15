@@ -27,7 +27,7 @@ import { z } from "zod";
 
 import { MAX_PASSWORD_LENGTH } from "../lib/auth/guard";
 import { checkPasswordStrength, hashPassword } from "../lib/auth/password";
-import { db } from "../lib/prisma";
+import { closeDb, db } from "../lib/prisma";
 import { GOVERNORATES } from "../lib/tunisia";
 import { normalizeSearch } from "../lib/utils";
 import { CATEGORIES } from "./seed-data/categories";
@@ -985,5 +985,5 @@ try {
   if (error instanceof Error && error.stack && process.env.DEBUG) console.error(error.stack);
   process.exitCode = 1;
 } finally {
-  await db.close();
+  await closeDb();
 }

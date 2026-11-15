@@ -21,7 +21,7 @@ import { z } from "zod";
 
 import { MAX_PASSWORD_LENGTH } from "../lib/auth/guard";
 import { checkPasswordStrength, hashPassword } from "../lib/auth/password";
-import { db } from "../lib/prisma";
+import { closeDb, db } from "../lib/prisma";
 
 const USAGE = `
 Créer ou mettre à jour un compte administrateur
@@ -285,5 +285,5 @@ try {
   console.error(`✗ ${error instanceof Error ? error.message : String(error)}`);
   process.exitCode = 1;
 } finally {
-  await db.close();
+  await closeDb();
 }
