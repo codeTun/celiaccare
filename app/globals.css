@@ -174,143 +174,188 @@
 }
 
 /* --------------------------------------------------------------------------
-   Brand band of the home page (components/sections/home/brand-marquee.tsx):
-   ONE row of tiles scrolling forever, in CSS only (no JavaScript).
-   The list is rendered twice in .brand-marquee-track (each copy ends with the
-   same gap as between two tiles): moving the track by half its width brings the
-   copy exactly where the first list started, so the loop never jumps.
-   LTR moves left (-50 %), RTL moves right (+50 %): the tiles always travel toward
-   the start of the reading direction. --brand-marquee-duration is set inline
-   (number of tiles × 3.75 s), so the speed stays the same whatever the count.
-   It pauses under the mouse and the focus, and stops with the pause button.
+   Brand wall of the home page (components/sections/home/brand-marquee.tsx):
+   TWO rows of logos sliding in opposite directions, in CSS only (no JavaScript).
+   Each row is rendered twice in .brand-wall-track: moving the track by half its
+   width brings the copy exactly where the first one started, so the loop never
+   jumps. Row 1 travels toward the start of the reading direction, row 2 toward
+   its end (both mirrored in Arabic). --brand-wall-duration is set inline from
+   the number of logos, so the speed stays the same whatever the count.
+   The rows are decoration (aria-hidden); .brand-wall-still is the real list:
+   hidden for the eyes while the wall moves, shown when a logo of it gets the
+   keyboard focus, and for "reduce motion".
    -------------------------------------------------------------------------- */
-@keyframes brand-marquee {
+@keyframes brand-wall-to-start {
   to {
     transform: translate3d(-50%, 0, 0);
   }
 }
 
-@keyframes brand-marquee-rtl {
+@keyframes brand-wall-to-end {
+  from {
+    transform: translate3d(-50%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes brand-wall-to-start-rtl {
   to {
     transform: translate3d(50%, 0, 0);
   }
 }
 
+@keyframes brand-wall-to-end-rtl {
+  from {
+    transform: translate3d(50%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
 @layer components {
-  .brand-marquee {
-    /* width of the soft fade on both edges, and side margin of <Container> */
-    --brand-marquee-fade: 1.75rem;
-    --brand-marquee-gutter: 1rem;
-    overflow: hidden;
-    mask-image: linear-gradient(
-      to right,
-      transparent,
-      #000 var(--brand-marquee-fade),
-      #000 calc(100% - var(--brand-marquee-fade)),
-      transparent
-    );
+  .brand-wall {
+    /* width of the soft fade on both edges */
+    --brand-wall-fade: 2rem;
+    position: relative;
   }
 
   @media (width >= 40rem) {
-    .brand-marquee {
-      --brand-marquee-fade: 4rem;
-      --brand-marquee-gutter: 1.5rem;
+    .brand-wall {
+      --brand-wall-fade: 5rem;
     }
   }
 
   @media (width >= 64rem) {
-    .brand-marquee {
-      --brand-marquee-fade: 6rem;
-      --brand-marquee-gutter: 2rem;
+    .brand-wall {
+      --brand-wall-fade: 9rem;
     }
   }
 
-  .brand-marquee-track {
+  .brand-wall-rows {
+    display: grid;
+    gap: --spacing(3);
+    overflow: hidden;
+    padding-block: --spacing(1.5);
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 var(--brand-wall-fade),
+      #000 calc(100% - var(--brand-wall-fade)),
+      transparent
+    );
+  }
+
+  .brand-wall-track {
     display: flex;
     width: max-content;
   }
 
-  .brand-marquee-list {
+  .brand-wall-list {
     display: flex;
     flex-shrink: 0;
-    gap: --spacing(3);
-    padding-inline-end: --spacing(3);
+    align-items: center;
 
     & > li {
       flex-shrink: 0;
     }
   }
 
-  /* The loop, for visitors who accept motion */
+  /* A logo: a little faded at rest; it lifts and lights up under the mouse or the focus */
+  .brand-logo {
+    display: inline-flex;
+    align-items: center;
+    opacity: 0.82;
+    transition:
+      opacity 250ms ease,
+      transform 300ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      filter 250ms ease;
+    filter: saturate(0.85);
+
+    &:hover,
+    &:focus-visible {
+      opacity: 1;
+      filter: saturate(1.1);
+      transform: translateY(-3px) scale(1.04);
+    }
+  }
+
   @media (prefers-reduced-motion: no-preference) {
-    .brand-marquee-track {
-      animation: brand-marquee var(--brand-marquee-duration, 40s) linear infinite;
+    .brand-wall-row .brand-wall-track {
+      animation: brand-wall-to-start var(--brand-wall-duration, 40s) linear infinite;
     }
 
-    [dir="rtl"] .brand-marquee-track {
-      animation-name: brand-marquee-rtl;
+    .brand-wall-row[data-direction="end"] .brand-wall-track {
+      animation-name: brand-wall-to-end;
     }
 
-    /* pause under the mouse, and while a tile has the focus */
-    .brand-marquee:hover .brand-marquee-track,
-    .brand-marquee:focus-within .brand-marquee-track {
+    [dir="rtl"] .brand-wall-row .brand-wall-track {
+      animation-name: brand-wall-to-start-rtl;
+    }
+
+    [dir="rtl"] .brand-wall-row[data-direction="end"] .brand-wall-track {
+      animation-name: brand-wall-to-end-rtl;
+    }
+
+    /* pause under the mouse (to click a logo), and for good with the pause button of the header */
+    .brand-wall-rows:hover .brand-wall-track,
+    .brand-band:has(.brand-marquee-pause :checked) .brand-wall-track {
       animation-play-state: paused;
     }
-
-    /* stopped for good with the pause button of the header (a checkbox, brand-marquee.tsx PauseToggle) */
-    .brand-band:has(.brand-marquee-pause :checked) .brand-marquee-track {
-      animation-play-state: paused;
-    }
   }
 
-  /* Keyboard navigation in the real list: the row stops and shows the whole list, wrapped and centred,
-     so every focused tile is fully visible (browsers do not scroll a half-visible element into view).
-     Only the real list counts: a click (Cmd/Ctrl+click, right-click) can leave the focus on a tile of
-     the copy, which must then stay displayed, or the focus would fall back to the page. */
-  .brand-marquee:has(.brand-marquee-list:not([aria-hidden]) :focus-visible) {
-    mask-image: none;
+  /* The real list: hidden for the eyes while the rows move (still read by screen readers)... */
+  .brand-wall-still {
+    position: absolute;
+    top: 0;
+    inset-inline-start: 0;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 
-  .brand-marquee:has(.brand-marquee-list:not([aria-hidden]) :focus-visible) .brand-marquee-track {
-    width: auto;
-    padding-inline: var(--brand-marquee-gutter);
-    animation: none;
-  }
-
-  .brand-marquee:has(.brand-marquee-list:not([aria-hidden]) :focus-visible) .brand-marquee-list {
+  /* ...shown as a still, centred logo wall when nothing moves (data-static), when one of its logos has
+     the keyboard focus (the rows then hide: every focused logo is fully visible), and for "reduce motion" */
+  .brand-wall-still[data-static],
+  .brand-wall:has(.brand-wall-still :focus-visible) .brand-wall-still {
+    position: static;
+    display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    width: 100%;
-    padding-inline-end: 0;
+    gap: --spacing(3) --spacing(6);
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+    white-space: normal;
+    padding-inline: --spacing(4);
   }
 
-  .brand-marquee:has(.brand-marquee-list:not([aria-hidden]) :focus-visible) .brand-marquee-list[aria-hidden="true"] {
+  .brand-wall:has(.brand-wall-still :focus-visible) .brand-wall-rows {
     display: none;
   }
 
-  /* "Reduce motion": no loop. One still list (the copy is hidden) that scrolls sideways and snaps;
-     it starts in line with the title, with short fades in the side margins. */
   @media (prefers-reduced-motion: reduce) {
-    .brand-marquee {
-      --brand-marquee-fade: var(--brand-marquee-gutter);
-      overflow-x: auto;
-      overscroll-behavior-x: contain;
-      scroll-snap-type: x mandatory;
-      scroll-padding-inline: var(--brand-marquee-fade);
-      scrollbar-width: thin;
-      scrollbar-color: var(--color-line-strong) transparent;
-    }
-
-    .brand-marquee-track {
-      padding-inline: var(--brand-marquee-fade);
-    }
-
-    .brand-marquee-list[aria-hidden="true"] {
+    .brand-wall-rows {
       display: none;
     }
 
-    .brand-marquee-list > li {
-      scroll-snap-align: start;
+    .brand-wall-still {
+      position: static;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: --spacing(3) --spacing(6);
+      width: auto;
+      height: auto;
+      overflow: visible;
+      clip-path: none;
+      white-space: normal;
+      padding-inline: --spacing(4);
     }
   }
 }

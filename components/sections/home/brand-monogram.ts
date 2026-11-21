@@ -153,3 +153,36 @@ export function monogramTones(brands: readonly Pick<BrandDTO, "slug" | "logoUrl"
   }
   return indexes.map((index, position) => MONOGRAM_TONES[index ?? toneIndex(brands[position].slug)]);
 }
+
+/* --------------------------------------------------------------------------
+   Lockup styles of the brand wall: four ways of drawing a business that has no official
+   logo yet (emblem shape + name typography), so the wall reads as a set of real brands.
+   -------------------------------------------------------------------------- */
+export const LOGO_VARIANTS = ["badge", "tile", "arch", "seal"] as const;
+export type LogoVariant = (typeof LOGO_VARIANTS)[number];
+
+/** The style of a slug: always the same one (a second hash, independent from the colour). */
+function variantIndex(slug: string) {
+  let hash = 7;
+  for (let index = 0; index < slug.length; index++) {
+    hash = (Math.imul(hash, 31) + slug.charCodeAt(index)) | 0;
+  }
+  return (hash >>> 0) % LOGO_VARIANTS.length;
+}
+
+/**
+ * The style of every logo of a row, in the same order: each business keeps the style of its slug,
+ * moved to the next one when its neighbour (or, for the last logo, the first one: they meet where
+ * the loop starts again) already has it. Two neighbours never share a style.
+ */
+export function logoVariants(brands: readonly Pick<BrandDTO, "slug">[]): LogoVariant[] {
+  const indexes = brands.map((brand) => variantIndex(brand.slug));
+  const last = indexes.length - 1;
+  for (let position = 1; position < indexes.length; position++) {
+    let index = indexes[position];
+    const after = position === last && last > 1 ? indexes[0] : null;
+    while (index === indexes[position - 1] || index === after) index = (index + 1) % LOGO_VARIANTS.length;
+    indexes[position] = index;
+  }
+  return indexes.map((index) => LOGO_VARIANTS[index]);
+}
