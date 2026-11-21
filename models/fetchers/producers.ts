@@ -2,6 +2,7 @@ import "server-only";
 
 import { cachePolicy } from "@/lib/cache";
 import { TAGS } from "@/lib/cache-tags";
+import { publicLabel, publicSource, publicText } from "@/lib/contacts";
 import { governorateLabel } from "@/lib/tunisia";
 import { localize, needsReview } from "@/lib/utils";
 import {
@@ -59,7 +60,8 @@ export async function getProducers(locale: Locale, filters: ProducerFilters = {}
       slug: row.slug,
       name: row.name,
       type: row.type,
-      description: localize(locale, row.description, row.descriptionAr),
+      // Free texts go through lib/contacts.ts: no business contact ever reaches the public site.
+      description: publicText(localize(locale, row.description, row.descriptionAr)),
       city: row.city,
       governorate: row.governorate,
       imageUrl: row.imageUrl,
@@ -69,8 +71,11 @@ export async function getProducers(locale: Locale, filters: ProducerFilters = {}
 }
 
 /**
- * A producer page: contact details, preparation practices, verification (source + date)
+ * A producer page: address, opening hours, preparation practices, verification (source + date)
  * and its public products (available ones first, then alphabetical). Null when unknown or hidden.
+ * The business's own contacts (phone, e-mail, website, social networks) are never read here:
+ * every purchase goes through CeliacCare (they are only in models/fetchers/admin/producers.ts),
+ * and a contact typed into a free text is left out (lib/contacts.ts).
  */
 export async function getProducerBySlug(locale: Locale, slug: string): Promise<ProducerDetailDTO | null> {
   "use cache";
@@ -90,12 +95,6 @@ export async function getProducerBySlug(locale: Locale, slug: string): Promise<P
       "address",
       "latitude",
       "longitude",
-      "phone",
-      "whatsapp",
-      "email",
-      "website",
-      "instagram",
-      "facebook",
       "openingHours",
       "guaranteeLevel",
       "dedicatedSpace",
@@ -120,26 +119,20 @@ export async function getProducerBySlug(locale: Locale, slug: string): Promise<P
     slug: row.slug,
     name: row.name,
     type: row.type,
-    description: localize(locale, row.description, row.descriptionAr),
+    description: publicText(localize(locale, row.description, row.descriptionAr)),
     city: row.city,
     governorate: row.governorate,
     imageUrl: row.imageUrl,
     guaranteeLevel: row.guaranteeLevel,
     productCount: products.length,
-    address: row.address,
+    address: publicLabel(row.address),
     latitude: row.latitude,
     longitude: row.longitude,
-    phone: row.phone,
-    whatsapp: row.whatsapp,
-    email: row.email,
-    website: row.website,
-    instagram: row.instagram,
-    facebook: row.facebook,
-    openingHours: row.openingHours,
+    openingHours: publicLabel(row.openingHours),
     dedicatedSpace: row.dedicatedSpace,
     dedicatedUtensils: row.dedicatedUtensils,
     trainedStaff: row.trainedStaff,
-    verificationSource: row.verificationSource,
+    verificationSource: publicSource(row.verificationSource),
     verifiedAt: row.verifiedAt.toISOString(),
     needsReview: needsReview(row.verifiedAt),
     products,

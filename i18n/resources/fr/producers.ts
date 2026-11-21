@@ -9,17 +9,17 @@ export const producers = {
   meta: {
     title: "Artisans et petits producteurs sans gluten en Tunisie",
     description:
-      "Les artisans sans gluten de Tunisie, vérifiés un à un : pâtisseries, boulangeries, épiceries, boutiques spécialisées, cuisine maison et coopératives.",
+      "Les commerces 100\u00a0% sans gluten de Tunisie, vérifiés un à un : pâtisseries, boulangeries, épiceries, boutiques spécialisées, cuisine maison, coopératives et petits fabricants.",
     detailTitle: "{name} : produits sans gluten à {city}",
     detailDescription:
-      "{name} ({type}, {city}) : produits sans gluten, niveau de garantie, pratiques de fabrication, horaires et contact.",
+      "{name} ({type}, {city}) : produits sans gluten, niveau de garantie, pratiques de fabrication et horaires. Commande via CeliacCare.",
   },
 
   hero: {
     eyebrow: "Artisans & petits producteurs",
     title: "Les artisans du sans gluten",
     description:
-      "CeliacCare travaille uniquement avec de petits producteurs tunisiens : pâtisseries de quartier, épiceries, cuisine maison, coopératives… jamais avec de grandes marques. Chaque fiche est vérifiée et datée.",
+      "CeliacCare référence uniquement de petits producteurs tunisiens 100\u00a0% sans gluten : pâtisseries de quartier, épiceries, cuisine maison, coopératives, petits fabricants… jamais de grandes marques. Chaque fiche est vérifiée et datée.",
     highlights: ["Petits producteurs locaux", "Jamais de grandes marques", "Fiches vérifiées et datées"],
   },
 
@@ -35,6 +35,7 @@ export const producers = {
     governorate: "Gouvernorat",
     guarantee: "Niveau de garantie",
     allGuarantees: "Tous les niveaux",
+    guaranteeHint: "Tous les commerces référencés sont 100\u00a0% sans gluten.",
     submit: "Filtrer",
     reset: "Effacer les filtres",
   },
@@ -67,20 +68,13 @@ export const producers = {
 
   page: {
     story: "L'histoire de {name}",
-    seeProducts: "Voir les produits",
     productsTitle: "Les produits de {name}",
-    productsText: "Commandez en ligne : nous livrons à domicile.",
-    productsEmptyTitle: "Pas encore de produit en ligne",
-    productsEmptyText: "Contactez directement l'artisan pour connaître ses produits sans gluten du moment.",
+    productsText: "Commandez sur CeliacCare : livraison gratuite à domicile, paiement à la livraison.",
   },
 
   /** Shared "fiche adresse" blocks (components/directory): same keys as restaurants.sheet. */
   sheet: {
     title: "Fiche artisan",
-    links: "Sur le web",
-    instagram: "Instagram",
-    facebook: "Facebook",
-    networkOf: "{network} de {name}",
     yes: "oui",
     notDeclared: "non déclaré",
     reportTitle: "Une information a changé ?",

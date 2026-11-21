@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
  * top, and empty fields are left out of the URL.
  *
  * Layout: the fields (`children`, ideally 3: search + 2 lists) on the first row,
- * then `extra` (e.g. a toggle) and the buttons on the second row.
+ * an optional short `note` under them, then `extra` (e.g. a toggle) and the buttons on the second row.
  *
  * Give it a `key` built from the current filters so its fields are reset when the
  * filters change from elsewhere (the "Effacer les filtres" link for example).
@@ -27,6 +27,7 @@ export function FilterForm({
   resetLabel,
   showReset,
   extra,
+  note,
   children,
   className,
 }: {
@@ -40,6 +41,8 @@ export function FilterForm({
   showReset: boolean;
   /** Shown at the start of the second row (e.g. the "partners only" toggle) */
   extra?: ReactNode;
+  /** Short sentence under the fields (e.g. "Tous les commerces référencés sont 100 % sans gluten.") */
+  note?: ReactNode;
   /** The fields of the first row */
   children: ReactNode;
   className?: string;
@@ -71,6 +74,8 @@ export function FilterForm({
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_minmax(0,1fr)] md:items-end">
         {children}
       </div>
+
+      {note ? <p className="mt-3 text-xs leading-relaxed text-ink-subtle">{note}</p> : null}
 
       <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>{extra}</div>

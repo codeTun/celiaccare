@@ -18,7 +18,7 @@ import { getDictionary } from "@/i18n/server";
 import { pageMetadata } from "@/lib/seo";
 import { isGovernorate } from "@/lib/tunisia";
 import { getProducers } from "@/models/fetchers/producers";
-import { GUARANTEE_LEVELS, PRODUCER_TYPES, type GuaranteeLevel, type Locale, type ProducerType } from "@/types";
+import { isListedGuaranteeLevel, PRODUCER_TYPES, type Locale, type ProducerType } from "@/types";
 
 /* /fr/artisans — directory of the small local businesses we work with (never big brands).
    Filters come from the URL: ?q=...&type=BAKERY&gouvernorat=Tunis&garantie=CERTIFIED */
@@ -73,7 +73,8 @@ function parseProducerSearch(params: SearchParamsRecord): ProducerSearch {
     q: readParam(params, "q"),
     type: (PRODUCER_TYPES as readonly string[]).includes(type) ? (type as ProducerType) : "",
     governorate: isGovernorate(governorate) ? governorate : "",
-    guarantee: (GUARANTEE_LEVELS as readonly string[]).includes(guarantee) ? (guarantee as GuaranteeLevel) : "",
+    // Policy "100 % sans gluten only": only the listed levels can be filtered
+    guarantee: isListedGuaranteeLevel(guarantee) ? guarantee : "",
   };
 }
 

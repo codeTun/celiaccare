@@ -12,14 +12,13 @@ import { localePath } from "@/i18n/config";
 import { interpolate } from "@/i18n/interpolate";
 import type { CartDict } from "@/i18n/resources/fr/cart";
 import type { CheckoutDict } from "@/i18n/resources/fr/checkout";
-import { formatPrice } from "@/lib/format";
 import { MAX_ORDERS_PER_DAY } from "@/lib/tunisia";
 import { cn } from "@/lib/utils";
 import type { DeliveryZoneDTO, Locale } from "@/types";
 
 import { CartBlockerAlert } from "./cart-blocker-alert";
 import { CartLine } from "./cart-line";
-import { cheapestZoneFee, findCartBlocker, findCartRestaurant } from "./delivery";
+import { findCartBlocker, findCartRestaurant } from "./delivery";
 import { DeliveryInfo } from "./delivery-info";
 import { EmptyCart } from "./empty-cart";
 import { CartSkeleton } from "./skeletons";
@@ -56,9 +55,7 @@ export function CartView({ lang, texts, paymentTexts, zones, restaurants }: Cart
   const restaurantHref = cart.restaurantSlug ? localePath(lang, `/restaurants/${cart.restaurantSlug}`) : null;
   const continueHref = isRestaurant && restaurantHref ? restaurantHref : localePath(lang, "/produits");
   const checkoutHref = localePath(lang, "/commande");
-  // Restaurant orders: the delivery fee is known now. Shop orders: it depends on the governorate.
-  const estimatedTotal = restaurant ? subtotal + restaurant.deliveryFee : null;
-  const cheapestFee = cheapestZoneFee(zones);
+  // Delivery is free: the total is the subtotal (prices are checked again when the order is sent).
 
   return (
     <div>
@@ -146,33 +143,14 @@ export function CartView({ lang, texts, paymentTexts, zones, restaurants }: Cart
               </div>
               <div className="flex items-baseline justify-between gap-4">
                 <dt className="text-ink-muted">{texts.summary.delivery}</dt>
-                <dd className="text-end">
-                  {restaurant ? (
-                    restaurant.deliveryFee === 0 ? (
-                      <span className="font-bold text-brand-700">{texts.summary.free}</span>
-                    ) : (
-                      <Price value={restaurant.deliveryFee} locale={lang} className="text-ink" />
-                    )
-                  ) : (
-                    <span className="text-ink">
-                      {texts.summary.deliveryByZone}
-                      {cheapestFee !== null ? (
-                        <span className="block text-xs text-ink-subtle">
-                          {interpolate(texts.summary.deliveryFrom, { price: formatPrice(cheapestFee, lang) })}
-                        </span>
-                      ) : null}
-                    </span>
-                  )}
+                <dd className="font-bold text-brand-700">{texts.summary.free}</dd>
+              </div>
+              <div className="flex items-baseline justify-between gap-4 border-t border-line pt-3">
+                <dt className="font-bold text-ink">{texts.summary.total}</dt>
+                <dd>
+                  <Price value={subtotal} locale={lang} className="text-xl text-brand-800" />
                 </dd>
               </div>
-              {estimatedTotal !== null ? (
-                <div className="flex items-baseline justify-between gap-4 border-t border-line pt-3">
-                  <dt className="font-bold text-ink">{texts.summary.total}</dt>
-                  <dd>
-                    <Price value={estimatedTotal} locale={lang} className="text-xl text-brand-800" />
-                  </dd>
-                </div>
-              ) : null}
             </dl>
             <p className="mt-3 text-xs leading-relaxed text-ink-subtle">{texts.summary.totalHint}</p>
 
@@ -213,10 +191,8 @@ export function CartView({ lang, texts, paymentTexts, zones, restaurants }: Cart
       <div className="sticky bottom-0 z-20 -mx-4 mt-8 border-t border-line bg-white/95 px-4 py-3 shadow-[0_-4px_16px_rgb(15_31_23/0.06)] backdrop-blur sm:-mx-6 sm:px-6 lg:hidden">
         <div className="flex items-center justify-between gap-4">
           <div className="min-w-0">
-            <p className="text-xs text-ink-subtle">
-              {estimatedTotal !== null ? texts.summary.total : texts.summary.subtotal}
-            </p>
-            <Price value={estimatedTotal ?? subtotal} locale={lang} className="text-lg text-ink" />
+            <p className="text-xs text-ink-subtle">{texts.summary.total}</p>
+            <Price value={subtotal} locale={lang} className="text-lg text-ink" />
           </div>
           <CheckoutButton
             href={checkoutHref}

@@ -13,8 +13,6 @@ import {
   formDataToObject,
   governorate,
   idSchema,
-  optionalPriceInDinars,
-  priceInDinars,
   requiredText,
   submittedValues,
   validationError,
@@ -33,11 +31,10 @@ import { setDeliveryZoneActive, updateDeliveryZone } from "@/models/puters/deliv
 
 const ZONES_PATH = "/admin/livraisons/zones";
 
+/** Delivery is free for the customer: a zone only has its governorate, its delay and its switch. */
 const zoneSchema = z.object({
   governorate,
-  fee: priceInDinars,
   delay: requiredText(40),
-  freeFrom: optionalPriceInDinars,
   isActive: checkbox,
 });
 
@@ -45,8 +42,6 @@ const zoneSchema = z.object({
 const FIELD_ERRORS: Record<string, { field?: string; message: string }> = {
   INVALID_GOVERNORATE: { field: "governorate", message: "Choisissez un gouvernorat de la liste." },
   GOVERNORATE_TAKEN: { field: "governorate", message: "Une zone existe déjà pour ce gouvernorat : modifiez-la plutôt." },
-  INVALID_FEE: { field: "fee", message: "Montant invalide." },
-  INVALID_FREE_FROM: { field: "freeFrom", message: "Montant invalide." },
   NOT_FOUND: { message: "Cette zone n'existe plus." },
   INVALID_ID: { message: "Zone introuvable." },
 };

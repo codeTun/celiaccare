@@ -98,6 +98,7 @@ export async function getProducer(id: number): Promise<AdminProducerForm | null>
     verificationSource: row.verificationSource,
     verifiedAt: toDateInput(row.verifiedAt),
     imageUrl: row.imageUrl,
+    logoUrl: row.logoUrl,
     isActive: row.isActive,
   };
 }

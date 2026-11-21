@@ -18,7 +18,7 @@ export const products: ProductsDict = {
     title: "منتجات خالية من الغلوتين",
     description:
       "منتجات يصنعها حرفيون تونسيون صغار، وليست علامات تجارية كبرى. تذكر كل بطاقة المكوّنات ومسبّبات الحساسية ومستوى ضمان يتحقّق منه فريقنا.",
-    legendLabel: "مستويات الضمان الثلاثة",
+    legendLabel: "مستويات الضمان",
     legendLink: "فهم مستويات الضمان",
   },
 
@@ -69,6 +69,7 @@ export const products: ProductsDict = {
     allCategories: "كل الأصناف",
     guarantee: "مستوى الضمان",
     allGuarantees: "كل المستويات",
+    guaranteeHint: "كل المتاجر المدرجة خالية تمامًا من الغلوتين.",
     exclude: "بدون مسبّبات الحساسية هذه",
     excludeHint: "تُخفى المنتجات التي تحتوي عليها.",
     contains: "يحتوي على",
@@ -93,7 +94,8 @@ export const products: ProductsDict = {
 
   sheet: {
     unavailable: "غير متوفّر حاليًا",
-    unavailableText: "هذا المنتج غير متوفّر في الوقت الحالي. عُد قريبًا أو اتّصل بالحرفي.",
+    unavailableText:
+      "هذا المنتج غير متوفّر في الوقت الحالي. عُد قريبًا، أو اطلب توفيره عبر CeliacCare: نتواصل مع الحرفي نيابةً عنك.",
     quantity: "الكمية",
     decrease: "إنقاص الكمية",
     increase: "زيادة الكمية",
@@ -101,7 +103,7 @@ export const products: ProductsDict = {
     guaranteeLink: "فهم مستويات الضمان",
     description: "الوصف",
     ingredientsTitle: "المكوّنات ومسبّبات الحساسية",
-    ingredientsEmpty: "قائمة المكوّنات غير متوفّرة بعد.",
+    ingredientsEmpty: "التركيبة المفصّلة غير منشورة على الإنترنت: راجع ملصق المُصنِّع.",
     allergenTag: "مسبّب للحساسية",
     allergensLine: "مسبّبات الحساسية: {list}.",
     noAllergens: "لم يُصرَّح بأيّ مسبّب رئيسي للحساسية.",
@@ -114,9 +116,6 @@ export const products: ProductsDict = {
     producerTitle: "من صنع",
     producerPage: "زيارة صفحة الحرفي",
     producerProducts: "كل منتجاته",
-    callProducer: "الاتصال بـ {name}",
-    whatsappProducer: "مراسلة {name} عبر واتساب",
-    whatsappMessage: "مرحبا، أتواصل معكم عبر CeliacCare بخصوص المنتج «{product}».",
     deliveryTitle: "التوصيل والدفع",
     deliveryZones: {
       zero: "التوصيل إلى المنزل متاح قريبًا",
@@ -126,11 +125,8 @@ export const products: ProductsDict = {
       many: "توصيل إلى المنزل في {count} ولاية",
       other: "توصيل إلى المنزل في {count} ولاية",
     },
-    deliveryFeeFrom: "معلوم التوصيل ابتداءً من {fee}",
-    deliveryFree: "التوصيل مجاني ابتداءً من {amount} من المشتريات",
-    deliveryFreeByZone: "التوصيل مجاني حسب المنطقة، ابتداءً من {amount} من المشتريات",
-    deliveryFreeFrom: "مجاني ابتداءً من {amount}",
-    deliveryZonesToggle: "عرض المناطق والأسعار والآجال",
+    deliveryFree: "التوصيل مجاني، دون حدّ أدنى للشراء",
+    deliveryZonesToggle: "عرض المناطق والآجال",
     deliveryNone: "سيتمّ الإعلان عن مناطق التوصيل قريبًا.",
     payment: "الدفع عند الاستلام، نقدًا أو بالبطاقة.",
     relatedEyebrow: "اكتشف أيضًا",

@@ -7,7 +7,7 @@ import type { Locale } from "@/types";
 
 import { GuaranteeLevels } from "../guarantee-levels";
 
-/** The 3 guarantee levels explained (key trust content of the spec, §5.2). */
+/** The guarantee levels a listed business can have, explained (key trust content of the spec, §5.2). */
 export function GuaranteesSection({ lang, common, home }: { lang: Locale; common: CommonDict; home: HomeDict }) {
   return (
     <section className="py-16 sm:py-24">

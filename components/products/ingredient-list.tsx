@@ -53,11 +53,14 @@ export function IngredientList({
         <p className="text-sm text-ink-subtle">{labels.ingredientsEmpty}</p>
       )}
 
-      <p className={cn("mt-4 text-sm font-semibold", allergens.length > 0 ? "text-red-700" : "text-ink-muted")}>
-        {allergens.length > 0
-          ? interpolate(labels.allergensLine, { list: allergenList })
-          : labels.noAllergens}
-      </p>
+      {/* Unknown composition: say nothing about allergens rather than "none declared". */}
+      {ingredients.length > 0 ? (
+        <p className={cn("mt-4 text-sm font-semibold", allergens.length > 0 ? "text-red-700" : "text-ink-muted")}>
+          {allergens.length > 0
+            ? interpolate(labels.allergensLine, { list: allergenList })
+            : labels.noAllergens}
+        </p>
+      ) : null}
 
       {mayContain ? (
         <p className="mt-1.5 text-sm text-amber-800">

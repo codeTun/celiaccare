@@ -52,6 +52,11 @@ export type ReviewDTO = {
   createdAt: string;
 };
 
+/**
+ * The artisan shown on a product sheet. Like every public DTO, it never carries the business's
+ * own contacts (phone, WhatsApp, e-mail, website, social networks): every purchase goes through
+ * CeliacCare, so these stay in the admin DTOs only (types/admin-data.ts).
+ */
 export type ProducerSummaryDTO = {
   id: number;
   slug: string;
@@ -61,9 +66,7 @@ export type ProducerSummaryDTO = {
   governorate: string;
   imageUrl: string | null;
   guaranteeLevel: GuaranteeLevel;
-  phone: string | null;
-  whatsapp: string | null;
-  /** How the artisan was verified, e.g. "Visite sur place" (French only) */
+  /** How the artisan was verified, e.g. "Visite sur place" (French only, plain text: never a link) */
   verificationSource: string;
 };
 
@@ -117,16 +120,11 @@ export type ProducerCardDTO = {
   productCount: number;
 };
 
+/** An artisan page. No contacts of the business (see ProducerSummaryDTO): visitors order through CeliacCare. */
 export type ProducerDetailDTO = ProducerCardDTO & {
   address: string | null;
   latitude: number | null;
   longitude: number | null;
-  phone: string | null;
-  whatsapp: string | null;
-  email: string | null;
-  website: string | null;
-  instagram: string | null;
-  facebook: string | null;
   openingHours: string | null;
   dedicatedSpace: boolean;
   dedicatedUtensils: boolean;

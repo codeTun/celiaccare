@@ -13,10 +13,11 @@ import { Alert } from "@/components/ui/alert";
 import { TextareaField, TextField } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 import { idleState, type ActionState } from "@/lib/validators";
-import { GUARANTEE_LEVELS, type GuaranteeLevel } from "@/types";
 import type { AdminRestaurantForm } from "@/types/admin-data";
 
-import { DEFAULT_DELIVERY_TIME, GUARANTEE_LABELS, PRICE_RANGE_LABELS } from "./labels";
+import { LogoSection } from "../catalog/form-sections";
+import { GuaranteeLevelField } from "../catalog/guarantee";
+import { DEFAULT_DELIVERY_TIME, PRICE_RANGE_LABELS } from "./labels";
 
 const PRICE_RANGE_OPTIONS = [
   { value: "1", label: `1 · ${PRICE_RANGE_LABELS[1]}` },
@@ -27,7 +28,6 @@ const PRICE_RANGE_OPTIONS = [
 /** Values of a new restaurant (same defaults as the database). */
 const NEW_RESTAURANT_DEFAULTS = {
   priceRange: 2,
-  deliveryFee: 3000,
   deliveryTime: DEFAULT_DELIVERY_TIME,
   minOrder: 0,
 };
@@ -64,8 +64,8 @@ export function RestaurantForm({
 
   const [isPartner, setIsPartner] = useState(() => checked("isPartner", restaurant?.isPartner ?? false));
 
-  // The file field is emptied when the form comes back: remount the photo field so its
-  // preview does not show a photo that will not be sent.
+  // The file fields are emptied when the form comes back: remount the photo and logo fields so
+  // their previews do not show an image that will not be sent.
   const [photoKey, setPhotoKey] = useState(0);
   const [answeredState, setAnsweredState] = useState(state);
   if (state !== answeredState) {
@@ -73,6 +73,7 @@ export function RestaurantForm({
     setPhotoKey((key) => key + 1);
   }
   const photoNotSaved = typeof state.data === "object" && state.data !== null && "photoNotSaved" in state.data;
+  const logoNotSaved = typeof state.data === "object" && state.data !== null && "logoNotSaved" in state.data;
 
   // After a server error, bring the first invalid field into view.
   useEffect(() => {
@@ -304,7 +305,7 @@ export function RestaurantForm({
           <FormSection
             id="convention"
             title="Convention & livraison"
-            description="Un restaurant conventionné reçoit des commandes en ligne, livrées dans son gouvernorat."
+            description="Un restaurant conventionné reçoit des commandes en ligne, livrées gratuitement au client dans son gouvernorat."
           >
             <div className="space-y-5">
               <FormGrid>
@@ -332,21 +333,11 @@ export function RestaurantForm({
                   !isPartner && "opacity-60",
                 )}
               >
-                {!isPartner ? (
-                  <p className="mb-4 text-xs text-ink-subtle">
-                    Utilisé seulement si le restaurant est conventionné (commande en ligne).
-                  </p>
-                ) : null}
-                <FormGrid columns={3}>
-                  <MoneyField
-                    name="deliveryFee"
-                    label="Frais de livraison"
-                    required={isPartner}
-                    hint="0 = livraison gratuite."
-                    defaultMillimes={restaurant?.deliveryFee ?? NEW_RESTAURANT_DEFAULTS.deliveryFee}
-                    defaultValue={state.values?.deliveryFee}
-                    error={errors.deliveryFee}
-                  />
+                <p className="mb-4 text-xs text-ink-subtle">
+                  {!isPartner ? "Utilisé seulement si le restaurant est conventionné (commande en ligne). " : null}
+                  Livraison gratuite pour le client : aucun frais de livraison n&apos;est facturé.
+                </p>
+                <FormGrid>
                   <TextField
                     name="deliveryTime"
                     label="Délai de livraison"
@@ -415,6 +406,22 @@ export function RestaurantForm({
             </div>
           </FormSection>
 
+          <LogoSection
+            key={photoKey}
+            cloudinaryReady={cloudinaryReady}
+            currentUrl={restaurant?.logoUrl}
+            alt={restaurant ? `Logo de ${restaurant.name}` : "Logo du restaurant"}
+            fallbackIcon="chef"
+            error={errors.logo}
+            notice={
+              logoNotSaved ? (
+                <p className="mt-4 text-xs font-medium text-amber-800">
+                  Le logo choisi n&apos;a pas été enregistré : sélectionnez-le à nouveau avant d&apos;enregistrer.
+                </p>
+              ) : null
+            }
+          />
+
           <FormSection
             id="verification"
             title="Vérification"
@@ -455,46 +462,5 @@ export function RestaurantForm({
         ) : null}
       </FormActions>
     </form>
-  );
-}
-
-/** The 3 guarantee levels as radio cards, with what each one means. */
-function GuaranteeLevelField({ defaultValue, error }: { defaultValue: string; error?: string[] }) {
-  const message = error?.[0];
-  return (
-    <fieldset aria-describedby={message ? "guaranteeLevel-error" : undefined}>
-      <legend className="text-sm font-semibold text-ink">
-        Niveau de garantie
-        <span className="ms-0.5 text-red-600" aria-hidden="true">
-          *
-        </span>
-      </legend>
-      <div className="mt-2 grid gap-3 md:grid-cols-3">
-        {GUARANTEE_LEVELS.map((level: GuaranteeLevel) => (
-          <label
-            key={level}
-            className="flex cursor-pointer items-start gap-3 rounded-2xl border border-line bg-white p-3.5 transition-colors hover:border-brand-200 has-[:checked]:border-brand-500 has-[:checked]:bg-brand-50/60 has-[:focus-visible]:ring-4 has-[:focus-visible]:ring-brand-100"
-          >
-            <input
-              type="radio"
-              name="guaranteeLevel"
-              value={level}
-              required
-              defaultChecked={defaultValue === level}
-              className="mt-0.5 size-4 shrink-0 accent-brand-600"
-            />
-            <span className="min-w-0">
-              <span className="block text-sm font-semibold text-ink">{GUARANTEE_LABELS[level].label}</span>
-              <span className="mt-0.5 block text-xs leading-relaxed text-ink-subtle">{GUARANTEE_LABELS[level].description}</span>
-            </span>
-          </label>
-        ))}
-      </div>
-      {message ? (
-        <p id="guaranteeLevel-error" className="mt-1.5 text-xs font-medium text-red-600" role="alert">
-          {message}
-        </p>
-      ) : null}
-    </fieldset>
   );
 }

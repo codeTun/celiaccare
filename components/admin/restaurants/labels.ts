@@ -1,27 +1,14 @@
-import type { DishCourse, GuaranteeLevel } from "@/types";
+import type { DishCourse } from "@/types";
+
+import { GUARANTEE_LEVEL_INFO } from "../catalog/labels";
 
 /* ==========================================================================
    French texts of the restaurant & menu admin pages (enums → labels).
    Same wording as the public site (i18n/resources/fr/common.ts).
    ========================================================================== */
 
-export const GUARANTEE_LABELS: Record<GuaranteeLevel, { label: string; short: string; description: string }> = {
-  CERTIFIED: {
-    label: "Certifié sans gluten",
-    short: "Certifié",
-    description: "Certification officielle vérifiée (logo, organisme et numéro).",
-  },
-  NATURALLY_GF: {
-    label: "Naturellement sans gluten",
-    short: "Sans gluten",
-    description: "Recettes sans gluten préparées avec précautions, sans certification officielle.",
-  },
-  TRACES_RISK: {
-    label: "Risque de traces",
-    short: "Traces possibles",
-    description: "Aucun ingrédient à gluten, mais cuisine partagée : contamination possible.",
-  },
-};
+/** Guarantee levels: the same texts as the catalogue admin pages (only CERTIFIED and DEDICATED can be chosen). */
+export const GUARANTEE_LABELS = GUARANTEE_LEVEL_INFO;
 
 /** Courses of a menu, in menu order (DISH_COURSES). */
 export const COURSE_LABELS: Record<DishCourse, { plural: string; singular: string; add: string; empty: string }> = {

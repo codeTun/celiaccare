@@ -1,4 +1,4 @@
-import type { GuaranteeLevel, Locale } from "@/types";
+import type { ListedGuaranteeLevel, Locale } from "@/types";
 
 /* ==========================================================================
    Shapes of the long-form content (guide, legal pages) stored in data/*.ts
@@ -43,8 +43,11 @@ export type ContentBlock =
       notes: string[];
       verdict: string;
     }
-  /** The 3 guarantee levels of CeliacCare (names from the dictionary) with one piece of advice each. */
-  | { type: "guarantees"; advice: Record<GuaranteeLevel, string> }
+  /**
+   * The guarantee levels a listed business can have (CERTIFIED, DEDICATED: policy "100 % sans gluten only"),
+   * names from the dictionary, with one piece of advice each.
+   */
+  | { type: "guarantees"; advice: Record<ListedGuaranteeLevel, string> }
   /** Side-by-side cards with an icon, a title and a list ("At home" / "At the restaurant"). */
   | { type: "cards"; items: { icon: CardIcon; title: string; items: string[] }[] }
   /** Sentences to show to a waiter, in French and in Arabic. */

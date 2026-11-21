@@ -100,7 +100,8 @@ export function DeliverySlip({ order }: { order: AdminOrderDetail }) {
             <td colSpan={4} className="text-end">
               Livraison
             </td>
-            <td className="text-end tabular">{formatPrice(order.deliveryFee)}</td>
+            {/* Free for every new order; an older order keeps the fee it was charged (it is in the total). */}
+            <td className="text-end tabular">{order.deliveryFee === 0 ? "Gratuite" : formatPrice(order.deliveryFee)}</td>
           </tr>
           <tr className="text-[14px] font-extrabold">
             <td colSpan={4} className="pt-1 text-end">

@@ -3,7 +3,13 @@
 import { FormGrid } from "@/components/admin/admin-form";
 import { CatalogForm, type CatalogFormAction } from "@/components/admin/catalog/catalog-form";
 import { CoordinatesFields } from "@/components/admin/catalog/coordinates-fields";
-import { ArabicSection, FormColumns, PhotoSection, VerificationSection } from "@/components/admin/catalog/form-sections";
+import {
+  ArabicSection,
+  FormColumns,
+  LogoSection,
+  PhotoSection,
+  VerificationSection,
+} from "@/components/admin/catalog/form-sections";
 import { checkedValue, textValue } from "@/components/admin/catalog/form-values";
 import { GuaranteeLevelField } from "@/components/admin/catalog/guarantee";
 import { PRODUCER_TYPE_ICON_KEYS, PRODUCER_TYPE_LABELS } from "@/components/admin/catalog/labels";
@@ -278,6 +284,13 @@ function ProducerFields({
             alt={producer ? `Photo de ${producer.name}` : "Photo de l'artisan"}
             fallbackIcon={PRODUCER_TYPE_ICON_KEYS[type]}
             error={errors?.image}
+          />
+          <LogoSection
+            cloudinaryReady={cloudinaryReady}
+            currentUrl={producer?.logoUrl}
+            alt={producer ? `Logo de ${producer.name}` : "Logo de l'artisan"}
+            fallbackIcon={PRODUCER_TYPE_ICON_KEYS[type]}
+            error={errors?.logo}
           />
         </>
       }

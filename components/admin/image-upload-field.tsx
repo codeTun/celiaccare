@@ -11,8 +11,26 @@ import { cn } from "@/lib/utils";
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif"];
 const MAX_BYTES = 5 * 1024 * 1024;
 
+/** Button and checkbox texts: a photo (default) or an official logo. */
+const TEXTS = {
+  photo: {
+    choose: "Choisir une photo",
+    change: "Changer la photo",
+    chosen: "Nouvelle photo",
+    remove: "Retirer la photo actuelle",
+  },
+  logo: {
+    choose: "Choisir un logo",
+    change: "Changer le logo",
+    chosen: "Nouveau logo",
+    remove: "Retirer le logo actuel",
+  },
+};
+
 /**
  * Photo field of the admin forms (products, restaurants, artisans, categories, dishes).
+ * With kind="logo" it is the official logo field of artisans and restaurants (texts about a
+ * logo, the image is shown whole on white instead of cropped).
  * - shows the current Cloudinary photo (or the branded placeholder);
  * - lets the admin pick a new JPG / PNG / WEBP / AVIF file (5 MB max, checked here AND on the server)
  *   and previews it before saving;
@@ -27,9 +45,11 @@ const MAX_BYTES = 5 * 1024 * 1024;
  * @example
  * <ImageUploadField label="Photo du produit" currentUrl={product.imageUrl} alt={product.name}
  *   fallbackIcon={product.categoryIcon} error={state.fieldErrors?.image} />
+ * <ImageUploadField kind="logo" name="logo" removeName="removeLogo" label="Logo officiel" … />
  */
 export function ImageUploadField({
   label,
+  kind = "photo",
   name = "image",
   removeName = "removeImage",
   currentUrl,
@@ -41,6 +61,8 @@ export function ImageUploadField({
   className,
 }: {
   label: ReactNode;
+  /** "photo" (default) or "logo": texts of the buttons, and how the image is shown. */
+  kind?: "photo" | "logo";
   /** Name of the file input (default "image"). */
   name?: string;
   /** Name of the "remove the photo" checkbox (default "removeImage"). */
@@ -102,9 +124,14 @@ export function ImageUploadField({
   const message = localError ?? serverError ?? null;
   const describedBy = [`${id}-hint`, message ? `${id}-error` : null].filter(Boolean).join(" ");
   const showCurrent = !previewUrl && !remove;
+  const texts = TEXTS[kind];
+  // A logo is shown whole (never cropped), with some white space around it.
+  const fit = kind === "logo" ? "object-contain p-3" : "object-cover";
 
   return (
-    <div className={cn("flex flex-col gap-1.5", className)}>
+    // @container: the preview goes beside the buttons only when the FIELD is wide enough (not the
+    // screen): in the narrow side column of the forms it stays above them.
+    <div className={cn("@container flex flex-col gap-1.5", className)}>
       <span className="text-sm font-semibold text-ink" id={`${id}-label`}>
         {label}
         {required && !currentUrl ? (
@@ -114,19 +141,20 @@ export function ImageUploadField({
         ) : null}
       </span>
 
-      <div className="flex flex-col gap-4 rounded-2xl border border-dashed border-line-strong bg-canvas/60 p-4 sm:flex-row sm:items-center">
+      <div className="flex flex-col gap-4 rounded-2xl border border-dashed border-line-strong bg-canvas/60 p-4 @sm:flex-row @sm:items-center">
         <div className="relative size-28 shrink-0 overflow-hidden rounded-2xl bg-white ring-1 ring-line">
           {previewUrl ? (
             // A local preview (blob: URL) cannot go through the Cloudinary loader of next/image.
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={previewUrl} alt={`Aperçu : ${alt}`} className="size-full object-cover" />
+            <img src={previewUrl} alt={`Aperçu : ${alt}`} className={cn("size-full", fit)} />
           ) : (
             <CloudImage
               src={showCurrent ? currentUrl : null}
               alt={alt}
               sizes="112px"
               fallbackIcon={fallbackIcon}
-              className="size-full"
+              className={cn("size-full", kind === "logo" && "bg-white")}
+              imageClassName={kind === "logo" ? fit : undefined}
               rounded="rounded-2xl"
             />
           )}
@@ -136,10 +164,11 @@ export function ImageUploadField({
           <div className="flex flex-wrap items-center gap-2">
             <label
               htmlFor={id}
-              className="inline-flex h-9 cursor-pointer items-center gap-2 rounded-full border border-line-strong bg-white px-4 text-sm font-semibold text-ink transition-colors hover:border-brand-300 hover:bg-brand-50 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-brand-600"
+              // min-h, not h: if the text ever wraps, the pill grows with it instead of letting it spill out
+              className="inline-flex min-h-9 cursor-pointer items-center gap-2 rounded-full border border-line-strong bg-white px-4 py-1.5 text-start text-sm leading-tight font-semibold text-ink transition-colors hover:border-brand-300 hover:bg-brand-50 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-brand-600"
             >
-              <ImagePlus className="size-4" aria-hidden="true" />
-              {currentUrl || previewUrl ? "Changer la photo" : "Choisir une photo"}
+              <ImagePlus className="size-4 shrink-0" aria-hidden="true" />
+              {currentUrl || previewUrl ? texts.change : texts.choose}
               <input
                 ref={inputRef}
                 id={id}
@@ -166,12 +195,16 @@ export function ImageUploadField({
             ) : null}
           </div>
 
-          {fileName ? <p className="truncate text-xs text-ink-muted">Nouvelle photo : {fileName}</p> : null}
+          {fileName ? (
+            <p className="truncate text-xs text-ink-muted">
+              {texts.chosen} : {fileName}
+            </p>
+          ) : null}
 
           {currentUrl && !previewUrl ? (
             <label className="flex items-center gap-2 text-sm text-ink-muted">
               <Checkbox name={removeName} checked={remove} onChange={(event) => setRemove(event.target.checked)} />
-              Retirer la photo actuelle
+              {texts.remove}
             </label>
           ) : null}
 

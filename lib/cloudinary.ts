@@ -3,7 +3,7 @@ import "server-only";
 import { v2 as cloudinary, type UploadApiOptions, type UploadApiResponse } from "cloudinary";
 
 /**
- * Cloudinary = where product, restaurant and artisan photos are stored.
+ * Cloudinary = where product, restaurant and artisan photos (and the official logos) are stored.
  * Uploads always happen on the SERVER (inside admin Server Actions), so the
  * API secret never reaches the browser.
  * Credentials: CLOUDINARY_CLOUD_NAME / CLOUDINARY_API_KEY / CLOUDINARY_API_SECRET in .env
@@ -60,8 +60,11 @@ export function isEmptyFile(value: FormDataEntryValue | null): boolean {
   return !value || typeof value === "string" || value.size === 0;
 }
 
-/** Upload an image File to Cloudinary, in the folder "celiaccare/<folder>". */
-export async function uploadImage(file: File, folder: "products" | "categories" | "producers" | "restaurants" | "dishes") {
+/** Upload an image File to Cloudinary, in the folder "celiaccare/<folder>" ("logos": artisan and restaurant logos). */
+export async function uploadImage(
+  file: File,
+  folder: "products" | "categories" | "producers" | "restaurants" | "dishes" | "logos",
+) {
   if (!isCloudinaryConfigured()) {
     throw new Error("Cloudinary n'est pas configuré (voir CLOUDINARY_* dans .env).");
   }

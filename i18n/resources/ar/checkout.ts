@@ -78,10 +78,8 @@ export const checkout: CheckoutDict = {
     },
   },
   zone: {
-    fee: "معلوم التوصيل",
+    delivery: "التوصيل",
     delay: "مدّة التوصيل",
-    freeFrom: "التوصيل مجاني ابتداءً من {price} من المشتريات",
-    freeApplied: "التوصيل مجاني لهذا الطلب!",
   },
   payment: {
     onDelivery: "الدفع عند الاستلام",
@@ -124,7 +122,6 @@ export const checkout: CheckoutDict = {
     title: "طلبك",
     subtotal: "المجموع الفرعي",
     delivery: "التوصيل",
-    deliveryPending: "حسب الولاية",
     free: "مجاني",
     total: "المجموع",
     estimate: "مبلغ تقديري: نتحقّق من الأسعار عند إرسال الطلب.",
@@ -159,8 +156,7 @@ export const checkout: CheckoutDict = {
     copied: "تمّ النسخ!",
     total: "المبلغ المطلوب عند الاستلام",
     subtotal: "المجموع الفرعي",
-    delivery: "التوصيل",
-    free: "مجاني",
+    freeDelivery: "التوصيل مجاني",
     delay: "المدّة التقديرية للتوصيل",
     payment: "الدفع",
     track: "متابعة طلبي",
@@ -171,6 +167,15 @@ export const checkout: CheckoutDict = {
       "يُحضَّر الطلب ثم يُسلَّم إلى عون التوصيل.",
       "تدفع عند الاستلام، نقدًا أو بالبطاقة.",
     ],
+  },
+  help: {
+    title: "لديك سؤال حول طلبك؟ تواصل مع CeliacCare",
+    checkoutText: "يجيبك فريقنا قبل الطلب وبعده، ويتولّى التواصل مع التاجر نيابةً عنك.",
+    orderText: "احتفظ بمرجع طلبك: يتابع فريقنا طلبك ويتولّى التواصل مع التاجر.",
+    call: "الاتصال بـ CeliacCare على الرقم",
+    whatsapp: "واتساب",
+    email: "مراسلة CeliacCare على العنوان",
+    form: "استمارة الاتصال",
   },
   tracking: {
     meta: {
@@ -220,7 +225,6 @@ export const checkout: CheckoutDict = {
       free: "مجاني",
       total: "المجموع",
       payment: "الدفع",
-      help: "لديك سؤال حول طلبك؟ اتّصل بنا على الرقم {phone}.",
     },
     statuses: {
       PENDING: "تمّ الاستلام",

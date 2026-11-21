@@ -11,7 +11,7 @@
  *   allowed up to 6 orders a day.
  *
  * Every order follows the rules of the real checkout (models/posters/orders.ts): current prices,
- * delivery fee of the zone (free above `freeFrom`) or of the restaurant, restaurant minimum order,
+ * free delivery (delivery fee 0, total = subtotal), restaurant minimum order,
  * restaurants deliver in their own governorate only, at most 3 orders per phone number per day.
  * All amounts are in millimes. Dates are computed from `now`, so the history always ends today.
  */
@@ -62,12 +62,12 @@ const CRECHE_BUSY_DAYS = [
   { daysAgo: 12, orders: 4 },
 ];
 const CRECHE_PRODUCTS = [
-  "pain-de-mie-riz-sarrasin",
-  "baguette-sans-gluten",
-  "pain-rond-au-sorgho",
-  "croissants-pur-beurre",
-  "sables-vanille",
-  "crackers-lin-sarrasin",
+  "la-seine-madeleine-marbree",
+  "lorizo-biscuit-long-vanille",
+  "glutella-cookies-sarrasin",
+  "glutella-bsissa",
+  "ibn-hayyan-couscous-traditionnel",
+  "ecopasta-couscous-mais",
 ];
 /** Orders of the last hours, with their status, so the admin sees work in progress. */
 const LIVE_ORDERS: { minutesAgo: number; type: OrderType; status: OrderStatus; zoneDelay?: string }[] = [
@@ -77,11 +77,11 @@ const LIVE_ORDERS: { minutesAgo: number; type: OrderType; status: OrderStatus; z
   { minutesAgo: 16 * 60, type: "SHOP", status: "OUT_FOR_DELIVERY", zoneDelay: "24 h" },
   { minutesAgo: 20 * 60, type: "SHOP", status: "PREPARING", zoneDelay: "24–48 h" },
 ];
-/** Restaurants open in the evening only, and closing days (0 = Sunday … 6 = Saturday), from their opening hours. */
-const DINNER_ONLY_RESTAURANTS = ["forno-libero-sousse"];
+/** Restaurants open at lunch or in the evening only, and closing days (0 = Sunday … 6 = Saturday), from their opening hours. */
+const DINNER_ONLY_RESTAURANTS: string[] = [];
+const LUNCH_ONLY_RESTAURANTS = ["inward"];
 const RESTAURANT_CLOSED_DAYS: Record<string, number[]> = {
-  "dar-el-ward": [1], // closed on Monday
-  "bol-vert-menzah": [0], // closed on Sunday
+  inward: [0, 1, 6], // open Tuesday to Friday
 };
 /** Shop orders are delivered this many days after the order (min, max), between 10:00 and 19:00, never on Sunday. */
 const SHOP_DELIVERY_DAYS: Record<string, [number, number]> = {
@@ -131,12 +131,11 @@ export type CatalogForOrders = {
     slug: string;
     name: string;
     governorate: string;
-    deliveryFee: number;
     minOrder: number;
     partnerSince: Date;
     dishes: { id: number; name: string; price: number; course: DishCourse }[];
   }[];
-  zones: { id: number; governorate: string; fee: number; delay: string; freeFrom: number | null }[];
+  zones: { id: number; governorate: string; delay: string }[];
   /** Active delivery people and the governorates they cover. */
   deliverers: { id: number; covers: string[] }[];
 };
@@ -506,8 +505,7 @@ export function buildDemoOrders(
     const items =
       plan.items ?? (type === "RESTAURANT" && restaurant ? pickDishes(restaurant) : pickShopItems(createdAt));
     const subtotal = items.reduce((sum, item) => sum + item.lineTotal, 0);
-    const isFreeDelivery = zone.freeFrom !== null && subtotal >= zone.freeFrom;
-    const deliveryFee = type === "RESTAURANT" && restaurant ? restaurant.deliveryFee : isFreeDelivery ? 0 : zone.fee;
+    const deliveryFee = 0; // delivery is free for the customer (like createOrder())
 
     const life = plan.status
       ? forcedLifecycle(plan.status, createdAt)
@@ -696,8 +694,10 @@ export function buildDemoOrders(
       const wantsRestaurant = random.chance(settings.restaurantShare);
       const pick = wantsRestaurant ? pickRestaurantCustomer(day, tunisTime(day, 0)) : null;
       if (pick) {
-        const dinner = DINNER_ONLY_RESTAURANTS.includes(pick.restaurant.slug) || random.chance(0.55);
-        // Lunch 12:00–14:30 or dinner 19:00–20:59: every partner is open at those times.
+        const dinner =
+          !LUNCH_ONLY_RESTAURANTS.includes(pick.restaurant.slug) &&
+          (DINNER_ONLY_RESTAURANTS.includes(pick.restaurant.slug) || random.chance(0.55));
+        // Lunch 12:00–14:30 or dinner 19:00–20:59, inside each partner's opening hours.
         const createdAt = dinner
           ? tunisTime(day, random.int(19, 20), random.int(0, 59))
           : tunisTime(day, random.int(12, 14), random.int(0, 30));

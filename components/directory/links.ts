@@ -2,8 +2,11 @@ import { formatPhone } from "@/lib/format";
 import { normalizeTunisianPhone } from "@/lib/tunisia";
 
 /* ==========================================================================
-   Links of the restaurant and artisan sheets: phone calls, WhatsApp, websites,
-   social networks and maps. Plain functions (no React), safe anywhere.
+   Links: maps of the restaurant and artisan sheets, and phone / WhatsApp links
+   for the CUSTOMERS' numbers shown in the admin panel (messages, reports).
+   Plain functions (no React), safe anywhere.
+   The public pages never link to a business's phone, WhatsApp, e-mail, website or
+   social networks: every purchase goes through CeliacCare.
    ========================================================================== */
 
 /** "20123456" -> "tel:+21620123456" (a number in another format is kept as typed). */
@@ -22,31 +25,6 @@ export function whatsappHref(phone: string) {
 export function displayPhone(phone: string) {
   const local = normalizeTunisianPhone(phone);
   return local ? `+216 ${formatPhone(local)}` : phone;
-}
-
-/** Makes sure a website address starts with https:// ("dar-bsissa.tn" -> "https://dar-bsissa.tn"). */
-export function websiteUrl(value: string) {
-  return /^https?:\/\//i.test(value) ? value : `https://${value}`;
-}
-
-/** Short text for a link: "https://www.dar-bsissa.tn/" -> "dar-bsissa.tn". */
-export function shortUrl(value: string) {
-  return value
-    .replace(/^https?:\/\//i, "")
-    .replace(/^www\./i, "")
-    .replace(/\/+$/, "");
-}
-
-/** Instagram: accepts a full link or an account name ("@dar.bsissa"). */
-export function instagramUrl(value: string) {
-  if (/^https?:\/\//i.test(value)) return value;
-  return `https://www.instagram.com/${encodeURIComponent(value.trim().replace(/^@/, ""))}`;
-}
-
-/** Facebook: accepts a full link or a page name ("darbsissa"). */
-export function facebookUrl(value: string) {
-  if (/^https?:\/\//i.test(value)) return value;
-  return `https://www.facebook.com/${encodeURIComponent(value.trim().replace(/^@/, ""))}`;
 }
 
 /** The place shown on a map. */

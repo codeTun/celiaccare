@@ -21,7 +21,7 @@ export function ProducerCard({
   producer: ProducerCardDTO;
   locale: Locale;
   common: CommonDict;
-  /** e.g. "{count} produits" */
+  /** e.g. "{count} produits" (an artisan without products online shows "Prix non publiés en ligne") */
   productsLabel: string;
   className?: string;
 }) {
@@ -44,7 +44,8 @@ export function ProducerCard({
         className="aspect-[4/5] w-full max-w-52 ring-4 ring-brand-50"
         imageClassName="transition duration-500 group-hover:scale-[1.03]"
       />
-      <Badge tone="brand" className="mt-4">
+      {/* may wrap: "مصنّع منتجات خالية من الغلوتين" is wider than a card of the 2-column grid at 320 px */}
+      <Badge tone="brand" className="mt-4 max-w-full text-center whitespace-normal">
         {common.producerTypes[producer.type]}
       </Badge>
       <h3 className="mt-2 text-base leading-snug font-bold text-ink">
@@ -63,7 +64,9 @@ export function ProducerCard({
         <GuaranteeBadge level={producer.guaranteeLevel} label={common.guarantee[producer.guaranteeLevel].short} />
         <span className="inline-flex items-center gap-1 text-xs font-semibold text-ink-muted">
           <Package className="size-3.5" aria-hidden="true" />
-          {productsLabel.replace("{count}", String(producer.productCount))}
+          {producer.productCount > 0
+            ? productsLabel.replace("{count}", String(producer.productCount))
+            : common.labels.pricesNotPublished}
         </span>
       </div>
     </article>

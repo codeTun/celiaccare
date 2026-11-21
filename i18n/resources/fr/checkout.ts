@@ -76,10 +76,8 @@ export const checkout = {
     },
   },
   zone: {
-    fee: "Frais de livraison",
+    delivery: "Livraison",
     delay: "Délai",
-    freeFrom: "Livraison offerte dès {price} d'achats",
-    freeApplied: "Livraison offerte pour cette commande !",
   },
   payment: {
     onDelivery: "Paiement à la livraison",
@@ -122,8 +120,7 @@ export const checkout = {
     title: "Votre commande",
     subtotal: "Sous-total",
     delivery: "Livraison",
-    deliveryPending: "Selon le gouvernorat",
-    free: "Offerte",
+    free: "Gratuite",
     total: "Total",
     estimate: "Montant estimé : les prix sont vérifiés à l'envoi de la commande.",
     quantity: "× {quantity}",
@@ -158,8 +155,7 @@ export const checkout = {
     copied: "Copiée !",
     total: "À payer à la livraison",
     subtotal: "Sous-total",
-    delivery: "Livraison",
-    free: "Offerte",
+    freeDelivery: "Livraison gratuite",
     delay: "Délai de livraison estimé",
     payment: "Paiement",
     track: "Suivre ma commande",
@@ -170,6 +166,22 @@ export const checkout = {
       "Elle est préparée puis confiée au livreur.",
       "Vous payez à la réception, en espèces ou par carte.",
     ],
+  },
+  /**
+   * "Une question sur votre commande ? Contactez CeliacCare" (components/checkout/order-help.tsx) on the
+   * checkout, the confirmation and the tracking page: CeliacCare's own contacts (lib/site-config.ts).
+   * Every order is followed by CeliacCare, never by the business directly.
+   */
+  help: {
+    title: "Une question sur votre commande ? Contactez CeliacCare",
+    /** Checkout, before the order is sent */
+    checkoutText: "Notre équipe vous répond avant comme après la commande, et fait le lien avec le commerce pour vous.",
+    /** Confirmation and tracking */
+    orderText: "Gardez votre référence sous la main : notre équipe suit votre commande et fait le lien avec le commerce.",
+    call: "Appeler CeliacCare au",
+    whatsapp: "WhatsApp",
+    email: "Écrire à CeliacCare à",
+    form: "Formulaire de contact",
   },
   tracking: {
     meta: {
@@ -217,10 +229,9 @@ export const checkout = {
       restaurant: "Restaurant : {name}",
       subtotal: "Sous-total",
       delivery: "Livraison",
-      free: "Offerte",
+      free: "Gratuite",
       total: "Total",
       payment: "Paiement",
-      help: "Une question sur votre commande ? Appelez-nous au {phone}.",
     },
     statuses: {
       PENDING: "Reçue",

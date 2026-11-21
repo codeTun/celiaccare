@@ -224,7 +224,14 @@ function OrderItems({ order }: { order: AdminOrderDetail }) {
         </div>
         <div className="flex justify-between gap-4">
           <dt className="text-ink-muted">Livraison{order.zone ? ` (${order.zone.governorate})` : ""}</dt>
-          <dd className="tabular">{order.deliveryFee === 0 ? "Offerte" : formatPrice(order.deliveryFee)}</dd>
+          {/* Free since the free-delivery decision; an older order keeps the fee it was charged. */}
+          <dd className="tabular">
+            {order.deliveryFee === 0 ? (
+              <span className="font-semibold text-brand-700">Gratuite</span>
+            ) : (
+              <span title="Commande passée avant la livraison gratuite">{formatPrice(order.deliveryFee)}</span>
+            )}
+          </dd>
         </div>
         <div className="flex justify-between gap-4 border-t border-line pt-2 text-base font-extrabold text-ink">
           <dt>Total</dt>

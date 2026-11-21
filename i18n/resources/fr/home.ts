@@ -7,7 +7,7 @@ export const home = {
   meta: {
     title: "CeliacCare · Produits et restaurants sans gluten en Tunisie",
     description:
-      "Produits sans gluten de petits artisans tunisiens et restaurants partenaires vérifiés. Fiches sourcées et datées, commande en ligne, livraison à domicile.",
+      "Produits sans gluten de petits artisans tunisiens et restaurants partenaires vérifiés. Fiches sourcées et datées, commande en ligne, livraison gratuite à domicile.",
   },
 
   hero: {
@@ -25,7 +25,7 @@ export const home = {
     trust: {
       verified: "Fiches vérifiées et datées",
       local: "Petits producteurs tunisiens",
-      delivery: "Livraison partout en Tunisie",
+      delivery: "Livraison gratuite à domicile",
     },
     // Little cards floating around the doorway illustration
     visual: {
@@ -87,7 +87,7 @@ export const home = {
       },
       delivered: {
         title: "Je suis livré·e",
-        text: "Le commerçant prépare ma commande, puis elle arrive chez moi. Je peux la suivre à tout moment avec mon numéro de commande.",
+        text: "Le commerçant prépare ma commande, puis elle arrive chez moi, sans frais de livraison. Je peux la suivre à tout moment avec mon numéro de commande.",
       },
     },
     track: "Déjà commandé ? Suivre ma commande",
@@ -96,14 +96,14 @@ export const home = {
   // The 3 guarantee levels (also used by the about page)
   guarantees: {
     eyebrow: "Transparence",
-    title: "3 niveaux de garantie, affichés sur chaque fiche",
+    title: "Uniquement du 100\u00a0% sans gluten, avec un niveau affiché sur chaque fiche",
     description:
-      "Le sans gluten n'est pas une simple étiquette. Nous indiquons clairement ce qui est certifié, ce qui est naturellement sans gluten et ce qui présente un risque de traces.",
+      "Le sans gluten n'est pas une simple étiquette. Nous ne référençons que des commerces qui travaillent entièrement sans gluten, et nous indiquons clairement s'ils sont certifiés par un organisme officiel ou non.",
     checkedLabel: "Ce que nous vérifions :",
     checks: {
       CERTIFIED: "le logo, l'organisme certificateur et le numéro de certification.",
-      NATURALLY_GF: "la recette, la liste des ingrédients et les précautions de préparation.",
-      TRACES_RISK: "l'absence d'ingrédient contenant du gluten. Le risque de contamination est signalé clairement.",
+      DEDICATED:
+        "que le commerce ne fabrique ou ne sert que du sans gluten (ou dispose d'une unité séparée), d'après ses sources publiques : site, réseaux sociaux, étiquettes, presse.",
     },
     onSheets: "Sur les fiches :",
     learnMore: "Comprendre la contamination croisée",
@@ -133,7 +133,7 @@ export const home = {
       },
       fairPrice: {
         title: "Un prix plus juste",
-        text: "Moins d'intermédiaires : votre achat soutient directement l'artisan.",
+        text: "Un seul intermédiaire, CeliacCare : votre achat soutient l'artisan.",
       },
       local: {
         title: "Des saveurs d'ici",
@@ -177,6 +177,24 @@ export const home = {
     suggestTitle: "Vous connaissez une bonne adresse ?",
     suggestText: "Proposez-la : nous la vérifierons avant de la publier.",
     suggestCta: "Proposer une adresse",
+  },
+
+  // Brand band at the bottom of the page (components/sections/home/brand-marquee.tsx).
+  // "demo" until siteConfig.partnersSigned is true (real businesses that have not signed yet), "partners" afterwards.
+  brands: {
+    demo: {
+      title: "Ils font le sans gluten en Tunisie",
+      subtitle: "Artisans, fabricants et restaurants 100 % sans gluten, vérifiés sur sources publiques.",
+    },
+    partners: {
+      title: "Nos partenaires",
+      subtitle: "Artisans, fabricants et restaurants 100 % sans gluten, vérifiés par notre équipe.",
+    },
+    seeAll: "Tous les artisans",
+    // type shown under a restaurant's name ("Restaurant · Carthage")
+    restaurantType: "Restaurant",
+    // name of the pause / play button of the scrolling row (a checkbox: checked = stopped)
+    pause: "Mettre en pause le défilement",
   },
 };
 

@@ -1,11 +1,10 @@
-import { UtensilsCrossed } from "lucide-react";
 import { Fragment } from "react";
 
 import { AddToCartButton } from "@/components/cart/add-to-cart-button";
 import { cartLabels } from "@/components/cart/labels";
+import { OrderRequestBox } from "@/components/directory/order-request";
 import { Badge } from "@/components/ui/badge";
 import { CloudImage } from "@/components/ui/cloud-image";
-import { EmptyState } from "@/components/ui/empty-state";
 import { Price } from "@/components/ui/price";
 import type { CommonDict } from "@/i18n/resources/fr/common";
 import type { RestaurantsDict } from "@/i18n/resources/fr/restaurants";
@@ -26,7 +25,8 @@ const sectionId = (course: DishCourse) => `carte-${course.toLowerCase()}`;
 /**
  * The gluten-free menu of a restaurant, by course (starters, mains, desserts, drinks).
  * Partner restaurants (`canOrder`) get an "Ajouter" button on each available dish;
- * the others only show their dishes.
+ * the others only show their dishes. Without any dish online, the section holds the
+ * "Demander sur CeliacCare" box (the page then leaves out its own box above the menu).
  */
 export function RestaurantMenu({
   restaurant,
@@ -49,18 +49,25 @@ export function RestaurantMenu({
       <h2 id="carte-title" className="text-2xl font-extrabold text-ink sm:text-3xl">
         {dict.menu.title}
       </h2>
-      <p className="mt-2 text-sm leading-relaxed text-ink-muted">
-        {dict.menu.intro}
-        {canOrder ? ` ${dict.menu.orderHint}` : ""}
-      </p>
+      {menu.length > 0 ? (
+        <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+          {dict.menu.intro}
+          {canOrder ? ` ${dict.menu.orderHint}` : ""}
+        </p>
+      ) : null}
 
       {menu.length === 0 ? (
-        <EmptyState
-          className="mt-6"
-          icon={<UtensilsCrossed />}
-          title={dict.menu.emptyTitle}
-          description={dict.menu.emptyText}
-        />
+        // No dish online yet: the visitor asks CeliacCare for them, never the restaurant directly.
+        <>
+          <p className="mt-2 text-sm leading-relaxed text-ink-muted">{dict.menu.emptyText}</p>
+          <OrderRequestBox
+            target={{ kind: "restaurant", slug: restaurant.slug }}
+            locale={locale}
+            texts={common.ordering}
+            headingLevel={3}
+            className="mt-6"
+          />
+        </>
       ) : (
         <>
           {/* Quick links to each course; stays under the navbar while scrolling the menu */}

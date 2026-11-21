@@ -48,7 +48,7 @@ type SelectFieldProps = Omit<ComponentProps<"select">, "children"> & {
  *
  * @example
  * <EnumSelectField name="guaranteeLevel" label="Niveau de garantie" required
- *   options={{ CERTIFIED: "Certifié sans gluten", NATURALLY_GF: "Naturellement sans gluten", TRACES_RISK: "Risque de traces" }}
+ *   options={{ CERTIFIED: "Certifié sans gluten", DEDICATED: "100 % sans gluten" }}
  *   defaultValue={product.guaranteeLevel} placeholder="Choisir…" />
  */
 export function EnumSelectField({

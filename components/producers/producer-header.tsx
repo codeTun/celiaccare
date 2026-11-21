@@ -1,7 +1,7 @@
-import { ArrowDown, MapPin, Package } from "lucide-react";
+import { MapPin, Package, ShoppingBasket } from "lucide-react";
 
-import { ContactButtons } from "@/components/directory/contact-buttons";
 import { DetailHero } from "@/components/directory/detail-hero";
+import { OrderRequestButton } from "@/components/directory/order-request";
 import { placeLabel } from "@/components/directory/place";
 import { LogoEmblem } from "@/components/logo";
 import { Badge } from "@/components/ui/badge";
@@ -17,15 +17,20 @@ import { PRODUCER_TYPE_ICONS } from "./producer-type-icons";
 
 /**
  * Top of an artisan page: photo in a Tunisian doorway frame, kind of business,
- * name (the page's <h1>), city, guarantee level and the contact buttons.
+ * name (the page's <h1>), city, guarantee level and the main action. Every purchase goes
+ * through CeliacCare: "Commander sur CeliacCare" (down to the products) when something can be
+ * ordered, "Demander sur CeliacCare" (our contact form) otherwise — never the business's contacts.
  */
 export function ProducerHeader({
   producer,
+  canOrder,
   locale,
   common,
   dict,
 }: {
   producer: ProducerDetailDTO;
+  /** At least one product can be added to the cart */
+  canOrder: boolean;
   locale: Locale;
   common: CommonDict;
   dict: ProducersDict;
@@ -71,9 +76,11 @@ export function ProducerHeader({
             </span>
             <span className="inline-flex items-center gap-1.5">
               <Package className="size-4 text-brand-600" aria-hidden="true" />
-              {interpolate(producer.productCount === 1 ? dict.results.productsOne : dict.results.productsOther, {
-                count: producer.productCount,
-              })}
+              {hasProducts
+                ? interpolate(producer.productCount === 1 ? dict.results.productsOne : dict.results.productsOther, {
+                    count: producer.productCount,
+                  })
+                : common.labels.pricesNotPublished}
             </span>
           </div>
 
@@ -85,19 +92,20 @@ export function ProducerHeader({
           />
 
           <div className="mt-7 flex flex-wrap items-center gap-2">
-            {hasProducts ? (
+            {canOrder ? (
               <a href="#produits" className={buttonStyles({ size: "lg", className: "w-full sm:w-auto" })}>
-                {dict.page.seeProducts}
-                <ArrowDown aria-hidden="true" />
+                <ShoppingBasket aria-hidden="true" />
+                {common.ordering.order}
               </a>
-            ) : null}
-            <ContactButtons
-              contact={producer}
-              common={common}
-              labels={dict.sheet}
-              primary={hasProducts ? undefined : "call"}
-              className="w-full sm:w-auto"
-            />
+            ) : (
+              <OrderRequestButton
+                target={{ kind: "artisan", slug: producer.slug }}
+                locale={locale}
+                label={common.ordering.request}
+                size="lg"
+                className="w-full sm:w-auto"
+              />
+            )}
           </div>
         </div>
       </div>

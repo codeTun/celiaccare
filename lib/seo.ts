@@ -79,11 +79,14 @@ export function pageMetadata({ locale, path, title, description: fullDescription
 
 /* --------------------------------------------------------------------------
    JSON-LD builders (schema.org)
+   Every purchase goes through CeliacCare: the structured data of restaurants,
+   artisans and products never carries a business's own phone, e-mail, website
+   or social networks (only CeliacCare's own contacts, in organizationJsonLd).
    -------------------------------------------------------------------------- */
 
 type JsonLdObject = Record<string, unknown>;
 
-/** Phone in international E.164 format: "20 123 456" or "+216 70 000 000" -> "+21620123456" (others kept as typed). */
+/** CeliacCare's phone in international E.164 format: "+216 70 000 000" -> "+21670000000" (others kept as typed). */
 function internationalPhone(phone: string) {
   const local = normalizeTunisianPhone(phone);
   return local ? `+216${local}` : phone;
@@ -171,7 +174,8 @@ export function productJsonLd(product: ProductDetailDTO, locale: Locale): JsonLd
       priceCurrency: "TND",
       price: (product.price / 1000).toFixed(3),
       availability: product.isAvailable ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-      seller: { "@type": "Organization", name: product.producerName },
+      // The artisan makes the product (brand); the purchase is made through CeliacCare.
+      seller: { "@type": "Organization", name: siteConfig.name, url: absoluteUrl("/") },
     },
     ...(product.ratingCount > 0 && product.ratingAvg
       ? {
@@ -194,7 +198,6 @@ export function restaurantJsonLd(restaurant: RestaurantDetailDTO, locale: Locale
     url: absoluteUrl(localePath(locale, `/restaurants/${restaurant.slug}`)),
     description: restaurant.description ?? undefined,
     ...(restaurant.imageUrl ? { image: [restaurant.imageUrl] } : {}),
-    ...(restaurant.phone ? { telephone: internationalPhone(restaurant.phone) } : {}),
     servesCuisine: restaurant.cuisine ?? undefined,
     ...(priceRange ? { priceRange } : {}),
     address: {
@@ -225,6 +228,7 @@ const producerSchemaType: Record<ProducerType, string> = {
   GROCERY: "GroceryStore",
   HOME_SELLER: "LocalBusiness",
   COOPERATIVE: "LocalBusiness",
+  MANUFACTURER: "LocalBusiness",
 };
 
 export function producerJsonLd(
@@ -236,7 +240,6 @@ export function producerJsonLd(
     city: string;
     governorate: string;
     address: string | null;
-    phone: string | null;
     imageUrl: string | null;
     latitude: number | null;
     longitude: number | null;
@@ -250,7 +253,6 @@ export function producerJsonLd(
     url: absoluteUrl(localePath(locale, `/artisans/${producer.slug}`)),
     description: producer.description ?? undefined,
     ...(producer.imageUrl ? { image: [producer.imageUrl] } : {}),
-    ...(producer.phone ? { telephone: internationalPhone(producer.phone) } : {}),
     address: {
       "@type": "PostalAddress",
       streetAddress: producer.address ?? undefined,

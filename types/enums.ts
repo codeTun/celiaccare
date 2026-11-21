@@ -6,10 +6,31 @@
 export const LOCALES = ["fr", "ar"] as const;
 export type Locale = (typeof LOCALES)[number];
 
-export const GUARANTEE_LEVELS = ["CERTIFIED", "NATURALLY_GF", "TRACES_RISK"] as const;
+/** Every level that can exist in the database, ordered from the strongest guarantee. */
+export const GUARANTEE_LEVELS = ["CERTIFIED", "DEDICATED", "NATURALLY_GF", "TRACES_RISK"] as const;
 export type GuaranteeLevel = (typeof GUARANTEE_LEVELS)[number];
 
-export const PRODUCER_TYPES = ["BAKERY", "SPECIALTY_SHOP", "GROCERY", "HOME_SELLER", "COOPERATIVE"] as const;
+/**
+ * Policy "100 % sans gluten only": CeliacCare only lists businesses that work entirely gluten-free.
+ * These are the only levels offered in the admin forms and presented in public filters / legends.
+ * NATURALLY_GF and TRACES_RISK stay in the enum so that older rows keep displaying correctly.
+ */
+export const LISTED_GUARANTEE_LEVELS = ["CERTIFIED", "DEDICATED"] as const satisfies readonly GuaranteeLevel[];
+export type ListedGuaranteeLevel = (typeof LISTED_GUARANTEE_LEVELS)[number];
+
+/** True for the levels a business can have under the current policy (CERTIFIED, DEDICATED). */
+export function isListedGuaranteeLevel(value: unknown): value is ListedGuaranteeLevel {
+  return (LISTED_GUARANTEE_LEVELS as readonly unknown[]).includes(value);
+}
+
+export const PRODUCER_TYPES = [
+  "BAKERY",
+  "SPECIALTY_SHOP",
+  "GROCERY",
+  "HOME_SELLER",
+  "COOPERATIVE",
+  "MANUFACTURER",
+] as const;
 export type ProducerType = (typeof PRODUCER_TYPES)[number];
 
 export const DISH_COURSES = ["STARTER", "MAIN", "DESSERT", "DRINK"] as const;

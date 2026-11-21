@@ -2,7 +2,13 @@ import "server-only";
 
 import { db } from "@/lib/prisma";
 import { ModelError } from "@/models/errors";
-import { applyImageChange, assertId, chooseSlug, rethrowSlugConflict } from "@/models/fetchers/admin/helpers";
+import {
+  applyImageChange,
+  applyLogoChange,
+  assertId,
+  chooseSlug,
+  rethrowSlugConflict,
+} from "@/models/fetchers/admin/helpers";
 import { assertProducerInput, isProducerSlugTaken, producerColumns } from "@/models/posters/producers";
 import type { ActiveToggleResult, ProducerInput, SlugMutationResult } from "@/types/admin-data";
 
@@ -17,7 +23,7 @@ import { refreshProductSearchText } from "./products";
 export async function updateProducer(id: number, input: ProducerInput): Promise<SlugMutationResult> {
   assertId(id);
   assertProducerInput(input);
-  const current = await db.orm.public.Producer.select("id", "slug", "name", "imagePublicId").first({ id });
+  const current = await db.orm.public.Producer.select("id", "slug", "name", "imagePublicId", "logoPublicId").first({ id });
   if (!current) throw new ModelError("NOT_FOUND", "Cet artisan n'existe plus.");
 
   const slug = await chooseSlug({
@@ -27,10 +33,16 @@ export async function updateProducer(id: number, input: ProducerInput): Promise<
     isTaken: (candidate) => isProducerSlugTaken(candidate, id),
   });
   const image = applyImageChange(input.image, current.imagePublicId);
+  const logo = applyLogoChange(input.logo, current.logoPublicId);
 
   try {
     await db.transaction(async (tx) => {
-      const saved = await tx.orm.public.Producer.where({ id }).update({ slug, ...producerColumns(input), ...image.fields });
+      const saved = await tx.orm.public.Producer.where({ id }).update({
+        slug,
+        ...producerColumns(input),
+        ...image.fields,
+        ...logo.fields,
+      });
       if (!saved) throw new ModelError("NOT_FOUND", "Cet artisan n'existe plus."); // deleted meanwhile
       // The producer name is part of the search text of its products.
       if (current.name !== input.name) await refreshProductSearchText({ producerId: id }, tx);
@@ -43,7 +55,7 @@ export async function updateProducer(id: number, input: ProducerInput): Promise<
     id,
     slug,
     previousSlug: current.slug !== slug ? current.slug : null,
-    imagesToDelete: image.imagesToDelete,
+    imagesToDelete: [...image.imagesToDelete, ...logo.imagesToDelete],
   };
 }
 

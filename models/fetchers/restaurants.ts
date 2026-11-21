@@ -2,6 +2,7 @@ import "server-only";
 
 import { cachePolicy } from "@/lib/cache";
 import { TAGS } from "@/lib/cache-tags";
+import { publicLabel, publicSource, publicText } from "@/lib/contacts";
 import { governorateLabel } from "@/lib/tunisia";
 import { clamp, localize, needsReview } from "@/lib/utils";
 import {
@@ -48,10 +49,10 @@ function selectRestaurantCards(query: RestaurantQuery) {
       "guaranteeLevel",
       "priceRange",
       "isPartner",
-      "deliveryFee",
       "deliveryTime",
       "minOrder",
     )
+    .include("dishes", (dishes) => dishes.count())
     .include("reviews", (reviews) => {
       const approved = reviews.where((review) => review.status.eq("APPROVED"));
       return approved.combine({ count: approved.count(), average: approved.avg("rating") });
@@ -71,9 +72,10 @@ type RestaurantCardRow = {
   guaranteeLevel: GuaranteeLevel;
   priceRange: number;
   isPartner: boolean;
-  deliveryFee: number;
   deliveryTime: string;
   minOrder: number;
+  /** Number of dishes on the menu */
+  dishes: number;
   reviews: { count: number; average: number | null };
 };
 
@@ -82,17 +84,18 @@ function toRestaurantCardDTO(row: RestaurantCardRow, locale: Locale): Restaurant
     id: row.id,
     slug: row.slug,
     name: row.name,
-    description: localize(locale, row.description, row.descriptionAr),
-    cuisine: row.cuisine,
+    // Free texts go through lib/contacts.ts: no business contact ever reaches the public site.
+    description: publicText(localize(locale, row.description, row.descriptionAr)),
+    cuisine: publicLabel(row.cuisine),
     city: row.city,
     governorate: row.governorate,
     imageUrl: row.imageUrl,
     guaranteeLevel: row.guaranteeLevel,
     priceRange: row.priceRange,
     isPartner: row.isPartner,
-    deliveryFee: row.deliveryFee,
     deliveryTime: row.deliveryTime,
     minOrder: row.minOrder,
+    dishCount: row.dishes,
     ratingAvg: roundRating(row.reviews.average),
     ratingCount: row.reviews.count,
   };
@@ -147,10 +150,13 @@ export async function getPartnerRestaurants(locale: Locale, limit = 6): Promise<
    -------------------------------------------------------------------------- */
 
 /**
- * A restaurant page: card data + contacts, practices, verification, the menu grouped by course
+ * A restaurant page: card data + address and hours, practices, verification, the menu grouped by course
  * (STARTER, MAIN, DESSERT, DRINK; empty courses are left out; dishes by sortOrder then name,
  * unavailable dishes included with isAvailable = false) and the 20 latest approved reviews.
  * Null when the restaurant does not exist or is hidden.
+ * The restaurant's own contacts (phone, e-mail, website, social networks) are never read here:
+ * every order goes through CeliacCare (they are only in models/fetchers/admin/restaurants.ts),
+ * and a contact typed into a free text is left out (lib/contacts.ts).
  */
 export async function getRestaurantBySlug(locale: Locale, slug: string): Promise<RestaurantDetailDTO | null> {
   "use cache";
@@ -170,18 +176,11 @@ export async function getRestaurantBySlug(locale: Locale, slug: string): Promise
       "address",
       "latitude",
       "longitude",
-      "phone",
-      "whatsapp",
-      "email",
-      "website",
-      "instagram",
-      "facebook",
       "openingHours",
       "imageUrl",
       "guaranteeLevel",
       "priceRange",
       "isPartner",
-      "deliveryFee",
       "deliveryTime",
       "minOrder",
       "dedicatedKitchen",
@@ -213,7 +212,7 @@ export async function getRestaurantBySlug(locale: Locale, slug: string): Promise
   const dishes = row.dishes.map((dish) => ({
     id: dish.id,
     name: localize(locale, dish.name, dish.nameAr),
-    description: localize(locale, dish.description, dish.descriptionAr),
+    description: publicText(localize(locale, dish.description, dish.descriptionAr)),
     price: dish.price,
     imageUrl: dish.imageUrl,
     course: dish.course,
@@ -231,21 +230,15 @@ export async function getRestaurantBySlug(locale: Locale, slug: string): Promise
   })).filter((section) => section.dishes.length > 0);
 
   return {
-    ...toRestaurantCardDTO(row, locale),
-    address: row.address,
+    ...toRestaurantCardDTO({ ...row, dishes: dishes.length }, locale),
+    address: publicLabel(row.address) ?? "",
     latitude: row.latitude,
     longitude: row.longitude,
-    phone: row.phone,
-    whatsapp: row.whatsapp,
-    email: row.email,
-    website: row.website,
-    instagram: row.instagram,
-    facebook: row.facebook,
-    openingHours: row.openingHours,
+    openingHours: publicLabel(row.openingHours),
     dedicatedKitchen: row.dedicatedKitchen,
     dedicatedUtensils: row.dedicatedUtensils,
     trainedStaff: row.trainedStaff,
-    verificationSource: row.verificationSource,
+    verificationSource: publicSource(row.verificationSource),
     verifiedAt: row.verifiedAt.toISOString(),
     needsReview: needsReview(row.verifiedAt),
     menu,

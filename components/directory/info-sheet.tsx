@@ -1,38 +1,25 @@
-import { ClipboardList, Clock, Globe, Mail, MapPin, Phone } from "lucide-react";
+import { ClipboardList, Clock, MapPin } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { FacebookIcon, InstagramIcon, WhatsAppIcon } from "@/components/social-icons";
 import { GuaranteeBadge } from "@/components/ui/guarantee-badge";
 import type { CommonDict } from "@/i18n/resources/fr/common";
 import { cn } from "@/lib/utils";
 import type { GuaranteeLevel, Locale } from "@/types";
 
 import type { SheetLabels } from "./labels";
-import {
-  displayPhone,
-  facebookUrl,
-  instagramUrl,
-  shortUrl,
-  telHref,
-  websiteUrl,
-  whatsappHref,
-} from "./links";
 import { placeLabel } from "./place";
 import { PracticesList, type PracticeItem } from "./practices-list";
 import { VerificationNote } from "./verification-note";
 
-/** What the sheet shows. RestaurantDetailDTO and ProducerDetailDTO both fit this shape. */
+/**
+ * What the sheet shows. RestaurantDetailDTO and ProducerDetailDTO both fit this shape.
+ * No phone, e-mail, website or social network of the business: every purchase goes through CeliacCare.
+ */
 export type SheetPlace = {
   name: string;
   address: string | null;
   city: string;
   governorate: string;
-  phone: string | null;
-  whatsapp: string | null;
-  email: string | null;
-  website: string | null;
-  instagram: string | null;
-  facebook: string | null;
   openingHours: string | null;
   guaranteeLevel: GuaranteeLevel;
   verificationSource: string;
@@ -40,14 +27,11 @@ export type SheetPlace = {
   needsReview: boolean;
 };
 
-const externalLink = { target: "_blank", rel: "noopener noreferrer" } as const;
-const linkStyle = "font-semibold text-brand-700 underline-offset-4 hover:text-brand-800 hover:underline";
-
 /**
  * The "fiche adresse" card (spec 5.2), shared by the restaurant and artisan pages:
- * address, phone, WhatsApp, e-mail, web links, opening hours (+ `extraRows`),
- * guarantee level, preparation practices, source and date of the last check,
- * and a `footer` (the "Signaler une erreur" button).
+ * address, opening hours (+ `extraRows`), guarantee level, preparation practices,
+ * source and date of the last check (plain text), and a `footer` (the "Signaler une erreur" button).
+ * The business's own contacts are never shown: visitors order and ask questions through CeliacCare.
  */
 export function InfoSheet({
   place,
@@ -70,8 +54,6 @@ export function InfoSheet({
   footer?: ReactNode;
   className?: string;
 }) {
-  const hasWebLinks = Boolean(place.website || place.instagram || place.facebook);
-
   return (
     <section
       aria-labelledby="sheet-title"
@@ -96,54 +78,6 @@ export function InfoSheet({
           ) : null}
           {placeLabel(place.city, place.governorate, locale)}
         </InfoRow>
-
-        {place.phone ? (
-          <InfoRow icon={<Phone />} label={common.labels.phone}>
-            <a href={telHref(place.phone)} dir="ltr" className={cn(linkStyle, "tabular")}>
-              {displayPhone(place.phone)}
-            </a>
-          </InfoRow>
-        ) : null}
-
-        {place.whatsapp ? (
-          <InfoRow icon={<WhatsAppIcon />} label={common.actions.whatsapp}>
-            <a href={whatsappHref(place.whatsapp)} {...externalLink} dir="ltr" className={cn(linkStyle, "tabular")}>
-              {displayPhone(place.whatsapp)}
-            </a>
-          </InfoRow>
-        ) : null}
-
-        {place.email ? (
-          <InfoRow icon={<Mail />} label={common.labels.email}>
-            <a href={`mailto:${place.email}`} dir="ltr" className={cn(linkStyle, "break-all")}>
-              {place.email}
-            </a>
-          </InfoRow>
-        ) : null}
-
-        {hasWebLinks ? (
-          <InfoRow icon={<Globe />} label={labels.links}>
-            <span className="flex flex-col items-start gap-1.5">
-              {place.website ? (
-                <a href={websiteUrl(place.website)} {...externalLink} dir="ltr" className={cn(linkStyle, "break-all")}>
-                  {shortUrl(place.website)}
-                </a>
-              ) : null}
-              {place.instagram ? (
-                <a href={instagramUrl(place.instagram)} {...externalLink} className={cn(linkStyle, "inline-flex items-center gap-1.5")}>
-                  <InstagramIcon className="size-4" />
-                  {labels.instagram}
-                </a>
-              ) : null}
-              {place.facebook ? (
-                <a href={facebookUrl(place.facebook)} {...externalLink} className={cn(linkStyle, "inline-flex items-center gap-1.5")}>
-                  <FacebookIcon className="size-4" />
-                  {labels.facebook}
-                </a>
-              ) : null}
-            </span>
-          </InfoRow>
-        ) : null}
 
         {place.openingHours ? (
           <InfoRow icon={<Clock />} label={common.labels.hours}>

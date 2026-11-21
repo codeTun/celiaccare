@@ -18,7 +18,10 @@ Project of the Master BioMIS (Design Thinking) — requirements in [`specbook.pd
 - Cart (no account needed), checkout with mandatory delivery details, order summary before confirmation,
   **max 3 orders per day per phone number**, cash/card on delivery, order tracking.
 - Reviews (published after moderation) and "Signaler une erreur" on every sheet.
-- Three gluten-free guarantee levels and verification dates on every sheet; medical disclaimer everywhere.
+- Only 100 % gluten-free businesses are listed: each sheet shows its guarantee level (certified, or 100 % gluten-free
+  without an official certificate), its verification source and date; medical disclaimer everywhere.
+- Demo notice (student prototype listing real, non-partner businesses), switchable with `demoMode` in
+  `lib/site-config.ts`.
 
 **Admin panel** (`/admin`, French) — not linked anywhere on the public site
 - Secure login: argon2id passwords, DB sessions with hashed tokens, HttpOnly/SameSite cookies, lock after
@@ -115,7 +118,12 @@ pnpm dev                       # http://localhost:3000  (admin: http://localhost
 
 - Replace the placeholders in `lib/site-config.ts` (phone, e-mail, WhatsApp, address, social links) and the
   "À compléter" items of the legal pages (`data/legal.ts`).
-- Replace the demo data with real, verified addresses and products (each sheet needs a source and a date).
+- Contact the listed businesses before going live: they are real, but not partners yet. Sign partnership
+  agreements, then set `demoMode: false` in `lib/site-config.ts` to remove the demo notice.
 - Add the Cloudinary keys and real photos; enable 2FA on every admin account (Admin → Sécurité).
 
-The demo data (businesses, people, phone numbers, orders) is fictional.
+**About the data.** The businesses, products, prices and menus are REAL: 100 % gluten-free Tunisian businesses
+researched on public sources in November 2026 (each sheet says where: official website, ATMC guide, press...).
+None of them holds an official gluten-free certificate, so they carry the level "100 % sans gluten" (dedicated
+workshop), never "Certifié". They are NOT partners of CeliacCare: the site shows a demo notice. Customers,
+orders, messages and reviews are fictional, and demo reviews are never published.

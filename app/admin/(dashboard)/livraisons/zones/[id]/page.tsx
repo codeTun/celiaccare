@@ -17,13 +17,13 @@ import { deleteDeliveryZoneAction, updateDeliveryZoneAction } from "../actions";
 
 export const metadata: Metadata = { title: "Modifier une zone de livraison" };
 
-/** /admin/livraisons/zones/[id] — change the fee, delay or free-delivery threshold of a zone, or delete it. */
+/** /admin/livraisons/zones/[id] — change the delay of a zone, open / close it, or delete it (delivery stays free). */
 export default function EditDeliveryZonePage({ params }: PageProps<"/admin/livraisons/zones/[id]">) {
   return (
     <>
       <AdminPageHeader
         title="Modifier la zone de livraison"
-        description="Les nouveaux frais et délais s'appliquent aux prochaines commandes ; les commandes passées gardent les leurs."
+        description="Le nouveau délai s'applique aux prochaines commandes. La livraison reste gratuite pour le client."
         breadcrumbs={[
           { label: "Tableau de bord", href: "/admin" },
           { label: "Livraisons", href: "/admin/livraisons" },

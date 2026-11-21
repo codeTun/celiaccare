@@ -7,7 +7,7 @@ import { GuaranteeBadge } from "@/components/ui/guarantee-badge";
 import { localePath } from "@/i18n/config";
 import type { CommonDict } from "@/i18n/resources/fr/common";
 import { placeLabel } from "@/components/directory/place";
-import { formatPrice, formatRating } from "@/lib/format";
+import { formatRating } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { Locale, RestaurantCardDTO } from "@/types";
 
@@ -84,11 +84,15 @@ export function RestaurantCard({
               </span>
               <span className="inline-flex items-center gap-1">
                 <Bike className="size-3.5" aria-hidden="true" />
-                {restaurant.deliveryFee === 0 ? common.labels.free : formatPrice(restaurant.deliveryFee, locale)}
+                {common.labels.freeDelivery}
               </span>
             </>
           ) : null}
-          <span className="text-ink-subtle">{common.priceLevels[restaurant.priceRange - 1] ?? common.priceLevels[1]}</span>
+          <span className="text-ink-subtle">
+            {restaurant.dishCount > 0
+              ? (common.priceLevels[restaurant.priceRange - 1] ?? common.priceLevels[1])
+              : common.labels.pricesNotPublished}
+          </span>
         </div>
       </div>
     </article>

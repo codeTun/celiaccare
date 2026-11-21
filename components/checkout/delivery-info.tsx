@@ -1,14 +1,11 @@
-import { Banknote, CreditCard, Headset, Mail, Phone, Store, Truck, UtensilsCrossed } from "lucide-react";
-import Link from "next/link";
+import { Banknote, CreditCard, Headset, Mail, Phone, Truck, UtensilsCrossed } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { WhatsAppIcon } from "@/components/social-icons";
 import { Price } from "@/components/ui/price";
-import { localePath } from "@/i18n/config";
 import { interpolate } from "@/i18n/interpolate";
 import type { CartDict } from "@/i18n/resources/fr/cart";
 import type { CheckoutDict } from "@/i18n/resources/fr/checkout";
-import { formatPrice } from "@/lib/format";
 import { siteConfig } from "@/lib/site-config";
 import { governorateLabel } from "@/lib/tunisia";
 import { cn } from "@/lib/utils";
@@ -18,8 +15,9 @@ import type { CheckoutRestaurant } from "./types";
 
 /**
  * "Livraison & paiement" panel shown on the cart page BEFORE ordering (spec 5.4):
- * covered zones with fees and delays (shop cart) or the restaurant's delivery rules
- * (restaurant cart), accepted payment methods and who to contact.
+ * covered zones and delays (shop cart) or the restaurant's delivery rules (restaurant cart),
+ * accepted payment methods and who to contact: CeliacCare (lib/site-config.ts), which handles
+ * every order with the business. Delivery is always free.
  */
 export function DeliveryInfo({
   lang,
@@ -65,7 +63,7 @@ export function DeliveryInfo({
               restaurant={restaurant}
             />
           ) : (
-            <ShopZones lang={lang} texts={texts} freeLabel={freeLabel} zones={zones} />
+            <ShopZones lang={lang} texts={texts} zones={zones} />
           )}
         </div>
 
@@ -83,22 +81,9 @@ export function DeliveryInfo({
           </ul>
         </InfoBlock>
 
+        {/* Every purchase goes through CeliacCare: only our own contacts, never the restaurant's or the artisan's. */}
         <InfoBlock icon={<Headset />} title={texts.contactTitle}>
-          {cartType === "RESTAURANT" && restaurant ? (
-            <>
-              <p>{texts.contactRestaurant}</p>
-              <Link
-                href={localePath(lang, `/restaurants/${restaurant.slug}`)}
-                className="mt-2 inline-flex items-center gap-2 font-semibold text-brand-700 underline-offset-4 hover:underline"
-              >
-                <Store className="size-4 shrink-0" aria-hidden="true" />
-                {interpolate(texts.restaurantContact, { name: restaurant.name })}
-              </Link>
-              <p className="mt-4">{texts.contactShop}</p>
-            </>
-          ) : (
-            <p>{texts.contactShop}</p>
-          )}
+          <p>{texts.contactShop}</p>
           <ul className="mt-3 flex flex-wrap gap-2">
             <li>
               <ContactLink href={`tel:${siteConfig.phone.replace(/\s/g, "")}`} label={texts.call}>
@@ -167,18 +152,8 @@ function ContactLink({
   );
 }
 
-/** Shop cart: the governorates we deliver to, with fee, delay and free-delivery threshold. */
-function ShopZones({
-  lang,
-  texts,
-  freeLabel,
-  zones,
-}: {
-  lang: Locale;
-  texts: CartDict["delivery"];
-  freeLabel: string;
-  zones: DeliveryZoneDTO[];
-}) {
+/** Shop cart: the governorates we deliver to (for free) and their delay. */
+function ShopZones({ lang, texts, zones }: { lang: Locale; texts: CartDict["delivery"]; zones: DeliveryZoneDTO[] }) {
   if (zones.length === 0) {
     return (
       <InfoBlock icon={<Truck />} title={texts.zonesTitle}>
@@ -204,9 +179,6 @@ function ShopZones({
                 {texts.governorate}
               </th>
               <th scope="col" className="px-3 py-2 text-start font-semibold sm:px-4">
-                {texts.fee}
-              </th>
-              <th scope="col" className="px-3 py-2 text-start font-semibold sm:px-4">
                 {texts.delay}
               </th>
             </tr>
@@ -217,18 +189,6 @@ function ShopZones({
                 <th scope="row" className="px-3 py-2.5 text-start font-semibold text-ink sm:px-4">
                   {governorateLabel(zone.governorate, lang)}
                 </th>
-                <td className="px-3 py-2.5 sm:px-4">
-                  {zone.fee === 0 ? (
-                    <span className="font-bold text-brand-700">{freeLabel}</span>
-                  ) : (
-                    <Price value={zone.fee} locale={lang} className="text-ink" />
-                  )}
-                  {zone.freeFrom !== null && zone.fee > 0 ? (
-                    <span className="block text-xs text-brand-700">
-                      {interpolate(texts.freeFrom, { price: formatPrice(zone.freeFrom, lang) })}
-                    </span>
-                  ) : null}
-                </td>
                 <td className="px-3 py-2.5 text-ink-muted sm:px-4">
                   <bdi>{zone.delay}</bdi>
                 </td>
@@ -266,15 +226,7 @@ function RestaurantDelivery({
   }
 
   const facts = [
-    {
-      label: texts.restaurantFee,
-      value:
-        restaurant.deliveryFee === 0 ? (
-          <span className="font-bold text-brand-700">{freeLabel}</span>
-        ) : (
-          <Price value={restaurant.deliveryFee} locale={lang} className="text-ink" />
-        ),
-    },
+    { label: texts.restaurantDelivery, value: <span className="font-bold text-brand-700">{freeLabel}</span> },
     { label: texts.restaurantTime, value: <bdi className="font-bold text-ink">{restaurant.deliveryTime}</bdi> },
     { label: texts.restaurantMin, value: <Price value={restaurant.minOrder} locale={lang} className="text-ink" /> },
   ];

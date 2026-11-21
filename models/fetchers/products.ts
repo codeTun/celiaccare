@@ -4,6 +4,7 @@ import { or } from "@prisma/orm-postgres/orm-client";
 
 import { cachePolicy } from "@/lib/cache";
 import { TAGS } from "@/lib/cache-tags";
+import { publicLabel, publicSource, publicText } from "@/lib/contacts";
 import { governorateLabel } from "@/lib/tunisia";
 import { clamp, localize, needsReview, normalizeSearch } from "@/lib/utils";
 import {
@@ -256,8 +257,6 @@ export async function getProductBySlug(locale: Locale, slug: string): Promise<Pr
         "governorate",
         "imageUrl",
         "guaranteeLevel",
-        "phone",
-        "whatsapp",
         "verificationSource",
       ),
     )
@@ -280,8 +279,9 @@ export async function getProductBySlug(locale: Locale, slug: string): Promise<Pr
 
   return {
     ...toProductCardDTO(row, locale),
-    description: localize(locale, row.description, row.descriptionAr),
-    certification: row.certification,
+    // Free texts go through lib/contacts.ts: no business contact ever reaches the public site.
+    description: publicText(localize(locale, row.description, row.descriptionAr)) ?? "",
+    certification: publicLabel(row.certification),
     mayContain: row.mayContain,
     verifiedAt: row.verifiedAt.toISOString(),
     needsReview: needsReview(row.verifiedAt),
@@ -299,9 +299,7 @@ export async function getProductBySlug(locale: Locale, slug: string): Promise<Pr
       governorate: producer.governorate,
       imageUrl: producer.imageUrl,
       guaranteeLevel: producer.guaranteeLevel,
-      phone: producer.phone,
-      whatsapp: producer.whatsapp,
-      verificationSource: producer.verificationSource,
+      verificationSource: publicSource(producer.verificationSource),
     },
     reviews: row.reviews.latest.map(toReviewDTO),
   };

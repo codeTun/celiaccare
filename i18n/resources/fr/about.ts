@@ -7,7 +7,7 @@ export const about = {
   meta: {
     title: "Notre démarche : des fiches sans gluten vérifiées",
     description:
-      "Comment CeliacCare vérifie chaque produit et restaurant sans gluten en Tunisie : sources, dates, 3 niveaux de garantie et révision tous les 12 mois.",
+      "Comment CeliacCare vérifie chaque commerce 100\u00a0% sans gluten en Tunisie : sources, dates, niveaux de garantie et révision tous les 12 mois.",
   },
 
   hero: {
@@ -85,6 +85,16 @@ export const about = {
     },
   },
 
+  // How CeliacCare earns its living (transparency), shown under the values.
+  model: {
+    title: "Des prix justes, la livraison offerte",
+    paragraphs: [
+      "Vous payez uniquement le prix fixé par l'artisan ou le restaurant, et la livraison est gratuite partout où nous livrons.",
+      "CeliacCare est rémunéré par une commission que les commerçants partenaires versent sur leurs ventes, jamais en augmentant les prix.",
+      "Notre objectif : un sans gluten accessible à toutes les familles tunisiennes, pas seulement aux plus aisées.",
+    ],
+  },
+
   method: {
     eyebrow: "Notre méthode",
     title: "De la première piste à la fiche publiée",
@@ -120,10 +130,10 @@ export const about = {
   },
 
   guarantees: {
-    eyebrow: "Les 3 niveaux de garantie",
+    eyebrow: "Nos niveaux de garantie",
     title: "Une étiquette honnête sur chaque fiche",
     description:
-      "Tous les produits « sans gluten » ne se valent pas. Nous distinguons trois niveaux pour que chacun puisse choisir en connaissance de cause.",
+      "Nous ne référençons que des commerces 100\u00a0% sans gluten, et nous distinguons ceux qui sont certifiés par un organisme officiel de ceux qui ne le sont pas, pour que chacun puisse choisir en connaissance de cause.",
   },
 
   local: {
@@ -141,7 +151,7 @@ export const about = {
       },
       shortCircuit: {
         title: "Des circuits courts",
-        text: "Moins d'intermédiaires, des prix plus justes et un revenu qui reste dans l'économie locale.",
+        text: "Un seul intermédiaire, CeliacCare : des prix plus justes et un revenu qui reste dans l'économie locale.",
       },
     },
     cta: "Rencontrer nos artisans",

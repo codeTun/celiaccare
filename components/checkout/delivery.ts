@@ -4,18 +4,14 @@ import { MAX_ORDER_LINES } from "./rules";
 import type { CheckoutRestaurant } from "./types";
 
 /* ==========================================================================
-   Delivery estimates shown in the cart and the checkout.
-   They follow the same rules as createOrder() (models/posters/orders.ts),
-   which computes the real amounts on the server when the order is sent.
+   Delivery rules shown in the cart and the checkout. They follow the same rules
+   as createOrder() (models/posters/orders.ts), which checks everything again on
+   the server. Delivery is always free: the total to pay is the subtotal.
    ========================================================================== */
 
-/** Estimated delivery for one governorate. */
+/** Delivery to one governorate (free): the announced delay. */
 export type DeliveryQuote = {
-  fee: number; // millimes (0 when free)
   delay: string;
-  /** Free-delivery threshold of the zone (shop orders), in millimes. */
-  freeFrom: number | null;
-  isFree: boolean;
 };
 
 /** The partner restaurant of a restaurant cart (null for a shop cart or when it is no longer a partner). */
@@ -35,30 +31,21 @@ export function canDeliverTo(
   return zones.some((zone) => zone.governorate === governorate);
 }
 
-/** Fee and delay for this governorate, or null when we do not deliver there. */
+/** Delay of the (free) delivery to this governorate, or null when we do not deliver there. */
 export function quoteDelivery(
   governorate: string,
   cart: CartState,
   zones: DeliveryZoneDTO[],
   restaurant: CheckoutRestaurant | null,
-  subtotal: number,
 ): DeliveryQuote | null {
   if (!canDeliverTo(governorate, cart, zones, restaurant)) return null;
 
-  // Restaurant orders: delivered by the restaurant, at its own price.
-  if (restaurant) {
-    return { fee: restaurant.deliveryFee, delay: restaurant.deliveryTime, freeFrom: null, isFree: restaurant.deliveryFee === 0 };
-  }
+  // Restaurant orders: delivered by the restaurant, with its own delay.
+  if (restaurant) return { delay: restaurant.deliveryTime };
 
-  // Shop orders: the zone of the governorate sets the fee, free above its threshold.
+  // Shop orders: the zone of the governorate gives the delay.
   const zone = zones.find((item) => item.governorate === governorate)!; // canDeliverTo() checked it
-  const isFree = zone.freeFrom !== null && subtotal >= zone.freeFrom;
-  return { fee: isFree ? 0 : zone.fee, delay: zone.delay, freeFrom: zone.freeFrom, isFree };
-}
-
-/** The cheapest delivery fee of the shop zones ("dès 5,000 DT"), or null without zones. */
-export function cheapestZoneFee(zones: DeliveryZoneDTO[]): number | null {
-  return zones.length > 0 ? Math.min(...zones.map((zone) => zone.fee)) : null;
+  return { delay: zone.delay };
 }
 
 /**

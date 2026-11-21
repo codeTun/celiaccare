@@ -189,12 +189,13 @@ export function KpiGridSkeleton() {
       <span className="sr-only" role="status">
         Chargement des chiffres…
       </span>
-      {Array.from({ length: 9 }, (_, index) => (
+      {/* Same layout as the dashboard key figures: the 2nd and the last cards are 2 columns wide on xl. */}
+      {Array.from({ length: 10 }, (_, index) => (
         <div
           key={index}
           className={cn(
             "rounded-[var(--radius-card)] border border-line bg-white p-5 shadow-soft",
-            index === 8 && "sm:col-span-2 xl:col-span-1",
+            (index === 1 || index === 9) && "xl:col-span-2",
           )}
         >
           <div className="flex items-start justify-between">

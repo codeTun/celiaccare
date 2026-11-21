@@ -28,7 +28,7 @@ export const content = {
   faq: {
     metaTitle: "Questions fréquentes",
     metaDescription:
-      "Toutes les réponses sur CeliacCare : commande sans gluten, livraison en Tunisie, paiement à la livraison, 3 commandes par jour, garanties et partenariats.",
+      "Toutes les réponses sur CeliacCare : commande sans gluten, livraison gratuite en Tunisie, paiement à la livraison, 3 commandes par jour, garanties et partenariats.",
     eyebrow: "Aide",
     title: "Questions fréquentes",
     description:

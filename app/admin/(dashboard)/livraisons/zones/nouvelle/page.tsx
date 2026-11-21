@@ -23,7 +23,7 @@ export default function NewDeliveryZonePage() {
     <>
       <AdminPageHeader
         title="Nouvelle zone de livraison"
-        description="Fixez les frais et le délai de livraison d'un gouvernorat. Les clients de ce gouvernorat pourront commander dès que la zone est ouverte."
+        description="Ouvrez la livraison (gratuite pour le client) dans un gouvernorat et indiquez le délai annoncé. Les clients de ce gouvernorat pourront commander dès que la zone est ouverte."
         breadcrumbs={[
           { label: "Tableau de bord", href: "/admin" },
           { label: "Livraisons", href: "/admin/livraisons" },
@@ -49,7 +49,7 @@ async function NewZoneForm() {
       <AdminEmpty
         icon={<MapPinned />}
         title="Les 24 gouvernorats ont déjà une zone"
-        description="Modifiez une zone existante pour changer ses frais ou son délai, ou ouvrez une zone fermée."
+        description="Modifiez une zone existante pour changer son délai, ou ouvrez une zone fermée."
         action={
           <Link href={ZONES_PATH} className={buttonStyles({ variant: "outline" })}>
             Voir les zones

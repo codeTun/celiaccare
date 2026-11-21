@@ -12,7 +12,7 @@ import type { Dictionary } from "@/i18n/server";
 import { getCategoryIcon } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import {
-  GUARANTEE_LEVELS,
+  LISTED_GUARANTEE_LEVELS,
   type CategoryDTO,
   type IngredientDTO,
   type Locale,
@@ -78,7 +78,12 @@ export function CatalogView({ locale, filters, result, categories, ingredients, 
       const Icon = getCategoryIcon(category.icon);
       return { value: category.slug, label: category.name, count: category.productCount, icon: <Icon aria-hidden="true" /> };
     }),
-    guarantees: GUARANTEE_LEVELS.map((level) => ({ value: GUARANTEE_PARAM[level], label: common.guarantee[level].label, level })),
+    // Policy "100 % sans gluten only": the filter offers the two levels a listed business can have.
+    guarantees: LISTED_GUARANTEE_LEVELS.map((level) => ({
+      value: GUARANTEE_PARAM[level],
+      label: common.guarantee[level].label,
+      level,
+    })),
     allergens: ingredients
       .filter((ingredient) => ingredient.isAllergen)
       .map((ingredient) => ({ value: ingredient.slug, label: ingredient.name })),
@@ -122,6 +127,7 @@ export function CatalogView({ locale, filters, result, categories, ingredients, 
     labels: products.filters,
     guaranteeLabels: {
       CERTIFIED: common.guarantee.CERTIFIED.label,
+      DEDICATED: common.guarantee.DEDICATED.label,
       NATURALLY_GF: common.guarantee.NATURALLY_GF.label,
       TRACES_RISK: common.guarantee.TRACES_RISK.label,
     },

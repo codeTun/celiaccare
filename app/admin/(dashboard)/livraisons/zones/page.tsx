@@ -20,7 +20,6 @@ import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { buttonStyles } from "@/components/ui/button";
 import { requireAdmin } from "@/lib/auth/session";
-import { formatPrice } from "@/lib/format";
 import { GOVERNORATES } from "@/lib/tunisia";
 import { normalizeSearch } from "@/lib/utils";
 import { listDeliveryZones } from "@/models/fetchers/admin/delivery-zones";
@@ -37,15 +36,16 @@ const filtersSchema = z.object({
 });
 
 /**
- * /admin/livraisons/zones — delivery price and delay for each governorate (one zone per
- * governorate). Customers of a governorate without an open zone cannot order.
+ * /admin/livraisons/zones — the governorates we deliver to and their delay (one zone per
+ * governorate). Delivery is free for the customer everywhere. Customers of a governorate
+ * without an open zone cannot order.
  */
 export default function DeliveryZonesPage({ searchParams }: PageProps<"/admin/livraisons/zones">) {
   return (
     <>
       <AdminPageHeader
         title="Zones de livraison"
-        description="Frais et délais de livraison par gouvernorat, affichés au client avant sa commande."
+        description="Gouvernorats desservis et délais annoncés au client avant sa commande. La livraison est gratuite pour le client, partout."
         breadcrumbs={[
           { label: "Tableau de bord", href: "/admin" },
           { label: "Livraisons", href: "/admin/livraisons" },
@@ -116,12 +116,11 @@ async function ZonesList({ searchParams }: { searchParams: Promise<AdminQuery> }
         <SearchForm basePath={ZONES_PATH} query={query} placeholder="Gouvernorat…" label="Rechercher une zone" />
       </div>
 
-      <DataTable caption="Zones de livraison par gouvernorat" tableClassName="min-w-[52rem]">
+      <DataTable caption="Zones de livraison par gouvernorat" tableClassName="min-w-[44rem]">
         <Thead>
           <Th>Gouvernorat</Th>
-          <Th align="end">Frais</Th>
+          <Th>Livraison</Th>
           <Th>Délai annoncé</Th>
-          <Th align="end">Offerte dès</Th>
           <Th align="end">Commandes</Th>
           <Th>Statut</Th>
           <Th align="end">
@@ -131,7 +130,7 @@ async function ZonesList({ searchParams }: { searchParams: Promise<AdminQuery> }
         <Tbody>
           {rows.length === 0 ? (
             <EmptyTableRow
-              colSpan={7}
+              colSpan={6}
               icon={<MapPinned />}
               title={isFiltered ? "Aucune zone ne correspond" : "Aucune zone de livraison"}
               description={
@@ -154,13 +153,10 @@ async function ZonesList({ searchParams }: { searchParams: Promise<AdminQuery> }
                     {zone.governorate}
                   </Link>
                 </Td>
-                <Td align="end" className="whitespace-nowrap tabular">
-                  {zone.fee === 0 ? <Badge tone="brand">Gratuite</Badge> : formatPrice(zone.fee)}
+                <Td>
+                  <Badge tone="brand">Gratuite</Badge>
                 </Td>
                 <Td className="whitespace-nowrap">{zone.delay}</Td>
-                <Td align="end" className="whitespace-nowrap tabular">
-                  {zone.freeFrom === null ? <span className="text-ink-subtle">—</span> : formatPrice(zone.freeFrom)}
-                </Td>
                 <Td align="end" className="tabular">
                   {zone.orderCount}
                 </Td>

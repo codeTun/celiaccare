@@ -7,14 +7,14 @@ import type { SlugDeleteResult } from "@/types/admin-data";
 
 /**
  * ADMIN — delete a producer. No auth check here: the Server Action calls requireAdmin() first,
- * then deletes the photos (deleteImage) and refreshes TAGS.producers, TAGS.producer(slug),
+ * then deletes the photo and the logo (deleteImage) and refreshes TAGS.producers, TAGS.producer(slug),
  * TAGS.products and TAGS.stats.
  */
 
 /** Refused with ModelError("IN_USE") while the producer still has products (deactivate it instead). */
 export async function deleteProducer(id: number): Promise<SlugDeleteResult> {
   assertId(id);
-  const current = await db.orm.public.Producer.select("id", "slug", "imagePublicId")
+  const current = await db.orm.public.Producer.select("id", "slug", "imagePublicId", "logoPublicId")
     .where({ id })
     .include("products", (products) => products.count())
     .first();
@@ -28,7 +28,11 @@ export async function deleteProducer(id: number): Promise<SlugDeleteResult> {
     if (isStillReferenced(error)) throw inUse();
     throw error;
   }
-  return { id, slug: current.slug, imagesToDelete: current.imagePublicId ? [current.imagePublicId] : [] };
+  // The photo and the logo of the producer (Cloudinary).
+  const imagesToDelete = [current.imagePublicId, current.logoPublicId].filter(
+    (publicId): publicId is string => Boolean(publicId),
+  );
+  return { id, slug: current.slug, imagesToDelete };
 }
 
 function inUse(productCount?: number) {

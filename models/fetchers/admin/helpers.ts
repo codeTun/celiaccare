@@ -132,6 +132,16 @@ export function applyImageChange(change: ImageChange, currentPublicId: string | 
   return { fields, imagesToDelete };
 }
 
+/**
+ * Same as applyImageChange, for the official logo of producers and restaurants
+ * (columns logoUrl / logoPublicId, shown in the brand band of the home page).
+ */
+export function applyLogoChange(change: ImageChange, currentPublicId: string | null) {
+  const { fields, imagesToDelete } = applyImageChange(change, currentPublicId);
+  if (!("imageUrl" in fields)) return { fields: {}, imagesToDelete };
+  return { fields: { logoUrl: fields.imageUrl, logoPublicId: fields.imagePublicId }, imagesToDelete };
+}
+
 /* --------------------------------------------------------------------------
    Database errors
    -------------------------------------------------------------------------- */

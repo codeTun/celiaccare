@@ -35,7 +35,7 @@ export const contact = {
     subjectPlaceholders: {
       GENERAL: "Ex. : Comment choisir un produit certifié ?",
       PARTNERSHIP: "Ex. : Pâtisserie sans gluten à Sousse",
-      ORDER: "Ex. : Ma commande du 12 novembre",
+      ORDER: "Ex. : Ma commande CC-7K2P9Q, ou : commander chez une pâtisserie",
       SUGGESTION: "Ex. : Un restaurant sans gluten à La Marsa",
       OTHER: "Ex. : Une idée pour CeliacCare",
     },
@@ -45,10 +45,26 @@ export const contact = {
       GENERAL: "Posez-nous votre question…",
       PARTNERSHIP:
         "Présentez votre activité : nom, ville, produits ou plats sans gluten, précautions contre la contamination (atelier séparé, ustensiles dédiés, certification…).",
-      ORDER: "Indiquez la référence de votre commande et le numéro de téléphone utilisé, puis décrivez votre demande.",
+      ORDER:
+        "Une commande passée ? Indiquez sa référence et le numéro de téléphone utilisé. Un artisan ou un restaurant pas encore disponible sur CeliacCare ? Indiquez son nom et ce que vous souhaitez commander.",
       SUGGESTION:
         "Nom de l'adresse, ville, ce que vous y avez mangé ou acheté, et les précautions prises contre le gluten…",
       OTHER: "Votre message…",
+    },
+    /**
+     * /contact?sujet=commande&artisan=… (or &restaurant=…, &produit=…: "Demander sur CeliacCare" on a
+     * business or product that cannot be ordered online yet): every purchase goes through CeliacCare,
+     * which contacts the business. {name} = the business, or `product` for a product.
+     */
+    orderRequest: {
+      product: "{product} ({name})",
+      subject: "Demande de commande : {name}",
+      messagePlaceholder:
+        "Dites-nous ce que vous aimeriez commander chez « {name} » : produits ou plats, quantités, ville de livraison… Nous contactons le commerce et revenons vers vous.",
+      productMessagePlaceholder:
+        "Dites-nous la quantité souhaitée de « {name} » et votre ville de livraison… Nous contactons l'artisan et revenons vers vous.",
+      notice:
+        "Votre demande pour « {name} » arrive chez CeliacCare : nous contactons le commerce pour vous, puis nous vous répondons pour organiser la commande, le paiement à la livraison et le suivi.",
     },
     consent: "J'accepte que mes données soient utilisées uniquement pour traiter ma demande.",
     privacyLink: "Politique de confidentialité",
@@ -91,7 +107,7 @@ export const contact = {
       "Nous vérifions vos ingrédients, vos pratiques et vos éventuels certificats.",
       "Votre fiche est publiée avec son niveau de garantie ; les restaurants conventionnés reçoivent aussi des commandes en ligne.",
     ],
-    note: "CeliacCare référence uniquement de petits producteurs et des commerces locaux.",
+    note: "CeliacCare référence uniquement de petits producteurs et des commerces locaux 100\u00a0% sans gluten.",
     cta: "Présenter mon activité",
   },
   suggest: {

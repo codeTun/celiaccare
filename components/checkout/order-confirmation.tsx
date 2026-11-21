@@ -4,6 +4,7 @@ import { ArrowRight, Check, CircleCheck, Copy, Truck } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useState } from "react";
 
+import { DemoNotice, type DemoTexts } from "@/components/demo-notice";
 import { LogoEmblem } from "@/components/logo";
 import { buttonStyles } from "@/components/ui/button";
 import { Price } from "@/components/ui/price";
@@ -13,11 +14,13 @@ import type { CheckoutDict } from "@/i18n/resources/fr/checkout";
 import { formatPhone } from "@/lib/format";
 import type { Locale, PaymentMethod, PlacedOrderDTO } from "@/types";
 
+import { OrderHelp } from "./order-help";
 import { ltr } from "./text";
 
 /**
  * Screen shown once the order is saved: the reference (big), the amounts computed by the
- * SERVER, the delay and the payment method, with a link to the tracking page.
+ * SERVER, the delay and the payment method, with a link to the tracking page, and CeliacCare's
+ * own support contacts (every order goes through CeliacCare, never directly to the business).
  */
 export function OrderConfirmation({
   lang,
@@ -26,6 +29,7 @@ export function OrderConfirmation({
   firstName,
   phone,
   paymentMethod,
+  demo,
 }: {
   lang: Locale;
   texts: CheckoutDict;
@@ -35,6 +39,8 @@ export function OrderConfirmation({
   /** The 8 normalised digits */
   phone: string;
   paymentMethod: PaymentMethod;
+  /** dict.common.demo while siteConfig.demoMode is on: the order was sent to no business */
+  demo: DemoTexts | null;
 }) {
   const t = texts.confirmation;
   const [copied, setCopied] = useState(false);
@@ -84,6 +90,8 @@ export function OrderConfirmation({
         <div aria-hidden="true" className="studs h-1.5 bg-brand-50" />
 
         <div className="p-6 sm:p-10">
+          {demo ? <DemoNotice title={demo.confirmationTitle} text={demo.confirmationText} className="mb-8" /> : null}
+
           {/* Reference */}
           <div className="rounded-2xl border-2 border-dashed border-brand-200 bg-brand-50/50 px-5 py-6 text-center">
             <p className="text-xs font-bold tracking-[0.14em] text-brand-700 uppercase rtl:tracking-normal">{t.reference}</p>
@@ -112,12 +120,8 @@ export function OrderConfirmation({
                 <Price value={order.total} locale={lang} className="text-2xl text-brand-800" />
               </dd>
               <dd className="mt-1 text-xs text-ink-muted">
-                {t.subtotal} <Price value={order.subtotal} locale={lang} className="font-semibold" /> · {t.delivery}{" "}
-                {order.deliveryFee === 0 ? (
-                  <span className="font-semibold text-brand-700">{t.free}</span>
-                ) : (
-                  <Price value={order.deliveryFee} locale={lang} className="font-semibold" />
-                )}
+                {t.subtotal} <Price value={order.subtotal} locale={lang} className="font-semibold" /> ·{" "}
+                <span className="font-semibold text-brand-700">{t.freeDelivery}</span>
               </dd>
             </div>
             <div className="rounded-2xl bg-canvas p-4">
@@ -151,6 +155,15 @@ export function OrderConfirmation({
               ))}
             </ol>
           </div>
+
+          {/* Questions about the order come to CeliacCare (lib/site-config.ts), never to the business directly. */}
+          <OrderHelp
+            lang={lang}
+            texts={texts.help}
+            text={texts.help.orderText}
+            id="order-help-title"
+            className="mt-8"
+          />
 
           <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:justify-center">
             <Link

@@ -6,14 +6,14 @@ import { localePath } from "@/i18n/config";
 import type { CommonDict } from "@/i18n/resources/fr/common";
 import type { ProducersDict } from "@/i18n/resources/fr/producers";
 import { GOVERNORATES } from "@/lib/tunisia";
-import { GUARANTEE_LEVELS, type GuaranteeLevel, type Locale, type ProducerType } from "@/types";
+import { LISTED_GUARANTEE_LEVELS, type ListedGuaranteeLevel, type Locale, type ProducerType } from "@/types";
 
 /** The filters as they appear in the URL of /artisans ("" = no filter). */
 export type ProducerSearch = {
   q: string;
   type: ProducerType | "";
   governorate: string;
-  guarantee: GuaranteeLevel | "";
+  guarantee: ListedGuaranteeLevel | "";
 };
 
 /**
@@ -44,6 +44,7 @@ export function ProducerFilters({
       resetLabel={dict.filters.reset}
       showReset={hasFilters}
       className={className}
+      note={dict.filters.guaranteeHint}
       extra={values.type ? <input type="hidden" name="type" value={values.type} /> : null}
     >
       <Field id="filter-q" label={dict.filters.search} className="sm:col-span-2 md:col-span-1">
@@ -77,7 +78,7 @@ export function ProducerFilters({
 
       <SelectField id="filter-guarantee" name="garantie" label={dict.filters.guarantee} defaultValue={values.guarantee}>
         <option value="">{dict.filters.allGuarantees}</option>
-        {GUARANTEE_LEVELS.map((level) => (
+        {LISTED_GUARANTEE_LEVELS.map((level) => (
           <option key={level} value={level}>
             {common.guarantee[level].label}
           </option>

@@ -10,7 +10,7 @@ export const CATALOG_PARAMS = [
   "categorie", // category slug
   "ingredients", // ingredient slugs the product must contain, separated by commas
   "sans", // allergen slugs the product must NOT contain, separated by commas
-  "garantie", // guarantee level: certifie | naturel | traces
+  "garantie", // guarantee level: certifie | 100-sans-gluten
   "prixMin", // in dinars
   "prixMax", // in dinars
   "artisan", // producer slug

@@ -2,7 +2,8 @@
  * Delivery set-up (demo data): one delivery zone per governorate and the delivery people.
  *
  * Zones (unique key: `governorate`, one line for each of the 24 governorates of lib/tunisia.ts):
- * - `fee` and `freeFrom` are in MILLIMES (7000 = 7,000 DT; free delivery from 150,000 DT).
+ * - Delivery is FREE for the customer everywhere: `fee` is always 0 and `freeFrom` always null
+ *   (the columns are kept in the database; the checkout never charges a delivery fee).
  * - `isActive: false` = not covered yet: the site shows "zone pas encore couverte" (spec EF-05).
  *
  * Delivery people (unique key: `phone`, FICTIONAL people and numbers):
@@ -28,38 +29,36 @@ export type SeedDeliverer = {
   notes: string | null;
 };
 
-const FREE_FROM = 150_000; // 150,000 DT
-
 export const DELIVERY_ZONES: SeedDeliveryZone[] = [
   // Grand Tunis: next day
-  { governorate: "Tunis", fee: 7000, delay: "24 h", freeFrom: FREE_FROM, isActive: true },
-  { governorate: "Ariana", fee: 7000, delay: "24 h", freeFrom: FREE_FROM, isActive: true },
-  { governorate: "Ben Arous", fee: 7000, delay: "24 h", freeFrom: FREE_FROM, isActive: true },
-  { governorate: "Manouba", fee: 7000, delay: "24 h", freeFrom: FREE_FROM, isActive: true },
+  { governorate: "Tunis", fee: 0, delay: "24 h", freeFrom: null, isActive: true },
+  { governorate: "Ariana", fee: 0, delay: "24 h", freeFrom: null, isActive: true },
+  { governorate: "Ben Arous", fee: 0, delay: "24 h", freeFrom: null, isActive: true },
+  { governorate: "Manouba", fee: 0, delay: "24 h", freeFrom: null, isActive: true },
   // Cap Bon, Bizerte, Zaghouan and the Sahel
-  { governorate: "Nabeul", fee: 8000, delay: "24–48 h", freeFrom: null, isActive: true },
-  { governorate: "Zaghouan", fee: 8000, delay: "24–48 h", freeFrom: null, isActive: true },
-  { governorate: "Bizerte", fee: 8000, delay: "24–48 h", freeFrom: null, isActive: true },
-  { governorate: "Sousse", fee: 8000, delay: "24–48 h", freeFrom: FREE_FROM, isActive: true },
-  { governorate: "Monastir", fee: 8000, delay: "24–48 h", freeFrom: null, isActive: true },
-  { governorate: "Mahdia", fee: 8000, delay: "24–48 h", freeFrom: null, isActive: true },
+  { governorate: "Nabeul", fee: 0, delay: "24–48 h", freeFrom: null, isActive: true },
+  { governorate: "Zaghouan", fee: 0, delay: "24–48 h", freeFrom: null, isActive: true },
+  { governorate: "Bizerte", fee: 0, delay: "24–48 h", freeFrom: null, isActive: true },
+  { governorate: "Sousse", fee: 0, delay: "24–48 h", freeFrom: null, isActive: true },
+  { governorate: "Monastir", fee: 0, delay: "24–48 h", freeFrom: null, isActive: true },
+  { governorate: "Mahdia", fee: 0, delay: "24–48 h", freeFrom: null, isActive: true },
   // Sfax and Kairouan
-  { governorate: "Sfax", fee: 9000, delay: "48 h", freeFrom: null, isActive: true },
-  { governorate: "Kairouan", fee: 9000, delay: "48 h", freeFrom: null, isActive: true },
+  { governorate: "Sfax", fee: 0, delay: "48 h", freeFrom: null, isActive: true },
+  { governorate: "Kairouan", fee: 0, delay: "48 h", freeFrom: null, isActive: true },
   // North-west, centre-west and south
-  { governorate: "Béja", fee: 10000, delay: "48–72 h", freeFrom: null, isActive: true },
-  { governorate: "Jendouba", fee: 11000, delay: "48–72 h", freeFrom: null, isActive: true },
-  { governorate: "Le Kef", fee: 11000, delay: "48–72 h", freeFrom: null, isActive: true },
-  { governorate: "Siliana", fee: 11000, delay: "48–72 h", freeFrom: null, isActive: true },
-  { governorate: "Kasserine", fee: 11000, delay: "48–72 h", freeFrom: null, isActive: true },
-  { governorate: "Sidi Bouzid", fee: 10000, delay: "48–72 h", freeFrom: null, isActive: true },
-  { governorate: "Gafsa", fee: 11000, delay: "48–72 h", freeFrom: null, isActive: true },
-  { governorate: "Gabès", fee: 10000, delay: "48–72 h", freeFrom: null, isActive: true },
-  { governorate: "Médenine", fee: 11000, delay: "48–72 h", freeFrom: null, isActive: true },
-  { governorate: "Tozeur", fee: 12000, delay: "48–72 h", freeFrom: null, isActive: true },
+  { governorate: "Béja", fee: 0, delay: "48–72 h", freeFrom: null, isActive: true },
+  { governorate: "Jendouba", fee: 0, delay: "48–72 h", freeFrom: null, isActive: true },
+  { governorate: "Le Kef", fee: 0, delay: "48–72 h", freeFrom: null, isActive: true },
+  { governorate: "Siliana", fee: 0, delay: "48–72 h", freeFrom: null, isActive: true },
+  { governorate: "Kasserine", fee: 0, delay: "48–72 h", freeFrom: null, isActive: true },
+  { governorate: "Sidi Bouzid", fee: 0, delay: "48–72 h", freeFrom: null, isActive: true },
+  { governorate: "Gafsa", fee: 0, delay: "48–72 h", freeFrom: null, isActive: true },
+  { governorate: "Gabès", fee: 0, delay: "48–72 h", freeFrom: null, isActive: true },
+  { governorate: "Médenine", fee: 0, delay: "48–72 h", freeFrom: null, isActive: true },
+  { governorate: "Tozeur", fee: 0, delay: "48–72 h", freeFrom: null, isActive: true },
   // Not covered yet (spec EF-05: "zone pas encore couverte")
-  { governorate: "Kébili", fee: 12000, delay: "48–72 h", freeFrom: null, isActive: false },
-  { governorate: "Tataouine", fee: 12000, delay: "48–72 h", freeFrom: null, isActive: false },
+  { governorate: "Kébili", fee: 0, delay: "48–72 h", freeFrom: null, isActive: false },
+  { governorate: "Tataouine", fee: 0, delay: "48–72 h", freeFrom: null, isActive: false },
 ];
 
 export const DELIVERERS: SeedDeliverer[] = [

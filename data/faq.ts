@@ -30,7 +30,7 @@ export const faq: Record<Locale, FaqGroup[]> = {
           question: "Qu'est-ce que CeliacCare ?",
           answer: [
             "CeliacCare est une plateforme tunisienne dédiée au sans gluten. Elle réunit des **produits fabriqués par de petits artisans et commerces locaux**, des **restaurants partenaires** où commander des plats sans gluten, et des conseils pratiques pour les personnes cœliaques ou sensibles au gluten.",
-            "Chaque fiche indique un niveau de garantie, la source de l'information et sa date de vérification.",
+            "CeliacCare ne référence que des commerces **100\u00a0% sans gluten**. Chaque fiche indique un niveau de garantie, la source de l'information et sa date de vérification.",
           ],
         },
         {
@@ -58,7 +58,15 @@ export const faq: Record<Locale, FaqGroup[]> = {
           question: "Comment passer une commande ?",
           answer: [
             "Ajoutez à votre panier des produits de nos artisans, ou les plats d'un restaurant partenaire : un panier contient soit des produits d'artisans, soit les plats d'un seul restaurant.",
-            "Indiquez ensuite votre nom, votre numéro de téléphone et votre adresse de livraison. Un récapitulatif (articles, montant, frais et délai de livraison) s'affiche avant la confirmation, puis vous recevez une référence pour suivre votre commande.",
+            "Indiquez ensuite votre nom, votre numéro de téléphone et votre adresse de livraison. Un récapitulatif (articles, montant et délai de livraison) s'affiche avant la confirmation, puis vous recevez une référence pour suivre votre commande.",
+          ],
+        },
+        {
+          id: "commander-par-celiaccare",
+          question: "Puis-je contacter un commerce ou commander directement chez lui ?",
+          answer: [
+            "Non : **toutes les commandes passent par CeliacCare**. Nous transmettons votre commande au commerce, coordonnons la livraison (gratuite) et assurons le suivi ; vous payez à la livraison. Pour toute question ou réclamation, CeliacCare est votre seul interlocuteur : c'est pourquoi le site n'affiche ni le téléphone, ni l'e-mail, ni les réseaux sociaux des commerces (seulement leur adresse et leurs horaires).",
+            "Un artisan ou un restaurant n'est pas encore disponible à la commande ? Utilisez le bouton **« Demander sur CeliacCare »** de sa page, ou [écrivez-nous](/contact?sujet=commande) : nous contactons le commerce pour vous.",
           ],
         },
         {
@@ -78,10 +86,18 @@ export const faq: Record<Locale, FaqGroup[]> = {
         },
         {
           id: "livraison",
-          question: "Où livrez-vous, en combien de temps et à quel prix ?",
+          question: "Où livrez-vous et en combien de temps ?",
           answer: [
-            "Les produits de nos artisans sont livrés dans les gouvernorats couverts par notre réseau. Pour chacun, les **frais**, le **délai** et, le cas échéant, le montant à partir duquel la livraison est offerte s'affichent avant la confirmation de la commande.",
-            "Les restaurants partenaires livrent dans leur propre zone : leurs frais, leur délai et leur minimum de commande sont indiqués sur leur page.",
+            "Les produits de nos artisans sont livrés dans les gouvernorats couverts par notre réseau. Pour chacun, le **délai** de livraison s'affiche avant la confirmation de la commande.",
+            "Les restaurants partenaires livrent dans leur propre gouvernorat : leur délai et leur minimum de commande sont indiqués sur leur page.",
+          ],
+        },
+        {
+          id: "prix-de-la-livraison",
+          question: "Combien coûte la livraison ?",
+          answer: [
+            "Rien : **la livraison est gratuite**, partout où CeliacCare livre et quel que soit le montant de votre commande. Il n'y a pas de minimum d'achat, sauf le minimum de commande propre à certains restaurants partenaires, indiqué sur leur page.",
+            "Vous payez uniquement le prix des articles, fixé par le commerçant. CeliacCare est rémunéré par une commission versée par les commerçants partenaires, jamais en augmentant les prix : [notre modèle](/a-propos#modele).",
           ],
         },
         {
@@ -100,26 +116,27 @@ export const faq: Record<Locale, FaqGroup[]> = {
       items: [
         {
           id: "niveaux-de-garantie",
-          question: "Que signifient les 3 niveaux de garantie ?",
+          question: "Que signifient les niveaux de garantie ?",
           answer: [
+            "CeliacCare ne référence que des commerces **100\u00a0% sans gluten**. Chaque fiche précise lequel des deux niveaux s'applique :",
             "**Certifié sans gluten** : le produit ou l'établissement est certifié par un organisme officiel ; nous avons vérifié le logo, l'organisme et le numéro de certification.",
-            "**Naturellement sans gluten** : la recette ne contient pas de gluten, ou l'option sans gluten est préparée avec des précautions, sans certification officielle.",
-            "**Risque de traces** : aucun ingrédient ne contient de gluten, mais une contamination croisée reste possible (atelier ou cuisine partagés).",
+            "**100\u00a0% sans gluten** : le commerce ou l'atelier ne travaille que sans gluten (ou dispose d'une unité de production entièrement séparée). Nous l'avons vérifié sur des sources publiques (site officiel, réseaux sociaux, étiquettes, presse), mais il n'a pas de certificat officiel.",
           ],
         },
         {
           id: "verification",
           question: "Comment vérifiez-vous les informations ?",
           answer: [
-            "Avant de publier une fiche, nous vérifions les ingrédients, les pratiques de préparation et, s'il y a lieu, les certificats, auprès du commerçant ou sur place. Chaque fiche affiche sa **source** et sa **date de vérification**.",
+            "Avant de publier une fiche, nous vérifions que le commerce travaille entièrement sans gluten et, s'il y a lieu, ses certificats : site officiel, réseaux sociaux, étiquettes, presse ou échange avec le commerçant. Chaque fiche affiche sa **source** et sa **date de vérification**.",
             "Une fiche qui n'a pas été revérifiée depuis plus de 12 mois est signalée automatiquement et remise en révision.",
           ],
         },
         {
-          id: "risque-de-traces",
-          question: "Un produit « Risque de traces » convient-il à une personne cœliaque ?",
+          id: "uniquement-100-sans-gluten",
+          question: "Pourquoi uniquement des commerces 100\u00a0% sans gluten ?",
           answer: [
-            "En général, non : pour une personne cœliaque, même une très petite quantité de gluten peut être nocive. Ces produits s'adressent plutôt aux personnes moins sensibles. En cas de doute, demandez l'avis de votre médecin ou de votre diététicien.",
+            "Pour une personne cœliaque, même une très petite quantité de gluten peut être nocive : un plat sans ingrédient à gluten, préparé dans un atelier ou une cuisine où l'on travaille la farine de blé, peut en contenir des traces. Nous ne référençons donc que des commerces certifiés ou qui ne travaillent que sans gluten.",
+            "En cas de doute, [posez-nous vos questions](/contact) : nous interrogeons le commerce pour vous. Lisez aussi l'étiquette et demandez l'avis de votre médecin ou de votre diététicien.",
           ],
         },
         {
@@ -200,7 +217,7 @@ export const faq: Record<Locale, FaqGroup[]> = {
           question: "ما هو CeliacCare؟",
           answer: [
             "CeliacCare منصة تونسية مخصّصة للأغذية الخالية من الغلوتين. تجمع **منتجات يصنعها حرفيون ومحلات محلية صغيرة**، و**مطاعم شريكة** يمكنك أن تطلب منها أطباقًا خالية من الغلوتين، ونصائح عملية لمرضى السيلياك والأشخاص الحساسين للغلوتين.",
-            "تعرض كل بطاقة مستوى الضمان ومصدر المعلومة وتاريخ التحقق منها.",
+            "لا يدرج CeliacCare إلا المتاجر **الخالية تمامًا من الغلوتين**. وتعرض كل بطاقة مستوى الضمان ومصدر المعلومة وتاريخ التحقق منها.",
           ],
         },
         {
@@ -228,7 +245,15 @@ export const faq: Record<Locale, FaqGroup[]> = {
           question: "كيف أقدّم طلبية؟",
           answer: [
             "أضف إلى سلتك منتجات حرفيينا أو أطباق أحد المطاعم الشريكة: تحتوي السلة إمّا على منتجات الحرفيين، وإمّا على أطباق مطعم واحد فقط.",
-            "بعد ذلك أدخل اسمك ورقم هاتفك وعنوان التوصيل. يظهر لك ملخّص (المنتجات، المبلغ، معلوم التوصيل ومدّته) قبل التأكيد، ثم تتلقى مرجعًا لتتبّع طلبيتك.",
+            "بعد ذلك أدخل اسمك ورقم هاتفك وعنوان التوصيل. يظهر لك ملخّص (المنتجات، المبلغ ومدّة التوصيل) قبل التأكيد، ثم تتلقى مرجعًا لتتبّع طلبيتك.",
+          ],
+        },
+        {
+          id: "commander-par-celiaccare",
+          question: "هل يمكنني التواصل مع متجر أو الطلب منه مباشرة؟",
+          answer: [
+            "لا: **كل الطلبيات تمرّ عبر CeliacCare**. نحن من يرسل طلبيتك إلى التاجر وينسّق التوصيل (المجاني) ويتابعها، وتدفع عند الاستلام. ولأي سؤال أو شكوى، CeliacCare هو الجهة الوحيدة التي تتعامل معها، ولهذا لا يعرض الموقع هاتف التجار ولا بريدهم الإلكتروني ولا حساباتهم على شبكات التواصل (بل عنوانهم وأوقات عملهم فقط).",
+            "حرفي أو مطعم غير متاح للطلب بعد؟ استعمل زر **«اطلب توفيره عبر CeliacCare»** في صفحته، أو [راسلنا](/contact?sujet=commande): نتواصل معه نيابةً عنك.",
           ],
         },
         {
@@ -248,10 +273,18 @@ export const faq: Record<Locale, FaqGroup[]> = {
         },
         {
           id: "livraison",
-          question: "أين توصلون، وفي كم من الوقت، وبأي سعر؟",
+          question: "أين توصلون، وفي كم من الوقت؟",
           answer: [
-            "نوصل منتجات حرفيينا إلى الولايات التي تغطيها شبكتنا. ولكل ولاية يظهر **معلوم التوصيل** و**مدّته**، وعند الاقتضاء المبلغ الذي يصبح التوصيل ابتداءً منه مجانيًا، وذلك قبل تأكيد الطلبية.",
-            "أما المطاعم الشريكة فتوصل داخل منطقتها الخاصة، ويُذكر معلوم التوصيل ومدّته والحد الأدنى للطلب في صفحة كل مطعم.",
+            "نوصل منتجات حرفيينا إلى الولايات التي تغطيها شبكتنا. ولكل ولاية تظهر **مدّة التوصيل** قبل تأكيد الطلبية.",
+            "أما المطاعم الشريكة فتوصل داخل ولايتها، وتُذكر مدّة التوصيل والحد الأدنى للطلب في صفحة كل مطعم.",
+          ],
+        },
+        {
+          id: "prix-de-la-livraison",
+          question: "كم يكلّف التوصيل؟",
+          answer: [
+            "لا شيء: **التوصيل مجاني** في كل المناطق التي يوصل إليها CeliacCare، مهما كان مبلغ طلبيتك. ولا يوجد حدّ أدنى للشراء، باستثناء الحدّ الأدنى للطلب الخاص ببعض المطاعم الشريكة، والمذكور في صفحتها.",
+            "تدفع فقط ثمن المنتجات كما يحدّده التاجر. ويحصل CeliacCare على أجره من عمولة يدفعها التجار الشركاء، وليس أبدًا بالزيادة في الأسعار: [نموذجنا](/a-propos#modele).",
           ],
         },
         {
@@ -270,26 +303,27 @@ export const faq: Record<Locale, FaqGroup[]> = {
       items: [
         {
           id: "niveaux-de-garantie",
-          question: "ماذا تعني مستويات الضمان الثلاثة؟",
+          question: "ماذا تعني مستويات الضمان؟",
           answer: [
+            "لا يدرج CeliacCare إلا المتاجر **الخالية تمامًا من الغلوتين**. وتوضّح كل بطاقة أيّ المستويين ينطبق عليها:",
             "**حاصل على شهادة خالٍ من الغلوتين**: المنتج أو المؤسسة حاصلة على شهادة من هيئة رسمية، وقد تحققنا من الشعار والهيئة ورقم الشهادة.",
-            "**خالٍ من الغلوتين بطبيعته**: الوصفة لا تحتوي على الغلوتين، أو يُحضَّر الخيار الخالي من الغلوتين مع اتخاذ احتياطات، دون شهادة رسمية.",
-            "**احتمال وجود آثار**: لا يحتوي أي مكوّن على الغلوتين، لكن التلوث المتبادل يبقى ممكنًا (ورشة أو مطبخ مشترك).",
+            "**خالٍ تمامًا من الغلوتين**: لا يعمل المتجر أو الورشة إلا بدون غلوتين (أو يملك وحدة إنتاج منفصلة تمامًا). تحققنا من ذلك عبر مصادر عامة (الموقع الرسمي، شبكات التواصل، الملصقات، الصحافة)، لكنه لا يملك شهادة رسمية.",
           ],
         },
         {
           id: "verification",
           question: "كيف تتحققون من المعلومات؟",
           answer: [
-            "قبل نشر أي بطاقة، نتحقق من المكوّنات وطرق التحضير، ومن الشهادات عند الاقتضاء، لدى التاجر أو في عين المكان. وتعرض كل بطاقة **مصدرها** و**تاريخ التحقق** منها.",
+            "قبل نشر أي بطاقة، نتحقق من أن المتجر يعمل بدون غلوتين بالكامل، ومن شهاداته عند الاقتضاء: الموقع الرسمي وشبكات التواصل والملصقات والصحافة أو التواصل مع التاجر. وتعرض كل بطاقة **مصدرها** و**تاريخ التحقق** منها.",
             "وإذا لم تتم مراجعة بطاقة منذ أكثر من 12 شهرًا، يُشار إليها آليًا وتُعاد إلى المراجعة.",
           ],
         },
         {
-          id: "risque-de-traces",
-          question: "هل يناسب منتجٌ يحمل عبارة «احتمال وجود آثار» مريضَ السيلياك؟",
+          id: "uniquement-100-sans-gluten",
+          question: "لماذا المتاجر الخالية تمامًا من الغلوتين فقط؟",
           answer: [
-            "في الغالب لا، فحتى كمية صغيرة جدًا من الغلوتين قد تضرّ مريض السيلياك. هذه المنتجات موجّهة بالأحرى إلى الأشخاص الأقل حساسية. وعند الشك، استشر طبيبك أو أخصائي التغذية.",
+            "حتى كمية صغيرة جدًا من الغلوتين قد تضرّ مريض السيلياك: فالطبق الخالي من مكوّنات الغلوتين قد يحتوي على آثار منه إذا حُضّر في ورشة أو مطبخ يُستعمل فيه دقيق القمح. لذلك لا ندرج إلا المتاجر الحاصلة على شهادة أو التي لا تعمل إلا بدون غلوتين.",
+            "وعند الشك، [اطرح علينا أسئلتك](/contact): نستفسر لدى المتجر نيابةً عنك. واقرأ الملصق أيضًا، واستشر طبيبك أو أخصائي التغذية.",
           ],
         },
         {

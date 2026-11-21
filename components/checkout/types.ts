@@ -5,7 +5,7 @@ import type { OrderTrackingDTO, PlacedOrderDTO, RestaurantCardDTO } from "@/type
    Shapes shared by the cart page, the checkout and the order tracking page.
    ========================================================================== */
 
-/** Delivery rules of a partner restaurant: what the cart and the checkout need to know. */
+/** Delivery rules of a partner restaurant (delivery is free): what the cart and the checkout need to know. */
 export type CheckoutRestaurant = {
   id: number;
   slug: string;
@@ -13,7 +13,6 @@ export type CheckoutRestaurant = {
   city: string;
   /** The restaurant only delivers inside its own governorate. */
   governorate: string;
-  deliveryFee: number; // millimes
   deliveryTime: string; // e.g. "30 à 45 min"
   minOrder: number; // millimes
 };
@@ -28,7 +27,6 @@ export function toCheckoutRestaurants(restaurants: RestaurantCardDTO[]): Checkou
       name: restaurant.name,
       city: restaurant.city,
       governorate: restaurant.governorate,
-      deliveryFee: restaurant.deliveryFee,
       deliveryTime: restaurant.deliveryTime,
       minOrder: restaurant.minOrder,
     }));

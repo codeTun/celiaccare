@@ -7,11 +7,9 @@ import type { CheckoutDict } from "@/i18n/resources/fr/checkout";
 import { cn } from "@/lib/utils";
 import type { CartItem, Locale } from "@/types";
 
-import type { DeliveryQuote } from "./delivery";
-
 /**
- * "Votre commande" card beside the checkout: the lines (optional), the subtotal, the delivery
- * fee for the chosen governorate and the total. These are ESTIMATES: the server recomputes
+ * "Votre commande" card beside the checkout: the lines (optional), the subtotal, the (free)
+ * delivery and the total, which is the subtotal. These are ESTIMATES: the server recomputes
  * every price when the order is sent. `children` = buttons / notices at the bottom of the card.
  */
 export function OrderSummary({
@@ -21,7 +19,6 @@ export function OrderSummary({
   items,
   showItems,
   subtotal,
-  quote,
   children,
   className,
 }: {
@@ -33,12 +30,9 @@ export function OrderSummary({
   items: CartItem[];
   showItems: boolean;
   subtotal: number;
-  quote: DeliveryQuote | null;
   children?: ReactNode;
   className?: string;
 }) {
-  const total = subtotal + (quote?.fee ?? 0);
-
   return (
     <section
       aria-labelledby="order-summary-title"
@@ -82,20 +76,12 @@ export function OrderSummary({
         </div>
         <div className="flex items-baseline justify-between gap-4">
           <dt className="text-ink-muted">{texts.delivery}</dt>
-          <dd className="text-end">
-            {quote === null ? (
-              <span className="text-ink-subtle">{texts.deliveryPending}</span>
-            ) : quote.fee === 0 ? (
-              <span className="font-bold text-brand-700">{texts.free}</span>
-            ) : (
-              <Price value={quote.fee} locale={lang} className="text-ink" />
-            )}
-          </dd>
+          <dd className="font-bold text-brand-700">{texts.free}</dd>
         </div>
         <div className="flex items-baseline justify-between gap-4 border-t border-line pt-3">
           <dt className="text-base font-bold text-ink">{texts.total}</dt>
           <dd>
-            <Price value={total} locale={lang} className="text-xl text-brand-800" />
+            <Price value={subtotal} locale={lang} className="text-xl text-brand-800" />
           </dd>
         </div>
       </dl>

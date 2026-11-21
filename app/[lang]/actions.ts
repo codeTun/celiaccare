@@ -5,6 +5,7 @@ import { z } from "zod";
 import { isLocale } from "@/i18n/config";
 import type { CommunityDict } from "@/i18n/resources/fr/community";
 import { getDictionary } from "@/i18n/server";
+import { containsContact } from "@/lib/contacts";
 import { LIMITS, rateLimit } from "@/lib/rate-limit";
 import { getIpHash } from "@/lib/request";
 import { normalizeTunisianPhone } from "@/lib/tunisia";
@@ -140,13 +141,17 @@ export async function submitReport(
 const reviewTargetSchema = z.object({ type: z.enum(["PRODUCT", "RESTAURANT"]), id: idSchema });
 const reportTargetSchema = z.object({ type: z.enum(REPORT_TARGETS), id: idSchema });
 
-/** Fields of the "Donner mon avis" form. */
+/**
+ * Fields of the "Donner mon avis" form. A review is public: it may not give a contact (phone, e-mail,
+ * link, social account), since every purchase goes through CeliacCare (lib/contacts.ts).
+ */
 function reviewSchema(errors: CommunityDict["errors"]) {
+  const withoutContact = (text: string) => !containsContact(text);
   return z.object({
-    authorName: textBetween(2, 40, errors.nameLength),
+    authorName: textBetween(2, 40, errors.nameLength).refine(withoutContact, errors.noContact),
     // A radio button sends "1" to "5"; nothing is sent when no star was chosen.
     rating: z.enum(["1", "2", "3", "4", "5"], { error: errors.ratingRequired }).transform(Number),
-    comment: textBetween(10, 1000, errors.commentLength),
+    comment: textBetween(10, 1000, errors.commentLength).refine(withoutContact, errors.noContact),
   });
 }
 

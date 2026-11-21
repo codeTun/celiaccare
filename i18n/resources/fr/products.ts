@@ -17,7 +17,7 @@ export const products = {
     title: "Produits sans gluten",
     description:
       "Des produits faits par de petits artisans tunisiens, jamais par de grandes marques. Chaque fiche indique les ingrédients, les allergènes et un niveau de garantie vérifié par notre équipe.",
-    legendLabel: "Nos trois niveaux de garantie",
+    legendLabel: "Nos niveaux de garantie",
     legendLink: "Comprendre les niveaux de garantie",
   },
 
@@ -70,6 +70,7 @@ export const products = {
     allCategories: "Toutes les catégories",
     guarantee: "Niveau de garantie",
     allGuarantees: "Tous les niveaux",
+    guaranteeHint: "Tous les commerces référencés sont 100\u00a0% sans gluten.",
     exclude: "Sans ces allergènes",
     excludeHint: "Les produits qui en contiennent sont masqués.",
     contains: "Contient",
@@ -94,7 +95,8 @@ export const products = {
 
   sheet: {
     unavailable: "Momentanément indisponible",
-    unavailableText: "Ce produit n'est pas disponible pour le moment. Revenez bientôt ou contactez l'artisan.",
+    unavailableText:
+      "Ce produit n'est pas disponible pour le moment. Revenez bientôt, ou demandez-le à CeliacCare : nous contactons l'artisan pour vous.",
     quantity: "Quantité",
     decrease: "Retirer un article",
     increase: "Ajouter un article",
@@ -102,7 +104,7 @@ export const products = {
     guaranteeLink: "Comprendre les niveaux de garantie",
     description: "Description",
     ingredientsTitle: "Ingrédients & allergènes",
-    ingredientsEmpty: "La liste des ingrédients n'est pas encore renseignée.",
+    ingredientsEmpty: "Composition détaillée non publiée en ligne : consultez l'étiquette du fabricant.",
     allergenTag: "allergène",
     allergensLine: "Allergènes : {list}.",
     noAllergens: "Aucun allergène majeur déclaré.",
@@ -115,9 +117,6 @@ export const products = {
     producerTitle: "Fait par",
     producerPage: "Voir la boutique",
     producerProducts: "Tous ses produits",
-    callProducer: "Appeler {name}",
-    whatsappProducer: "Écrire à {name} sur WhatsApp",
-    whatsappMessage: "Bonjour, je vous contacte depuis CeliacCare au sujet du produit « {product} ».",
     deliveryTitle: "Livraison & paiement",
     deliveryZones: {
       zero: "Livraison à domicile bientôt disponible",
@@ -127,11 +126,8 @@ export const products = {
       many: "Livraison à domicile dans {count} gouvernorats",
       other: "Livraison à domicile dans {count} gouvernorats",
     },
-    deliveryFeeFrom: "Frais de livraison dès {fee}",
-    deliveryFree: "Livraison offerte dès {amount} d'achat",
-    deliveryFreeByZone: "Livraison offerte selon la zone, dès {amount} d'achat",
-    deliveryFreeFrom: "offerte dès {amount}",
-    deliveryZonesToggle: "Voir les zones, tarifs et délais",
+    deliveryFree: "Livraison gratuite, sans minimum d'achat",
+    deliveryZonesToggle: "Voir les zones et les délais",
     deliveryNone: "Les zones de livraison seront bientôt annoncées.",
     payment: "Paiement à la livraison, en espèces ou par carte.",
     relatedEyebrow: "À découvrir aussi",

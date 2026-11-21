@@ -10,17 +10,17 @@ export const restaurants = {
       "Restaurants et cafés sans gluten vérifiés en Tunisie : niveau de garantie, pratiques en cuisine, horaires et commande en ligne chez nos partenaires.",
     detailTitle: "{name} : plats sans gluten à {city}",
     detailDescription:
-      "{name} à {city} : plats sans gluten, niveau de garantie, pratiques en cuisine, horaires et contact.",
+      "{name} à {city} : plats sans gluten, niveau de garantie, pratiques en cuisine et horaires. Commande via CeliacCare.",
     detailDescriptionPartner:
-      "{name} à {city} : commandez vos plats sans gluten en ligne, livrés chez vous. Niveau de garantie, pratiques en cuisine et horaires.",
+      "{name} à {city} : commandez vos plats sans gluten sur CeliacCare, livrés chez vous. Niveau de garantie, pratiques en cuisine et horaires.",
   },
 
   hero: {
     eyebrow: "Restaurants & cafés",
     title: "Restaurants sans gluten",
     description:
-      "Des adresses vérifiées une à une : niveau de garantie, pratiques en cuisine, horaires et contact. Chez nos restaurants partenaires, commandez en ligne et faites-vous livrer.",
-    highlights: ["Commande en ligne chez nos partenaires", "Livraison à domicile", "Paiement à la livraison"],
+      "Des adresses vérifiées une à une : niveau de garantie, pratiques en cuisine et horaires. Chez nos restaurants partenaires, commandez sur CeliacCare et faites-vous livrer.",
+    highlights: ["Commande en ligne chez nos partenaires", "Livraison gratuite à domicile", "Paiement à la livraison"],
   },
 
   filters: {
@@ -30,6 +30,7 @@ export const restaurants = {
     governorate: "Gouvernorat",
     guarantee: "Niveau de garantie",
     allGuarantees: "Tous les niveaux",
+    guaranteeHint: "Tous les commerces référencés sont 100\u00a0% sans gluten.",
     partnersOnly: "Partenaires seulement",
     partnersOnlyHint: "Commande en ligne",
     submit: "Filtrer",
@@ -50,9 +51,10 @@ export const restaurants = {
     suggest: "Proposer une adresse",
     seeAll: "Voir tous les restaurants",
     partnersTitle: "Restaurants partenaires",
-    partnersText: "Commande en ligne et livraison à domicile.",
+    partnersText: "Commande en ligne et livraison gratuite à domicile.",
     othersTitle: "Autres adresses vérifiées",
-    othersText: "Commandez directement auprès du restaurant, par téléphone ou WhatsApp.",
+    othersText:
+      "Pas encore disponibles à la commande sur CeliacCare : demandez-les depuis leur page, nous contactons le restaurant pour vous.",
   },
 
   howTo: {
@@ -70,7 +72,7 @@ export const restaurants = {
       },
       {
         title: "Recevez votre commande",
-        text: "Livraison à domicile et paiement à la livraison, en espèces ou par carte.",
+        text: "Livraison gratuite à domicile et paiement à la livraison, en espèces ou par carte.",
       },
     ],
     cta: "Voir les restaurants partenaires",
@@ -84,19 +86,17 @@ export const restaurants = {
   },
 
   page: {
-    orderOnline: "Commander en ligne",
     seeMenu: "Voir la carte",
     seeReviews: "Voir les avis",
   },
 
   delivery: {
     title: "Livraison & paiement",
-    text: "Ce restaurant partenaire livre à domicile. Vérifiez ces informations avant de commander.",
+    text: "Ce restaurant partenaire livre à domicile, gratuitement. Vérifiez ces informations avant de commander.",
     zone: "Zone desservie",
     zoneValue: "Gouvernorat de {governorate}",
     payment: "Paiement",
     paymentValue: "À la livraison : espèces ou carte",
-    contact: "Une question ? Contactez directement le restaurant.",
   },
 
   menu: {
@@ -108,11 +108,8 @@ export const restaurants = {
     allergen: "allergène",
     add: "Ajouter",
     unavailable: "Indisponible aujourd'hui",
-    emptyTitle: "La carte n'est pas encore en ligne",
-    emptyText: "Contactez le restaurant pour connaître ses plats sans gluten du moment.",
-    offlineTitle: "Commande en ligne indisponible",
-    offlineText:
-      "Ce restaurant n'est pas encore partenaire de CeliacCare : contactez-le directement pour commander ou réserver.",
+    /** Above the "Demander sur CeliacCare" box when no dish is online yet */
+    emptyText: "Ses plats sans gluten et leurs prix ne sont pas encore publiés sur CeliacCare.",
   },
 
   cart: {
@@ -125,10 +122,6 @@ export const restaurants = {
   /** Shared "fiche adresse" blocks (components/directory). Same keys in producers.sheet. */
   sheet: {
     title: "Fiche adresse",
-    links: "Sur le web",
-    instagram: "Instagram",
-    facebook: "Facebook",
-    networkOf: "{network} de {name}",
     yes: "oui",
     notDeclared: "non déclaré",
     reportTitle: "Une information a changé ?",

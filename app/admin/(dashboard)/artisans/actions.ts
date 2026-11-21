@@ -13,8 +13,8 @@ import {
   isModelError,
   modelErrorState,
   refreshTags,
-  saveWithPhoto,
-  withPhotoErrors,
+  saveWithPhotoAndLogo,
+  withPhotoAndLogoErrors,
   zodFieldErrors,
   type FieldErrors,
 } from "@/components/admin/catalog/action-helpers";
@@ -39,7 +39,7 @@ import {
 import { deleteProducer } from "@/models/deleters/producers";
 import { createProducer } from "@/models/posters/producers";
 import { setProducerActive, updateProducer } from "@/models/puters/producers";
-import { GUARANTEE_LEVELS, PRODUCER_TYPES } from "@/types";
+import { LISTED_GUARANTEE_LEVELS, PRODUCER_TYPES } from "@/types";
 import type { ProducerInput, SlugDeleteResult } from "@/types/admin-data";
 
 /* ==========================================================================
@@ -73,7 +73,8 @@ const producerSchema = z.object({
   // Horaires
   openingHours: optionalText(500),
   // Garantie & pratiques
-  guaranteeLevel: z.enum(GUARANTEE_LEVELS, { error: "Choisissez le niveau de garantie." }),
+  // Policy "100 % sans gluten only": the older levels (NATURALLY_GF, TRACES_RISK) can no longer be chosen
+  guaranteeLevel: z.enum(LISTED_GUARANTEE_LEVELS, { error: "Choisissez le niveau de garantie." }),
   dedicatedSpace: checkbox,
   dedicatedUtensils: checkbox,
   trainedStaff: checkbox,
@@ -86,10 +87,10 @@ const producerSchema = z.object({
 });
 
 type ProducerForm =
-  | { ok: true; input: Omit<ProducerInput, "image">; values: Record<string, string> }
+  | { ok: true; input: Omit<ProducerInput, "image" | "logo">; values: Record<string, string> }
   | { ok: false; state: ActionState };
 
-/** Read and check the form (fields + photo). Nothing is saved or uploaded here. */
+/** Read and check the form (fields + photo + logo). Nothing is saved or uploaded here. */
 function readProducerForm(formData: FormData): ProducerForm {
   const values = echoValues(formData);
   const raw = formDataToObject(formData);
@@ -104,7 +105,7 @@ function readProducerForm(formData: FormData): ProducerForm {
     const missing = parsed.data.latitude === null ? "latitude" : "longitude";
     fieldErrors = { ...fieldErrors, [missing]: [`Indiquez aussi la ${missing}, ou videz les deux champs.`] };
   }
-  fieldErrors = withPhotoErrors(fieldErrors, formData);
+  fieldErrors = withPhotoAndLogoErrors(fieldErrors, formData);
 
   if (!parsed.success || hasFieldErrors(fieldErrors)) return { ok: false, state: invalidState(fieldErrors, values) };
   return { ok: true, input: parsed.data, values };
@@ -119,7 +120,9 @@ export async function createProducerAction(_prev: ActionState, formData: FormDat
   const form = readProducerForm(formData);
   if (!form.ok) return answer(form.state);
 
-  const saved = await saveWithPhoto(formData, "producers", form.values, (image) => createProducer({ ...form.input, image }));
+  const saved = await saveWithPhotoAndLogo(formData, "producers", form.values, (image, logo) =>
+    createProducer({ ...form.input, image, logo }),
+  );
   if (!saved.ok) return answer(saved.state);
 
   const { result } = saved;
@@ -137,8 +140,8 @@ export async function updateProducerAction(id: number, _prev: ActionState, formD
   const form = readProducerForm(formData);
   if (!form.ok) return answer(form.state);
 
-  const saved = await saveWithPhoto(formData, "producers", form.values, (image) =>
-    updateProducer(producerId.data, { ...form.input, image }),
+  const saved = await saveWithPhotoAndLogo(formData, "producers", form.values, (image, logo) =>
+    updateProducer(producerId.data, { ...form.input, image, logo }),
   );
   if (!saved.ok) return answer(saved.state);
 
@@ -194,7 +197,7 @@ export async function deleteProducerAction(id: number): Promise<ActionState> {
     return answer(modelErrorState(error));
   }
 
-  await deletePhotos(result.imagesToDelete);
+  await deletePhotos(result.imagesToDelete); // its photo and its logo
   await logAdminAction(admin, "delete", "producer", result.id, result.slug, await getIpHash());
   refreshProducerPages(result.slug);
   redirect(`${LIST_PATH}?ok=deleted`);

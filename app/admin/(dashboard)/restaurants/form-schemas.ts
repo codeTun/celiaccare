@@ -18,7 +18,7 @@ import {
   slug,
   tunisianPhone,
 } from "@/lib/validators";
-import { DISH_COURSES, GUARANTEE_LEVELS } from "@/types";
+import { DISH_COURSES, LISTED_GUARANTEE_LEVELS } from "@/types";
 import type { DishInput, ImageChange, RestaurantInput } from "@/types/admin-data";
 
 /* ==========================================================================
@@ -85,7 +85,8 @@ const restaurantFields = z.object({
   // Horaires
   openingHours: optionalText(300),
   // Garantie & pratiques
-  guaranteeLevel: z.enum(GUARANTEE_LEVELS, { error: "Choisissez un niveau de garantie." }),
+  // Policy "100 % sans gluten only": the older levels (NATURALLY_GF, TRACES_RISK) can no longer be chosen
+  guaranteeLevel: z.enum(LISTED_GUARANTEE_LEVELS, { error: "Choisissez un niveau de garantie." }),
   dedicatedKitchen: checkbox,
   dedicatedUtensils: checkbox,
   trainedStaff: checkbox,
@@ -98,7 +99,7 @@ const restaurantFields = z.object({
     .preprocess(emptyToUndefined, dateInput.optional())
     .transform((value) => value ?? null)
     .refine((date) => date === null || date.getTime() <= Date.now() + 36 * 60 * 60 * 1000, "La date ne peut pas être dans le futur."),
-  deliveryFee: optionalPriceInDinars,
+  // No delivery fee: delivery is free for the customer (the column is saved as 0).
   deliveryTime: optionalText(40),
   minOrder: optionalPriceInDinars,
   priceRange: z.coerce
@@ -118,10 +119,7 @@ export const restaurantFormSchema = restaurantFields.superRefine((data, ctx) => 
     const path = data.latitude === null ? "latitude" : "longitude";
     ctx.addIssue({ code: "custom", path: [path], message: "Indiquez la latitude ET la longitude (ou aucune des deux)." });
   }
-  // Ordering online needs the delivery conditions.
-  if (data.isPartner && data.deliveryFee === null) {
-    ctx.addIssue({ code: "custom", path: ["deliveryFee"], message: "Indiquez les frais de livraison (0 si elle est gratuite)." });
-  }
+  // Ordering online needs the delivery delay.
   if (data.isPartner && data.deliveryTime === null) {
     ctx.addIssue({ code: "custom", path: ["deliveryTime"], message: "Indiquez le délai de livraison (ex. 30–45 min)." });
   }
@@ -129,14 +127,14 @@ export const restaurantFormSchema = restaurantFields.superRefine((data, ctx) => 
 
 export type RestaurantFormData = z.output<typeof restaurantFormSchema>;
 
-/** Validated form → what models/posters|puters/restaurants expect. */
-export function toRestaurantInput(data: RestaurantFormData, image: ImageChange): RestaurantInput {
+/** Validated form (+ what to do with the photo and the logo) → what models/posters|puters/restaurants expect. */
+export function toRestaurantInput(data: RestaurantFormData, image: ImageChange, logo: ImageChange): RestaurantInput {
   return {
     ...data,
-    deliveryFee: data.deliveryFee ?? 0,
     deliveryTime: data.deliveryTime ?? DEFAULT_DELIVERY_TIME,
     minOrder: data.minOrder ?? 0,
     image,
+    logo,
   };
 }
 

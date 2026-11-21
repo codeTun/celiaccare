@@ -109,90 +109,169 @@ export function modelErrorState(error: unknown, values?: Record<string, string>)
 }
 
 /* --------------------------------------------------------------------------
-   Photos (Cloudinary). Field names are those of <ImageUploadField>:
-   "image" (the file) and "removeImage" (the "Retirer la photo actuelle" box).
+   Photos and logos (Cloudinary). Each image is one <ImageUploadField>: a file
+   input and a "Retirer …" box. The photo uses "image" / "removeImage"; the
+   official logo of the artisans uses "logo" / "removeLogo" (folder "logos").
    -------------------------------------------------------------------------- */
 
 export type PhotoFolder = "categories" | "producers" | "products";
 
-const PHOTO_FIELD = "image";
-const REMOVE_PHOTO_FIELD = "removeImage";
+/** Cloudinary folder of an image: "celiaccare/<folder>" (lib/cloudinary.ts uploadImage). */
+type ImageFolder = PhotoFolder | "logos";
 
-const RESELECT_PHOTO = "Choisissez à nouveau la photo : elle n'a pas été envoyée car d'autres champs sont à corriger.";
-const UPLOAD_FAILED = "L'envoi de la photo vers Cloudinary a échoué. Réessayez, ou enregistrez sans changer la photo.";
+/** The two inputs of one <ImageUploadField> and the messages shown under it. */
+type ImageInput = {
+  /** Name of the file input (`name` prop). */
+  name: string;
+  /** Name of the "Retirer …" box (`removeName` prop). */
+  removeName: string;
+  /** The form comes back with errors: the browser forgot the chosen file. */
+  reselect: string;
+  uploadFailed: string;
+};
+
+const PHOTO_INPUT: ImageInput = {
+  name: "image",
+  removeName: "removeImage",
+  reselect: "Choisissez à nouveau la photo : elle n'a pas été envoyée car d'autres champs sont à corriger.",
+  uploadFailed: "L'envoi de la photo vers Cloudinary a échoué. Réessayez, ou enregistrez sans changer la photo.",
+};
+
+const LOGO_INPUT: ImageInput = {
+  name: "logo",
+  removeName: "removeLogo",
+  reselect: "Choisissez à nouveau le logo : il n'a pas été envoyé car d'autres champs sont à corriger.",
+  uploadFailed: "L'envoi du logo vers Cloudinary a échoué. Réessayez, ou enregistrez sans changer le logo.",
+};
 
 /**
- * Add the photo problems to the field errors, BEFORE anything is uploaded or saved:
- * wrong type / too heavy; and, when other fields are wrong, a reminder to choose the
- * photo again (the browser forgets the chosen file after the submission).
+ * Add the image problems to the field errors, BEFORE anything is uploaded or saved:
+ * wrong type / too heavy; and, when the form comes back with errors, a reminder to
+ * choose each image again (the browser forgets the chosen files after the submission).
  */
-export function withPhotoErrors(fieldErrors: FieldErrors, formData: FormData): FieldErrors {
-  const file = formData.get(PHOTO_FIELD);
-  if (isEmptyFile(file)) return fieldErrors;
-  const problem = validateImageFile(file as File);
-  if (problem) return { ...fieldErrors, [PHOTO_FIELD]: [problem] };
-  // (Without Cloudinary the photo is ignored anyway: no reminder then.)
-  if (hasFieldErrors(fieldErrors) && isCloudinaryConfigured()) return { ...fieldErrors, [PHOTO_FIELD]: [RESELECT_PHOTO] };
-  return fieldErrors;
+function withImageErrors(fieldErrors: FieldErrors, formData: FormData, inputs: readonly ImageInput[]): FieldErrors {
+  let errors = fieldErrors;
+  for (const input of inputs) {
+    const file = formData.get(input.name);
+    if (isEmptyFile(file)) continue;
+    const problem = validateImageFile(file as File);
+    if (problem) errors = { ...errors, [input.name]: [problem] };
+  }
+  // (Without Cloudinary the chosen images are ignored anyway: no reminder then.)
+  if (!hasFieldErrors(errors) || !isCloudinaryConfigured()) return errors;
+  for (const input of inputs) {
+    if (!isEmptyFile(formData.get(input.name)) && !errors[input.name]?.length) {
+      errors = { ...errors, [input.name]: [input.reselect] };
+    }
+  }
+  return errors;
 }
 
-/** Delete photos that are not used any more. Never throws (deleteImage ignores Cloudinary errors). */
+/** The photo checks (field "image"), for the forms of categories and products. */
+export function withPhotoErrors(fieldErrors: FieldErrors, formData: FormData): FieldErrors {
+  return withImageErrors(fieldErrors, formData, [PHOTO_INPUT]);
+}
+
+/** The photo AND logo checks (fields "image" and "logo"), for the artisan form. */
+export function withPhotoAndLogoErrors(fieldErrors: FieldErrors, formData: FormData): FieldErrors {
+  return withImageErrors(fieldErrors, formData, [PHOTO_INPUT, LOGO_INPUT]);
+}
+
+/** Delete photos (or logos) that are not used any more. Never throws (deleteImage ignores Cloudinary errors). */
 export async function deletePhotos(publicIds: readonly (string | null | undefined)[]) {
   await Promise.all(publicIds.map((publicId) => deleteImage(publicId)));
 }
 
-type PreparedPhoto = {
-  /** What the model must do with the photo (undefined = keep the current one, null = remove it). */
+type PreparedImage = {
+  /** What the model must do with the image (undefined = keep the current one, null = remove it). */
   change: ImageChange;
-  /** Cloudinary id of the photo uploaded by this request (deleted again if the save fails). */
+  /** Cloudinary id of the image uploaded by this request (deleted again if the save fails). */
   uploadedPublicId: string | null;
-  /** A new photo was chosen but Cloudinary is not configured: the sheet is saved without it. */
+  /** A new image was chosen but Cloudinary is not configured: the sheet is saved without it. */
   skipped: boolean;
 };
 
-async function preparePhoto(formData: FormData, folder: PhotoFolder): Promise<PreparedPhoto> {
-  const file = formData.get(PHOTO_FIELD);
+async function prepareImage(formData: FormData, input: ImageInput, folder: ImageFolder): Promise<PreparedImage> {
+  const file = formData.get(input.name);
   if (!isEmptyFile(file)) {
     if (!isCloudinaryConfigured()) return { change: undefined, uploadedPublicId: null, skipped: true };
     const image = await uploadImage(file as File, folder);
     return { change: { url: image.url, publicId: image.publicId }, uploadedPublicId: image.publicId, skipped: false };
   }
-  if (formData.get(REMOVE_PHOTO_FIELD) === "on") return { change: null, uploadedPublicId: null, skipped: false };
+  if (formData.get(input.removeName) === "on") return { change: null, uploadedPublicId: null, skipped: false };
   return { change: undefined, uploadedPublicId: null, skipped: false };
 }
 
+/** `photoSkipped`: a new photo (or logo) was chosen but not sent, because Cloudinary is not configured. */
 export type SaveResult<T> = { ok: true; result: T; photoSkipped: boolean } | { ok: false; state: ActionState };
 
 /**
- * Save a sheet that has a photo, with Cloudinary kept tidy:
- *  1. the new photo is uploaded (only now: the fields were validated before);
- *  2. `save(image)` calls the model (createX / updateX);
- *  3. the save failed → the photo uploaded in step 1 is deleted again;
- *     the save worked → the photos the model replaced or removed are deleted.
+ * Save a sheet that has images, with Cloudinary kept tidy:
+ *  1. the new images are uploaded (only now: the fields were validated before);
+ *  2. `save(changes)` calls the model (createX / updateX), one change per image, in order;
+ *  3. an upload or the save failed → the images uploaded in step 1 are deleted again;
+ *     the save worked → the images the model replaced or removed are deleted.
  * Returns the model result, or the error state to send back to the form.
  */
-export async function saveWithPhoto<T extends { imagesToDelete: string[] }>(
+async function saveWithImages<T extends { imagesToDelete: string[] }>(
+  formData: FormData,
+  images: readonly { input: ImageInput; folder: ImageFolder }[],
+  values: Record<string, string>,
+  save: (changes: ImageChange[]) => Promise<T>,
+): Promise<SaveResult<T>> {
+  const prepared: PreparedImage[] = [];
+  for (const { input, folder } of images) {
+    try {
+      prepared.push(await prepareImage(formData, input, folder));
+    } catch (error) {
+      console.error(`[admin catalogue] ${input.name} upload failed`, error);
+      await deletePhotos(prepared.map((image) => image.uploadedPublicId)); // already sent by this request
+      // The other chosen images were not saved either: ask to choose them again.
+      const reminders: FieldErrors = Object.fromEntries(
+        images
+          .filter((other) => other.input !== input && !isEmptyFile(formData.get(other.input.name)))
+          .map((other) => [other.input.name, [other.input.reselect]]),
+      );
+      return { ok: false, state: invalidState({ ...reminders, [input.name]: [input.uploadFailed] }, values) };
+    }
+  }
+
+  let result: T;
+  try {
+    result = await save(prepared.map((image) => image.change));
+  } catch (error) {
+    await deletePhotos(prepared.map((image) => image.uploadedPublicId));
+    return { ok: false, state: modelErrorState(error, values) };
+  }
+
+  await deletePhotos(result.imagesToDelete);
+  return { ok: true, result, photoSkipped: prepared.some((image) => image.skipped) };
+}
+
+/** Save a sheet that has a photo (categories, products): see saveWithImages. */
+export function saveWithPhoto<T extends { imagesToDelete: string[] }>(
   formData: FormData,
   folder: PhotoFolder,
   values: Record<string, string>,
   save: (image: ImageChange) => Promise<T>,
 ): Promise<SaveResult<T>> {
-  let photo: PreparedPhoto;
-  try {
-    photo = await preparePhoto(formData, folder);
-  } catch (error) {
-    console.error("[admin catalogue] photo upload failed", error);
-    return { ok: false, state: invalidState({ [PHOTO_FIELD]: [UPLOAD_FAILED] }, values) };
-  }
+  return saveWithImages(formData, [{ input: PHOTO_INPUT, folder }], values, ([image]) => save(image));
+}
 
-  let result: T;
-  try {
-    result = await save(photo.change);
-  } catch (error) {
-    await deletePhotos([photo.uploadedPublicId]);
-    return { ok: false, state: modelErrorState(error, values) };
-  }
-
-  await deletePhotos(result.imagesToDelete);
-  return { ok: true, result, photoSkipped: photo.skipped };
+/** Save a sheet that has a photo AND an official logo (artisans): see saveWithImages. */
+export function saveWithPhotoAndLogo<T extends { imagesToDelete: string[] }>(
+  formData: FormData,
+  folder: PhotoFolder,
+  values: Record<string, string>,
+  save: (image: ImageChange, logo: ImageChange) => Promise<T>,
+): Promise<SaveResult<T>> {
+  return saveWithImages(
+    formData,
+    [
+      { input: PHOTO_INPUT, folder },
+      { input: LOGO_INPUT, folder: "logos" },
+    ],
+    values,
+    ([image, logo]) => save(image, logo),
+  );
 }

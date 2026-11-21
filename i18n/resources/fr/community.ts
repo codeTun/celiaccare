@@ -81,6 +81,9 @@ export const community = {
     nameLength: "Votre prénom doit contenir entre 2 et 40 caractères.",
     ratingRequired: "Choisissez une note de 1 à 5 étoiles.",
     commentLength: "Votre avis doit contenir entre 10 et 1000 caractères.",
+    /** A review is public: no phone number, e-mail, web address or social account (lib/contacts.ts) */
+    noContact:
+      "Pas de numéro de téléphone, d'e-mail, de lien ni de compte de réseau social dans un avis : les commandes passent par CeliacCare.",
     reasonRequired: "Choisissez un motif.",
     messageLength: "Votre message doit contenir entre 10 et 1000 caractères.",
     contactInvalid: "Indiquez une adresse e-mail valide ou un numéro tunisien à 8 chiffres.",

@@ -16,7 +16,7 @@ import { getCategories } from "@/models/fetchers/categories";
 import { getIngredients } from "@/models/fetchers/ingredients";
 import { getProducers } from "@/models/fetchers/producers";
 import { getPriceRange, getProducts } from "@/models/fetchers/products";
-import { GUARANTEE_LEVELS, type Locale } from "@/types";
+import { LISTED_GUARANTEE_LEVELS, type Locale } from "@/types";
 
 /* ==========================================================================
    /fr/produits — the product catalogue (spec EF-01, EF-02, EF-04).
@@ -56,9 +56,9 @@ export default async function ProductsPage({ searchParams }: PageProps<"/[lang]/
         title={products.hero.title}
         description={products.hero.description}
       >
-        {/* The three guarantee levels: a legend that is also a shortcut to filter by level */}
+        {/* The guarantee levels a listed business can have: a legend that is also a shortcut to filter by level */}
         <ul aria-label={products.hero.legendLabel} className="flex flex-wrap items-center gap-2">
-          {GUARANTEE_LEVELS.map((level) => (
+          {LISTED_GUARANTEE_LEVELS.map((level) => (
             <li key={level}>
               <Link
                 href={catalogHref(lang, { guarantee: level })}
@@ -77,6 +77,7 @@ export default async function ProductsPage({ searchParams }: PageProps<"/[lang]/
             </Link>
           </li>
         </ul>
+        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink-muted">{common.guarantee.policy}</p>
       </PageHero>
 
       <Suspense fallback={<CatalogSkeleton label={common.actions.loading} />}>

@@ -3,6 +3,7 @@ import "server-only";
 import { and } from "@prisma/orm-postgres/orm-client";
 
 import { db } from "@/lib/prisma";
+import { siteConfig } from "@/lib/site-config";
 import { tunisDayKey } from "@/lib/tunisia";
 import { publicProducers, publicProducts, publicRestaurants } from "@/models/fetchers/mappers";
 import {
@@ -27,7 +28,9 @@ import { listOrders } from "./orders";
  * Rules used everywhere in this file:
  *  - CANCELLED orders are left out of every figure (revenue, order counts, averages, top lists);
  *  - "today" and "this month" follow the Tunis calendar (Africa/Tunis), like the order counters;
- *  - amounts are in millimes; item revenue is the sum of line totals (delivery fees excluded).
+ *  - amounts are in millimes; item revenue is the sum of line totals (delivery fees excluded);
+ *  - CeliacCare's commission = siteConfig.commissionRate × the orders' merchandise subtotal
+ *    (paid by the merchants: customers pay the merchants' prices only, delivery is free).
  */
 
 /* --------------------------------------------------------------------------
@@ -190,10 +193,18 @@ export type MonthToDateComparison = {
   /** From the 1st of this month (Tunis) to now, millimes. */
   revenue: number;
   orders: number;
+  /** CeliacCare's commission on the merchandise subtotal of these orders, millimes. */
+  commission: number;
   /** From the 1st of last month to the same day and hour of last month, millimes. */
   previousRevenue: number;
   previousOrders: number;
+  previousCommission: number;
 };
+
+/** CeliacCare's commission on a merchandise subtotal (millimes, rounded to the millime). */
+function commissionOn(merchandise: number) {
+  return Math.round(merchandise * siteConfig.commissionRate);
+}
 
 /**
  * Compare like with like: on the 15th at 14:00, this month's revenue so far is compared with
@@ -211,8 +222,10 @@ export async function getMonthToDateComparison(now: Date = new Date()): Promise<
     db.raw.sql`
       SELECT
         COALESCE(SUM(o."total") FILTER (WHERE o."createdAt" >= b."thisMonth"), 0) AS "revenue",
+        COALESCE(SUM(o."subtotal") FILTER (WHERE o."createdAt" >= b."thisMonth"), 0) AS "merchandise",
         COUNT(o."id") FILTER (WHERE o."createdAt" >= b."thisMonth") AS "orders",
         COALESCE(SUM(o."total") FILTER (WHERE o."createdAt" < b."lastMonthCut"), 0) AS "previousRevenue",
+        COALESCE(SUM(o."subtotal") FILTER (WHERE o."createdAt" < b."lastMonthCut"), 0) AS "previousMerchandise",
         COUNT(o."id") FILTER (WHERE o."createdAt" < b."lastMonthCut") AS "previousOrders"
       FROM (
         SELECT
@@ -231,8 +244,10 @@ export async function getMonthToDateComparison(now: Date = new Date()): Promise<
     `
       .returnsRow({
         revenue: "pg/int8number@1",
+        merchandise: "pg/int8number@1",
         orders: "pg/int8number@1",
         previousRevenue: "pg/int8number@1",
+        previousMerchandise: "pg/int8number@1",
         previousOrders: "pg/int8number@1",
       })
       .build(),
@@ -241,8 +256,10 @@ export async function getMonthToDateComparison(now: Date = new Date()): Promise<
   return {
     revenue: row?.revenue ?? 0,
     orders: row?.orders ?? 0,
+    commission: commissionOn(row?.merchandise ?? 0),
     previousRevenue: row?.previousRevenue ?? 0,
     previousOrders: row?.previousOrders ?? 0,
+    previousCommission: commissionOn(row?.previousMerchandise ?? 0),
   };
 }
 

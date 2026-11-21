@@ -14,12 +14,28 @@ import type { ContactDict } from "@/i18n/resources/fr/contact";
 import type { ActionState } from "@/lib/validators";
 import { MESSAGE_TOPICS, type Locale, type MessageTopic } from "@/types";
 
+/**
+ * A request to order from a business that cannot be ordered from on the site yet
+ * (/contact?sujet=commande&artisan=…, &restaurant=… or &produit=…): texts already written by the
+ * server with the business name read from the database.
+ */
+export type OrderRequest = {
+  /** Default value of the "Objet" field, e.g. "Demande de commande : LilyDelights" */
+  subject: string;
+  /** Example text of the message while the topic stays "Une commande" */
+  messagePlaceholder: string;
+  /** Short note above the form: we contact the business for the visitor */
+  notice: string;
+};
+
 export type ContactFormProps = {
   lang: Locale;
   /** sendContactMessage (app/[lang]/contact/actions.ts) with the page language already bound */
   action: (state: ActionState, formData: FormData) => Promise<ActionState>;
   /** Topic chosen in the URL (/contact?sujet=PARTNERSHIP), GENERAL otherwise */
   defaultTopic: MessageTopic;
+  /** Order request for a published business or product (/contact?sujet=commande&artisan=…), null otherwise */
+  orderRequest?: OrderRequest | null;
   /** dict.contact.form */
   labels: ContactDict["form"];
 };
@@ -45,6 +61,7 @@ function ContactFormRound({
   lang,
   action,
   defaultTopic,
+  orderRequest = null,
   labels,
   onWriteAnother,
 }: ContactFormProps & { onWriteAnother: () => void }) {
@@ -58,6 +75,9 @@ function ContactFormRound({
   const selectedTopic = isTopic(values.topic) ? values.topic : defaultTopic;
   // Topic currently chosen: the examples of the "subject" and "message" fields follow it.
   const [topic, setTopic] = useState<MessageTopic>(defaultTopic);
+  // Order request for a business: its own message example while the topic stays "Une commande".
+  const messagePlaceholder =
+    orderRequest && topic === "ORDER" ? orderRequest.messagePlaceholder : labels.messagePlaceholders[topic];
 
   const formRef = useRef<HTMLFormElement>(null);
   const successRef = useRef<HTMLDivElement>(null);
@@ -86,6 +106,8 @@ function ContactFormRound({
     // noValidate: every check is done on the server, with messages in the page language.
     <form ref={formRef} action={formAction} noValidate className="relative space-y-5">
       {state.status === "error" && state.message ? <Alert tone="error">{state.message}</Alert> : null}
+      {/* About this business only while the topic stays "Une commande" */}
+      {orderRequest && topic === "ORDER" ? <Alert tone="info">{orderRequest.notice}</Alert> : null}
 
       <HoneypotField name="website" />
 
@@ -167,7 +189,8 @@ function ContactFormRound({
         required
         maxLength={150}
         placeholder={labels.subjectPlaceholders[topic]}
-        defaultValue={values.subject}
+        // After an error, what the visitor sent; otherwise the subject written for an order request.
+        defaultValue={values.subject ?? orderRequest?.subject}
         error={errors.subject}
       />
 
@@ -177,7 +200,7 @@ function ContactFormRound({
         required
         rows={6}
         maxLength={3000}
-        placeholder={labels.messagePlaceholders[topic]}
+        placeholder={messagePlaceholder}
         hint={labels.messageHint}
         defaultValue={values.message}
         error={errors.message}

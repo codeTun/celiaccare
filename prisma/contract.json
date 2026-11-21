@@ -130,6 +130,10 @@
                 "value": "CERTIFIED"
               },
               {
+                "name": "DEDICATED",
+                "value": "DEDICATED"
+              },
+              {
                 "name": "NATURALLY_GF",
                 "value": "NATURALLY_GF"
               },
@@ -288,6 +292,10 @@
               {
                 "name": "COOPERATIVE",
                 "value": "COOPERATIVE"
+              },
+              {
+                "name": "MANUFACTURER",
+                "value": "MANUFACTURER"
               }
             ]
           },
@@ -2750,6 +2758,20 @@
                   "kind": "scalar"
                 }
               },
+              "logoPublicId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "logoUrl": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "longitude": {
                 "nullable": true,
                 "type": {
@@ -2916,6 +2938,12 @@
                 },
                 "latitude": {
                   "column": "latitude"
+                },
+                "logoPublicId": {
+                  "column": "logoPublicId"
+                },
+                "logoUrl": {
+                  "column": "logoUrl"
                 },
                 "longitude": {
                   "column": "longitude"
@@ -3739,6 +3767,20 @@
                   "kind": "scalar"
                 }
               },
+              "logoPublicId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "logoUrl": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "longitude": {
                 "nullable": true,
                 "type": {
@@ -3958,6 +4000,12 @@
                 },
                 "latitude": {
                   "column": "latitude"
+                },
+                "logoPublicId": {
+                  "column": "logoPublicId"
+                },
+                "logoUrl": {
+                  "column": "logoUrl"
                 },
                 "longitude": {
                   "column": "longitude"
@@ -5936,13 +5984,13 @@
             "Producer": {
               "checks": [
                 {
-                  "expression": "\"guaranteeLevel\" IN ('CERTIFIED', 'NATURALLY_GF', 'TRACES_RISK')",
-                  "name": "Producer_guaranteeLevel_check_787b944c",
+                  "expression": "\"guaranteeLevel\" IN ('CERTIFIED', 'DEDICATED', 'NATURALLY_GF', 'TRACES_RISK')",
+                  "name": "Producer_guaranteeLevel_check_114d2c40",
                   "prefix": "Producer_guaranteeLevel_check"
                 },
                 {
-                  "expression": "\"type\" IN ('BAKERY', 'SPECIALTY_SHOP', 'GROCERY', 'HOME_SELLER', 'COOPERATIVE')",
-                  "name": "Producer_type_check_ff011653",
+                  "expression": "\"type\" IN ('BAKERY', 'SPECIALTY_SHOP', 'GROCERY', 'HOME_SELLER', 'COOPERATIVE', 'MANUFACTURER')",
+                  "name": "Producer_type_check_cd2783a0",
                   "prefix": "Producer_type_check"
                 }
               ],
@@ -6061,6 +6109,16 @@
                   "dataType": "pg/float8",
                   "nullable": true
                 },
+                "logoPublicId": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "logoUrl": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
                 "longitude": {
                   "codecId": "pg/float8@1",
                   "dataType": "pg/float8",
@@ -6165,8 +6223,8 @@
             "Product": {
               "checks": [
                 {
-                  "expression": "\"guaranteeLevel\" IN ('CERTIFIED', 'NATURALLY_GF', 'TRACES_RISK')",
-                  "name": "Product_guaranteeLevel_check_787b944c",
+                  "expression": "\"guaranteeLevel\" IN ('CERTIFIED', 'DEDICATED', 'NATURALLY_GF', 'TRACES_RISK')",
+                  "name": "Product_guaranteeLevel_check_114d2c40",
                   "prefix": "Product_guaranteeLevel_check"
                 }
               ],
@@ -6686,8 +6744,8 @@
             "Restaurant": {
               "checks": [
                 {
-                  "expression": "\"guaranteeLevel\" IN ('CERTIFIED', 'NATURALLY_GF', 'TRACES_RISK')",
-                  "name": "Restaurant_guaranteeLevel_check_787b944c",
+                  "expression": "\"guaranteeLevel\" IN ('CERTIFIED', 'DEDICATED', 'NATURALLY_GF', 'TRACES_RISK')",
+                  "name": "Restaurant_guaranteeLevel_check_114d2c40",
                   "prefix": "Restaurant_guaranteeLevel_check"
                 }
               ],
@@ -6836,6 +6894,16 @@
                 "latitude": {
                   "codecId": "pg/float8@1",
                   "dataType": "pg/float8",
+                  "nullable": true
+                },
+                "logoPublicId": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "logoUrl": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
                   "nullable": true
                 },
                 "longitude": {
@@ -7147,6 +7215,7 @@
               "kind": "valueSet",
               "values": [
                 "CERTIFIED",
+                "DEDICATED",
                 "NATURALLY_GF",
                 "TRACES_RISK"
               ]
@@ -7216,7 +7285,8 @@
                 "SPECIALTY_SHOP",
                 "GROCERY",
                 "HOME_SELLER",
-                "COOPERATIVE"
+                "COOPERATIVE",
+                "MANUFACTURER"
               ]
             },
             "RefusalReason": {
@@ -7276,7 +7346,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "6f3417227960ab4c38b3b17f60a6be9b883e8f2d6547eb48d2d7b3a3cb01fb76"
+    "storageHash": "39c01f20e1730337c441946bad8270c6f06dc294551d0ef86c2bffbc576b3a3c"
   },
   "execution": {
     "executionHash": "09b774c54b0193861e14afeb8761361ec5fcf86759e6b08bb22cffdb00ce25ea",

@@ -13,7 +13,7 @@ import type { Locale } from "@/types";
    ========================================================================== */
 
 /** Date of the last update of the legal pages (shown at the top of each page). */
-export const LEGAL_UPDATED_AT = "2026-11-15";
+export const LEGAL_UPDATED_AT = "2026-11-21";
 
 const email = `[${siteConfig.email}](mailto:${siteConfig.email})`;
 const phone = `[${siteConfig.phone}](tel:${siteConfig.phone.replace(/\s/g, "")})`;
@@ -643,7 +643,7 @@ export const termsOfUse: Record<Locale, ContentSection[]> = {
       blocks: [
         {
           type: "paragraph",
-          text: "CeliacCare est un **annuaire et un service de mise en relation**. Le site présente des produits sans gluten d'artisans et de commerces tunisiens ainsi que des restaurants partenaires (« restaurants conventionnés »), et transmet vos commandes au commerçant concerné.",
+          text: "CeliacCare est une **plateforme de commande intermédiaire**. Le site présente des produits sans gluten d'artisans et de commerces tunisiens ainsi que des restaurants partenaires (« restaurants conventionnés »), et **toutes les commandes passent par CeliacCare**, qui les transmet au commerçant concerné.",
         },
         {
           type: "list",
@@ -651,6 +651,8 @@ export const termsOfUse: Record<Locale, ContentSection[]> = {
             "CeliacCare vérifie les informations publiées (ingrédients, pratiques de préparation, certificats éventuels) et affiche pour chaque fiche un niveau de garantie, sa source et sa date de vérification.",
             "CeliacCare **ne fabrique pas et ne cuisine pas** les produits et les plats proposés.",
             "CeliacCare transmet les commandes aux commerçants et coordonne leur livraison.",
+            "CeliacCare est votre **seul interlocuteur** pour vos commandes : prise de commande, paiement à la livraison, suivi et réclamations. Le téléphone, l'e-mail et les réseaux sociaux des commerçants ne sont pas publiés sur le site ; pour un commerce qui n'est pas encore disponible à la commande, [faites-nous une demande](/contact?sujet=commande) et nous le contactons pour vous.",
+            "CeliacCare est rémunéré par une **commission versée par les commerçants partenaires** sur leurs ventes. Elle n'est jamais ajoutée au prix que vous payez.",
           ],
         },
       ],
@@ -679,8 +681,8 @@ export const termsOfUse: Record<Locale, ContentSection[]> = {
           items: [
             "Vous composez votre panier : soit des produits d'artisans, soit les plats d'un seul restaurant.",
             "Vous indiquez votre nom, un numéro de téléphone tunisien valide et votre adresse de livraison complète : ces champs sont obligatoires.",
-            "Un récapitulatif (articles, prix, frais et délai de livraison) s'affiche : la commande n'est envoyée qu'après votre confirmation.",
-            "Vous recevez une référence pour suivre votre commande. Le commerçant ou notre équipe peut vous appeler pour la confirmer.",
+            "Un récapitulatif (articles, prix et délai de livraison) s'affiche : la commande n'est envoyée qu'après votre confirmation.",
+            "Vous recevez une référence pour suivre votre commande. Notre équipe vous appelle pour la confirmer.",
           ],
         },
         {
@@ -715,9 +717,9 @@ export const termsOfUse: Record<Locale, ContentSection[]> = {
           type: "list",
           items: [
             "Le paiement se fait **à la livraison**, en espèces ou, lorsque c'est proposé, par carte bancaire au moment de la remise. Aucun paiement en ligne n'est demandé.",
-            "Les zones desservies, les frais, les délais et, le cas échéant, le minimum de commande sont affichés **avant** la confirmation de la commande.",
+            "La livraison est **gratuite** dans toutes les zones desservies. Les zones, les délais et, le cas échéant, le minimum de commande d'un restaurant sont affichés **avant** la confirmation de la commande.",
             "Les délais de livraison sont indicatifs. Merci de rester joignable au numéro indiqué et présent à l'adresse de livraison.",
-            "À la réception, vérifiez votre commande. En cas de problème (article manquant ou abîmé), contactez-nous au plus vite.",
+            "À la réception, vérifiez votre commande. En cas de problème (article manquant ou abîmé), contactez CeliacCare au plus vite : nous traitons la réclamation avec le commerçant.",
           ],
         },
       ],
@@ -734,7 +736,7 @@ export const termsOfUse: Record<Locale, ContentSection[]> = {
         },
         {
           type: "paragraph",
-          text: "Les informations publiées sont vérifiées avec soin, mais elles reposent en partie sur les déclarations des commerçants et peuvent évoluer. Le niveau de garantie de chaque fiche indique la fiabilité de l'information : un produit « Risque de traces » peut contenir du gluten.",
+          text: "Les informations publiées sont vérifiées avec soin, mais elles reposent en partie sur les déclarations des commerçants et peuvent évoluer. Le niveau de garantie de chaque fiche indique la fiabilité de l'information : un commerce « 100\u00a0% sans gluten » ne travaille que sans gluten mais n'est pas contrôlé par un organisme officiel.",
         },
         {
           type: "paragraph",
@@ -799,7 +801,7 @@ export const termsOfUse: Record<Locale, ContentSection[]> = {
       blocks: [
         {
           type: "paragraph",
-          text: "CeliacCare **دليل وخدمة ربط بين الحرفاء والتجار**. يعرض الموقع منتجات خالية من الغلوتين لحرفيين ومحلات تونسية، إضافة إلى مطاعم شريكة («مطاعم متعاقدة»)، ويحيل طلبياتك إلى التاجر المعني.",
+          text: "CeliacCare **منصّة طلب وسيطة**. يعرض الموقع منتجات خالية من الغلوتين لحرفيين ومحلات تونسية، إضافة إلى مطاعم شريكة («مطاعم متعاقدة»)، و**تمرّ كل الطلبيات عبر CeliacCare** الذي يحيلها إلى التاجر المعني.",
         },
         {
           type: "list",
@@ -807,6 +809,8 @@ export const termsOfUse: Record<Locale, ContentSection[]> = {
             "يتحقق CeliacCare من المعلومات المنشورة (المكوّنات، طرق التحضير، الشهادات إن وُجدت)، ويعرض لكل بطاقة مستوى الضمان ومصدره وتاريخ التحقق.",
             "CeliacCare **لا يصنع ولا يطبخ** المنتجات والأطباق المعروضة.",
             "يحيل CeliacCare الطلبيات إلى التجار وينسّق عملية توصيلها.",
+            "CeliacCare هو **الجهة الوحيدة التي تتعامل معها** في ما يخص طلبياتك: تسجيل الطلبية، الدفع عند الاستلام، المتابعة والشكاوى. لا يُنشر على الموقع هاتف التجار ولا بريدهم الإلكتروني ولا حساباتهم على شبكات التواصل؛ وإذا كان تاجر ما غير متاح للطلب بعد، [قدّم لنا طلبًا](/contact?sujet=commande) وسنتواصل معه نيابةً عنك.",
+            "يحصل CeliacCare على أجره من **عمولة يدفعها التجار الشركاء** على مبيعاتهم، ولا تُضاف أبدًا إلى السعر الذي تدفعه.",
           ],
         },
       ],
@@ -835,8 +839,8 @@ export const termsOfUse: Record<Locale, ContentSection[]> = {
           items: [
             "تُكوّن سلتك: إمّا منتجات الحرفيين، وإمّا أطباق مطعم واحد.",
             "تُدخل اسمك ورقم هاتف تونسي صالحًا وعنوان التوصيل كاملًا: هذه الحقول إجبارية.",
-            "يظهر ملخّص (المنتجات، الأسعار، معلوم التوصيل ومدّته): ولا تُرسَل الطلبية إلا بعد تأكيدك.",
-            "تتلقى مرجعًا لتتبّع طلبيتك، وقد يتصل بك التاجر أو فريقنا لتأكيدها.",
+            "يظهر ملخّص (المنتجات، الأسعار ومدّة التوصيل): ولا تُرسَل الطلبية إلا بعد تأكيدك.",
+            "تتلقى مرجعًا لتتبّع طلبيتك، ويتصل بك فريقنا لتأكيدها.",
           ],
         },
         {
@@ -871,9 +875,9 @@ export const termsOfUse: Record<Locale, ContentSection[]> = {
           type: "list",
           items: [
             "يتم الدفع **عند الاستلام**، نقدًا أو بالبطاقة البنكية عند التسليم إذا كانت هذه الخدمة متاحة. لا يُطلب منك أي دفع عبر الإنترنت.",
-            "تُعرض المناطق المشمولة ومعلوم التوصيل ومدّته، والحد الأدنى للطلب عند الاقتضاء، **قبل** تأكيد الطلبية.",
+            "التوصيل **مجاني** في كل المناطق المشمولة. وتُعرض هذه المناطق ومدّة التوصيل، والحد الأدنى للطلب لدى المطعم عند الاقتضاء، **قبل** تأكيد الطلبية.",
             "آجال التوصيل تقريبية. يرجى أن تبقى متاحًا على الرقم المذكور وحاضرًا في عنوان التوصيل.",
-            "عند الاستلام، تحقّق من طلبيتك. وفي حال وجود مشكلة (منتج ناقص أو تالف)، اتصل بنا في أسرع وقت.",
+            "عند الاستلام، تحقّق من طلبيتك. وفي حال وجود مشكلة (منتج ناقص أو تالف)، اتصل بـ CeliacCare في أسرع وقت: نعالج الشكوى مع التاجر.",
           ],
         },
       ],
@@ -890,7 +894,7 @@ export const termsOfUse: Record<Locale, ContentSection[]> = {
         },
         {
           type: "paragraph",
-          text: "يتم التحقق من المعلومات المنشورة بعناية، لكنها تستند جزئيًا إلى تصريحات التجار وقد تتغيّر. ويدلّ مستوى الضمان في كل بطاقة على درجة موثوقية المعلومة: فالمنتج الذي يحمل عبارة «احتمال وجود آثار» قد يحتوي على الغلوتين.",
+          text: "يتم التحقق من المعلومات المنشورة بعناية، لكنها تستند جزئيًا إلى تصريحات التجار وقد تتغيّر. ويدلّ مستوى الضمان في كل بطاقة على درجة موثوقية المعلومة: فالمتجر «الخالي تمامًا من الغلوتين» لا يعمل إلا بدون غلوتين لكنه لا يخضع لرقابة هيئة رسمية.",
         },
         {
           type: "paragraph",

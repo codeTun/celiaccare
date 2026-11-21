@@ -18,7 +18,7 @@ import { getDictionary } from "@/i18n/server";
 import { pageMetadata } from "@/lib/seo";
 import { isGovernorate } from "@/lib/tunisia";
 import { getRestaurants } from "@/models/fetchers/restaurants";
-import { GUARANTEE_LEVELS, type GuaranteeLevel, type Locale } from "@/types";
+import { isListedGuaranteeLevel, type Locale } from "@/types";
 
 /* /fr/restaurants — directory of gluten-free restaurants, partner restaurants
    (online ordering) first. Filters come from the URL:
@@ -75,7 +75,8 @@ function parseRestaurantSearch(params: SearchParamsRecord): RestaurantSearch {
   return {
     q: readParam(params, "q"),
     governorate: isGovernorate(governorate) ? governorate : "",
-    guarantee: (GUARANTEE_LEVELS as readonly string[]).includes(guarantee) ? (guarantee as GuaranteeLevel) : "",
+    // Policy "100 % sans gluten only": only the listed levels can be filtered
+    guarantee: isListedGuaranteeLevel(guarantee) ? guarantee : "",
     partnerOnly: readParam(params, "partenaires") === "1",
   };
 }

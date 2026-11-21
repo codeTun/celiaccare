@@ -63,7 +63,14 @@ const MAX_LINES = 30;
 const MAX_QUANTITY = 20;
 
 /**
- * Checks the cart, computes the prices and the delivery fee from the database, applies the
+ * Delivery is free for the customer, always and everywhere (CeliacCare is paid by a commission
+ * of the merchants, see siteConfig.commissionRate). Whatever DeliveryZone / Restaurant rows still
+ * hold in their fee columns, every new order is saved with this fee, so its total = its subtotal.
+ */
+const DELIVERY_FEE = 0;
+
+/**
+ * Checks the cart, computes the prices from the database, checks the delivery zone, applies the
  * "3 orders per day and per phone number" rule and saves the order (status PENDING).
  * Expected problems are returned as { ok: false, reason } (show a message to the customer).
  * Throws ModelError("INVALID_ORDER_INPUT") when the input was not validated by the Server Action.
@@ -77,10 +84,10 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
   if (!cart.ok) return cart;
   const subtotal = cart.lines.reduce((sum, line) => sum + line.lineTotal, 0);
 
-  // 2. Delivery fee and delay.
+  // 2. Delivery zone and delay (delivery itself is free).
   const delivery =
     cart.restaurant === null
-      ? await shopDelivery(input.governorate, subtotal)
+      ? await shopDelivery(input.governorate)
       : await restaurantDelivery(cart.restaurant, input.governorate, subtotal);
   if (!delivery.ok) return delivery;
 
@@ -108,7 +115,6 @@ type OrderRestaurant = {
   id: number;
   name: string;
   governorate: string;
-  deliveryFee: number;
   deliveryTime: string;
   minOrder: number;
 };
@@ -155,7 +161,7 @@ async function priceRestaurantCart(input: CreateOrderInput): Promise<PricedCart 
   if (restaurantId === null) return { ok: false, reason: "RESTAURANT_UNAVAILABLE" };
   const restaurant = await db.orm.public.Restaurant.where((r) => r.id.eq(restaurantId))
     .where({ isActive: true, isPartner: true })
-    .select("id", "name", "governorate", "deliveryFee", "deliveryTime", "minOrder")
+    .select("id", "name", "governorate", "deliveryTime", "minOrder")
     .first();
   if (!restaurant) return { ok: false, reason: "RESTAURANT_UNAVAILABLE" };
 
@@ -191,20 +197,16 @@ async function priceRestaurantCart(input: CreateOrderInput): Promise<PricedCart 
    2. Delivery
    -------------------------------------------------------------------------- */
 
-type Delivery = { ok: true; zoneId: number | null; fee: number; delay: string };
+type Delivery = { ok: true; zoneId: number | null; delay: string };
 
-/** Shop orders: the delivery zone of the governorate sets the fee (free above `freeFrom`). */
-async function shopDelivery(governorate: string, subtotal: number): Promise<Delivery | Refusal> {
-  const zone = await db.orm.public.DeliveryZone.where({ governorate, isActive: true })
-    .select("id", "fee", "delay", "freeFrom")
-    .first();
+/** Shop orders: only to a governorate with an open delivery zone, which gives the delay. */
+async function shopDelivery(governorate: string): Promise<Delivery | Refusal> {
+  const zone = await db.orm.public.DeliveryZone.where({ governorate, isActive: true }).select("id", "delay").first();
   if (!zone) return { ok: false, reason: "ZONE_NOT_COVERED" };
-
-  const isFree = zone.freeFrom !== null && subtotal >= zone.freeFrom;
-  return { ok: true, zoneId: zone.id, fee: isFree ? 0 : zone.fee, delay: zone.delay };
+  return { ok: true, zoneId: zone.id, delay: zone.delay };
 }
 
-/** Restaurant orders: delivered by the restaurant, in its own governorate only. */
+/** Restaurant orders: delivered by the restaurant, in its own governorate only, above its minimum order. */
 async function restaurantDelivery(
   restaurant: OrderRestaurant,
   governorate: string,
@@ -215,7 +217,7 @@ async function restaurantDelivery(
 
   // Not required, but it lets the admin group orders by zone.
   const zone = await db.orm.public.DeliveryZone.where({ governorate }).select("id").first();
-  return { ok: true, zoneId: zone?.id ?? null, fee: restaurant.deliveryFee, delay: restaurant.deliveryTime };
+  return { ok: true, zoneId: zone?.id ?? null, delay: restaurant.deliveryTime };
 }
 
 /* --------------------------------------------------------------------------
@@ -276,8 +278,8 @@ async function saveOrderInTransaction(
     activeRule?.type === "EXCEPTION" ? (activeRule.maxPerDay ?? MAX_ORDERS_PER_DAY) : MAX_ORDERS_PER_DAY;
   if (counter.count >= dailyLimit) return refuse("DAILY_LIMIT");
 
-  // d) The order and its lines.
-  const deliveryFee = delivery.fee;
+  // d) The order and its lines (free delivery: the customer pays the merchants' prices only).
+  const deliveryFee = DELIVERY_FEE;
   const total = subtotal + deliveryFee;
   const order = await tx.orm.public.Order.select("id", "reference").create({
     reference: generateOrderReference(),
@@ -304,7 +306,7 @@ async function saveOrderInTransaction(
   // e) One more order today for this number.
   await tx.orm.public.OrderCounter.where({ id: counter.id }).update({ count: counter.count + 1 });
 
-  return { ok: true, order: { reference: order.reference, total, deliveryFee, subtotal, delay: delivery.delay } };
+  return { ok: true, order: { reference: order.reference, total, subtotal, delay: delivery.delay } };
 }
 
 /** The columns of today's counter that the order rules use. */

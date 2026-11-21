@@ -2,7 +2,13 @@ import "server-only";
 
 import { db } from "@/lib/prisma";
 import { ModelError } from "@/models/errors";
-import { applyImageChange, assertId, chooseSlug, rethrowSlugConflict } from "@/models/fetchers/admin/helpers";
+import {
+  applyImageChange,
+  applyLogoChange,
+  assertId,
+  chooseSlug,
+  rethrowSlugConflict,
+} from "@/models/fetchers/admin/helpers";
 import {
   assertRestaurantInput,
   isRestaurantSlugTaken,
@@ -20,7 +26,9 @@ import type { ActiveToggleResult, RestaurantInput, SlugMutationResult } from "@/
 export async function updateRestaurant(id: number, input: RestaurantInput): Promise<SlugMutationResult> {
   assertId(id);
   assertRestaurantInput(input);
-  const current = await db.orm.public.Restaurant.select("id", "slug", "imagePublicId", "partnerSince").first({ id });
+  const current = await db.orm.public.Restaurant.select("id", "slug", "imagePublicId", "logoPublicId", "partnerSince").first({
+    id,
+  });
   if (!current) throw new ModelError("NOT_FOUND", "Ce restaurant n'existe plus.");
 
   const slug = await chooseSlug({
@@ -30,12 +38,14 @@ export async function updateRestaurant(id: number, input: RestaurantInput): Prom
     isTaken: (candidate) => isRestaurantSlugTaken(candidate, id),
   });
   const image = applyImageChange(input.image, current.imagePublicId);
+  const logo = applyLogoChange(input.logo, current.logoPublicId);
 
   try {
     const saved = await db.orm.public.Restaurant.where({ id }).update({
       slug,
       ...restaurantColumns(input, partnerSinceFor(input, current.partnerSince)),
       ...image.fields,
+      ...logo.fields,
     });
     if (!saved) throw new ModelError("NOT_FOUND", "Ce restaurant n'existe plus."); // deleted meanwhile
   } catch (error) {
@@ -46,7 +56,7 @@ export async function updateRestaurant(id: number, input: RestaurantInput): Prom
     id,
     slug,
     previousSlug: current.slug !== slug ? current.slug : null,
-    imagesToDelete: image.imagesToDelete,
+    imagesToDelete: [...image.imagesToDelete, ...logo.imagesToDelete],
   };
 }
 

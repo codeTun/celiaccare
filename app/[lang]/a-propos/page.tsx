@@ -22,8 +22,14 @@ import { siteConfig } from "@/lib/site-config";
 import { absoluteUrl } from "@/lib/utils";
 import { getSiteStats } from "@/models/fetchers/stats";
 
-/** Anchors of the "on this page" links (also the ids of the sections). */
-const SECTION_IDS = { story: "histoire", method: "methode", guarantees: "garanties", team: "equipe" } as const;
+/** Anchors of the "on this page" links (also the ids of the sections). `model` is linked from the FAQ. */
+const SECTION_IDS = {
+  story: "histoire",
+  model: "modele",
+  method: "methode",
+  guarantees: "garanties",
+  team: "equipe",
+} as const;
 
 export async function generateMetadata({ params }: PageProps<"/[lang]/a-propos">): Promise<Metadata> {
   const { lang } = await params;
@@ -77,7 +83,7 @@ export default async function AboutPage({ params }: PageProps<"/[lang]/a-propos"
 
       <AboutProblem about={about} />
       <AboutStory about={about} id={SECTION_IDS.story} />
-      <AboutMission about={about} />
+      <AboutMission about={about} modelId={SECTION_IDS.model} />
       <VerificationTimeline about={about} id={SECTION_IDS.method} />
 
       <section id={SECTION_IDS.guarantees} className="scroll-mt-24 py-16 sm:py-24">

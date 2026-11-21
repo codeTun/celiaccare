@@ -49,8 +49,14 @@ const nextConfig: NextConfig = {
   },
 
   experimental: {
-    // Admin image uploads go through Server Actions (default limit: 1 MB).
-    serverActions: { bodySizeLimit: "6mb" },
+    // Admin image uploads go through Server Actions (default limit: 1 MB). The artisan and restaurant
+    // forms send a photo AND a logo in one request, each up to 5 MB (lib/cloudinary.ts MAX_IMAGE_BYTES):
+    // 10 MB of files + the form fields and the multipart overhead. Above the limit Next answers 413
+    // before the action runs (error page, the typed form is lost).
+    serverActions: { bodySizeLimit: "11mb" },
+    // proxy.ts runs on /admin and buffers every request body for it, by default up to 10 MB only: a
+    // bigger body would reach the action cut short. Same limit as the Server Actions above.
+    proxyClientMaxBodySize: "11mb",
     // One 404 page for URLs that match no route (we have two root layouts).
     globalNotFound: true,
     // The build pre-renders pages from the database. Each build worker has its own pool of

@@ -6,7 +6,7 @@ import { ImageUploadField } from "@/components/admin/image-upload-field";
 import { Alert } from "@/components/ui/alert";
 import { TextField } from "@/components/ui/form";
 
-import { CLOUDINARY_MISSING_MESSAGE, VERIFICATION_SOURCES } from "./labels";
+import { CLOUDINARY_MISSING_MESSAGE, LOGO_HINT, LOGO_SECTION_DESCRIPTION, VERIFICATION_SOURCES } from "./labels";
 
 /* ==========================================================================
    Sections shared by the catalogue forms (categories, artisans, products).
@@ -67,6 +67,50 @@ export function PhotoSection({
         </Alert>
       )}
       <ImageUploadField label={label} currentUrl={currentUrl} alt={alt} fallbackIcon={fallbackIcon} error={error} />
+    </FormSection>
+  );
+}
+
+/**
+ * "Logo" card of the artisan and restaurant forms: the official logo shown in the brand band of
+ * the home page (sends "logo" and "removeLogo"). Uploaded only with the business's agreement;
+ * without it the site draws a monogram. Same Cloudinary warning and behaviour as PhotoSection.
+ */
+export function LogoSection({
+  cloudinaryReady,
+  currentUrl,
+  alt,
+  fallbackIcon,
+  error,
+  notice,
+}: {
+  cloudinaryReady: boolean;
+  currentUrl?: string | null;
+  alt: string;
+  fallbackIcon?: string | null;
+  error?: string[];
+  /** Extra line under the field, e.g. "the chosen logo was not saved" (restaurant form). */
+  notice?: ReactNode;
+}) {
+  return (
+    <FormSection id="logo" title="Logo" description={LOGO_SECTION_DESCRIPTION}>
+      {cloudinaryReady ? null : (
+        <Alert tone="warning" className="mb-4">
+          {CLOUDINARY_MISSING_MESSAGE}
+        </Alert>
+      )}
+      <ImageUploadField
+        kind="logo"
+        name="logo"
+        removeName="removeLogo"
+        label="Logo officiel"
+        hint={LOGO_HINT}
+        currentUrl={currentUrl}
+        alt={alt}
+        fallbackIcon={fallbackIcon}
+        error={error}
+      />
+      {notice}
     </FormSection>
   );
 }

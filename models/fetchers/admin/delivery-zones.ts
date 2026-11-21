@@ -6,13 +6,14 @@ import type { AdminDeliveryZoneForm, AdminDeliveryZoneRow } from "@/types/admin-
 import { isValidId, toIso } from "./helpers";
 
 /**
- * ADMIN — delivery zones: price and delay per governorate (never cached).
+ * ADMIN — delivery zones: where we deliver and the delay per governorate (never cached).
+ * Delivery is free for the customer, so the fee columns are not read.
  * Call requireAdmin() before using these functions.
  */
 
 /** Every zone (A → Z) with the number of orders delivered to it. */
 export async function listDeliveryZones(): Promise<AdminDeliveryZoneRow[]> {
-  const rows = await db.orm.public.DeliveryZone.select("id", "governorate", "fee", "delay", "freeFrom", "isActive", "updatedAt")
+  const rows = await db.orm.public.DeliveryZone.select("id", "governorate", "delay", "isActive", "updatedAt")
     .include("orders", (orders) => orders.count())
     .orderBy([(z) => z.governorate.asc(), (z) => z.id.asc()])
     .all();
@@ -20,9 +21,7 @@ export async function listDeliveryZones(): Promise<AdminDeliveryZoneRow[]> {
   return rows.map((row) => ({
     id: row.id,
     governorate: row.governorate,
-    fee: row.fee,
     delay: row.delay,
-    freeFrom: row.freeFrom,
     isActive: row.isActive,
     orderCount: row.orders,
     updatedAt: toIso(row.updatedAt),
@@ -34,12 +33,5 @@ export async function getDeliveryZone(id: number): Promise<AdminDeliveryZoneForm
   if (!isValidId(id)) return null;
   const row = await db.orm.public.DeliveryZone.first({ id });
   if (!row) return null;
-  return {
-    id: row.id,
-    governorate: row.governorate,
-    fee: row.fee,
-    delay: row.delay,
-    freeFrom: row.freeFrom,
-    isActive: row.isActive,
-  };
+  return { id: row.id, governorate: row.governorate, delay: row.delay, isActive: row.isActive };
 }

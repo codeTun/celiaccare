@@ -7,6 +7,7 @@ import { isGovernorate } from "@/lib/tunisia";
 import { ModelError } from "@/models/errors";
 import {
   applyImageChange,
+  applyLogoChange,
   assertMillimes,
   assertVerification,
   chooseSlug,
@@ -36,7 +37,6 @@ export function assertRestaurantInput(input: RestaurantInput) {
   if (!Number.isInteger(input.priceRange) || input.priceRange < 1 || input.priceRange > 3) {
     throw new ModelError("INVALID_PRICE_RANGE", "La gamme de prix doit être 1, 2 ou 3.");
   }
-  assertMillimes(input.deliveryFee, "INVALID_DELIVERY_FEE");
   assertMillimes(input.minOrder, "INVALID_MIN_ORDER");
 }
 
@@ -49,7 +49,7 @@ export function partnerSinceFor(input: RestaurantInput, saved: Date | null = nul
   return input.partnerSince ?? saved ?? new Date();
 }
 
-/** The columns written by create and update (everything except slug and photo). */
+/** The columns written by create and update (everything except slug, photo and logo). */
 export function restaurantColumns(input: RestaurantInput, partnerSince: Date | null) {
   return {
     name: input.name,
@@ -77,7 +77,7 @@ export function restaurantColumns(input: RestaurantInput, partnerSince: Date | n
     priceRange: input.priceRange,
     isPartner: input.isPartner,
     partnerSince,
-    deliveryFee: input.deliveryFee,
+    deliveryFee: 0, // delivery is free for the customer (column kept for older data)
     deliveryTime: input.deliveryTime,
     minOrder: input.minOrder,
     isActive: input.isActive,
@@ -93,12 +93,14 @@ export async function createRestaurant(input: RestaurantInput): Promise<SlugMuta
     isTaken: (candidate) => isRestaurantSlugTaken(candidate),
   });
   const image = applyImageChange(input.image, null);
+  const logo = applyLogoChange(input.logo, null);
 
   try {
     const row = await db.orm.public.Restaurant.create({
       slug,
       ...restaurantColumns(input, partnerSinceFor(input)),
       ...image.fields,
+      ...logo.fields,
     });
     return { id: row.id, slug: row.slug, previousSlug: null, imagesToDelete: [] };
   } catch (error) {

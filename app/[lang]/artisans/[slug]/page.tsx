@@ -1,4 +1,3 @@
-import { PackageOpen } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -6,13 +5,13 @@ import { Suspense } from "react";
 import { ProductCard } from "@/components/cards/product-card";
 import { InfoSheet } from "@/components/directory/info-sheet";
 import { MapEmbed } from "@/components/directory/map-embed";
+import { OrderRequestBox } from "@/components/directory/order-request";
 import { SheetReport } from "@/components/directory/sheet-report";
 import { DetailPageSkeleton } from "@/components/directory/skeletons";
 import { JsonLd } from "@/components/json-ld";
 import { ProducerHeader } from "@/components/producers/producer-header";
 import { Alert } from "@/components/ui/alert";
 import { Container } from "@/components/ui/container";
-import { EmptyState } from "@/components/ui/empty-state";
 import { isLocale } from "@/i18n/config";
 import { interpolate } from "@/i18n/interpolate";
 import { getDictionary } from "@/i18n/server";
@@ -21,7 +20,8 @@ import { pageMetadata, producerJsonLd } from "@/lib/seo";
 import { getProducerBySlug, getProducerSlugs } from "@/models/fetchers/producers";
 
 /* /fr/artisans/[slug] — one small business: its story, its sheet (spec 5.2),
-   its products and the "Signaler une erreur" button. */
+   its products and the "Signaler une erreur" button. Every purchase goes through
+   CeliacCare: no contact of the business, but "Commander / Demander sur CeliacCare". */
 
 type ArtisanPageProps = PageProps<"/[lang]/artisans/[slug]">;
 
@@ -67,12 +67,14 @@ async function ArtisanContent({ params }: Pick<ArtisanPageProps, "params">) {
 
   const dict = getDictionary(lang);
   const { common, producers: texts } = dict;
+  // Something can be added to the cart; otherwise the visitor asks CeliacCare (OrderRequestBox).
+  const canOrder = producer.products.some((product) => product.isAvailable);
 
   return (
     <>
       <JsonLd data={producerJsonLd(producer, lang)} />
 
-      <ProducerHeader producer={producer} locale={lang} common={common} dict={texts} />
+      <ProducerHeader producer={producer} canOrder={canOrder} locale={lang} common={common} dict={texts} />
 
       <Container className="py-10 sm:py-14">
         {/* Mobile: story, products, then the sheet and the map. Large screens: the sheet in a side column. */}
@@ -94,25 +96,27 @@ async function ArtisanContent({ params }: Pick<ArtisanPageProps, "params">) {
               <h2 id="products-title" className="text-2xl font-extrabold text-ink sm:text-3xl">
                 {interpolate(texts.page.productsTitle, { name: producer.name })}
               </h2>
-              {producer.products.length > 0 ? (
-                <>
-                  <p className="mt-2 text-sm text-ink-muted">{texts.page.productsText}</p>
-                  <ul className="mt-6 grid grid-cols-2 gap-4 sm:gap-6 xl:grid-cols-3">
-                    {producer.products.map((product) => (
-                      <li key={product.id} className="flex">
-                        <ProductCard product={product} locale={lang} common={common} className="w-full" />
-                      </li>
-                    ))}
-                  </ul>
-                </>
+              {canOrder ? (
+                <p className="mt-2 text-sm text-ink-muted">{texts.page.productsText}</p>
               ) : (
-                <EmptyState
+                // Nothing to order on the site yet: the visitor asks CeliacCare, never the business directly.
+                <OrderRequestBox
+                  target={{ kind: "artisan", slug: producer.slug }}
+                  locale={lang}
+                  texts={common.ordering}
+                  headingLevel={3}
                   className="mt-6"
-                  icon={<PackageOpen />}
-                  title={texts.page.productsEmptyTitle}
-                  description={texts.page.productsEmptyText}
                 />
               )}
+              {producer.products.length > 0 ? (
+                <ul className="mt-6 grid grid-cols-2 gap-4 sm:gap-6 xl:grid-cols-3">
+                  {producer.products.map((product) => (
+                    <li key={product.id} className="flex">
+                      <ProductCard product={product} locale={lang} common={common} className="w-full" />
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
             </section>
 
             {/* Spec 6.5: visible warning on every sheet */}

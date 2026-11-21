@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import { HomePage, homeMetadata } from "@/components/sections/home/home-page";
 import { isLocale } from "@/i18n/config";
+import { getBrandShowcase } from "@/models/fetchers/brands";
 import { getCategories } from "@/models/fetchers/categories";
 import { getProducers } from "@/models/fetchers/producers";
 import { getFeaturedProducts } from "@/models/fetchers/products";
@@ -24,12 +25,13 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
 
-  const [stats, categories, featuredProducts, partnerRestaurants, producers] = await Promise.all([
+  const [stats, categories, featuredProducts, partnerRestaurants, producers, brands] = await Promise.all([
     getSiteStats(),
     getCategories(lang),
     getFeaturedProducts(lang, 8),
     getPartnerRestaurants(lang, 3),
     getProducers(lang),
+    getBrandShowcase(lang),
   ]);
 
   return (
@@ -40,6 +42,7 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
       featuredProducts={featuredProducts}
       partnerRestaurants={partnerRestaurants}
       producers={producers}
+      brands={brands}
     />
   );
 }

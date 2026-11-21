@@ -3,12 +3,13 @@ import "server-only";
 import { db } from "@/lib/prisma";
 import { ModelError, isUniqueViolation } from "@/models/errors";
 import { assertId } from "@/models/fetchers/admin/helpers";
-import { checkDeliveryZoneInput, governorateTaken } from "@/models/posters/delivery-zones";
+import { FREE_DELIVERY_COLUMNS, checkDeliveryZoneInput, governorateTaken } from "@/models/posters/delivery-zones";
 import type { DeliveryZoneInput, DeliveryZoneMutationResult } from "@/types/admin-data";
 
 /**
  * ADMIN — update a delivery zone. No auth check here: the Server Action calls
- * requireAdmin() first, then refreshes TAGS.zones.
+ * requireAdmin() first, then refreshes TAGS.zones. Saving a zone also clears any fee
+ * it still had from before delivery became free.
  */
 
 export async function updateDeliveryZone(id: number, input: DeliveryZoneInput): Promise<DeliveryZoneMutationResult> {
@@ -19,10 +20,9 @@ export async function updateDeliveryZone(id: number, input: DeliveryZoneInput): 
       .select("id", "governorate")
       .update({
         governorate: input.governorate,
-        fee: input.fee,
         delay: input.delay,
-        freeFrom: input.freeFrom,
         isActive: input.isActive,
+        ...FREE_DELIVERY_COLUMNS,
       });
     if (!row) throw new ModelError("NOT_FOUND", "Cette zone n'existe plus.");
     return { id: row.id, governorate: row.governorate };

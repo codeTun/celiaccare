@@ -160,10 +160,13 @@ function checkUniqueKeys(problems: string[]) {
   reportDuplicates(problems, "Phone rule", PHONE_RULES.map((r) => r.phone));
 }
 
-/** A product or a dish lists at least one ingredient, each one known and listed once. */
-function checkIngredientList(problems: string[], where: string, slugs: string[]) {
+/**
+ * Ingredients are known and listed once. A dish lists at least one (menus describe them); a product
+ * may list none when its maker does not publish the composition (the sheet then says so).
+ */
+function checkIngredientList(problems: string[], where: string, slugs: string[], required = false) {
   const known = new Set(INGREDIENTS.map((i) => i.slug));
-  if (slugs.length === 0) problems.push(`${where}: needs at least one ingredient.`);
+  if (required && slugs.length === 0) problems.push(`${where}: needs at least one ingredient.`);
   for (const slug of slugs.filter((s) => !known.has(s))) problems.push(`${where}: unknown ingredient "${slug}".`);
   reportDuplicates(problems, `${where}: ingredient`, slugs);
 }
@@ -193,7 +196,7 @@ function checkProducers(problems: string[]) {
   for (const producer of PRODUCERS) {
     const where = `Producer "${producer.slug}"`;
     if (!governorates.has(producer.governorate)) problems.push(`${where}: unknown governorate.`);
-    if (!isPhone(producer.phone)) problems.push(`${where}: invalid phone "${producer.phone}".`);
+    if (producer.phone !== null && !isPhone(producer.phone)) problems.push(`${where}: invalid phone "${producer.phone}".`);
     if (producer.whatsapp && !isPhone(producer.whatsapp)) problems.push(`${where}: invalid WhatsApp number.`);
     if (producer.joinedMonthsAgo < producer.verifiedMonthsAgo) {
       problems.push(`${where}: verified before joining (joinedMonthsAgo must be >= verifiedMonthsAgo).`);
@@ -210,10 +213,12 @@ function checkRestaurants(problems: string[]) {
     if (!isAmount(restaurant.deliveryFee) || !isAmount(restaurant.minOrder)) {
       problems.push(`${where}: invalid delivery fee or minimum order.`);
     }
-    if (restaurant.dishes.length === 0) problems.push(`${where}: needs at least one dish.`);
+    if (restaurant.partnerSinceMonthsAgo !== null && restaurant.dishes.length === 0) {
+      problems.push(`${where}: a partner restaurant (online ordering) needs at least one dish.`);
+    }
     reportDuplicates(problems, `${where}: dish`, restaurant.dishes.map((d) => d.name));
     for (const dish of restaurant.dishes) {
-      checkIngredientList(problems, `${where}, dish "${dish.name}"`, dish.ingredients);
+      checkIngredientList(problems, `${where}, dish "${dish.name}"`, dish.ingredients, true);
       if (!isPrice(dish.price)) problems.push(`${where}, dish "${dish.name}": invalid price.`);
     }
   }
@@ -456,6 +461,9 @@ async function seedProducers() {
         phone: producer.phone,
         whatsapp: producer.whatsapp,
         email: producer.email,
+        website: producer.website,
+        instagram: producer.instagram,
+        facebook: producer.facebook,
         openingHours: producer.openingHours,
       };
       const verifiedAt = monthsAgo(producer.verifiedMonthsAgo);
@@ -588,6 +596,9 @@ async function seedRestaurants() {
         phone: restaurant.phone,
         whatsapp: restaurant.whatsapp,
         email: restaurant.email,
+        website: restaurant.website,
+        instagram: restaurant.instagram,
+        facebook: restaurant.facebook,
         openingHours: restaurant.openingHours,
         priceRange: restaurant.priceRange,
         deliveryFee: restaurant.deliveryFee,
@@ -759,10 +770,10 @@ async function loadCatalogForOrders(): Promise<CatalogForOrders> {
     .include("producer", (producer) => producer.select("name"))
     .all();
   const restaurants = await db.orm.public.Restaurant.where({ isActive: true, isPartner: true })
-    .select("id", "slug", "name", "governorate", "deliveryFee", "minOrder", "partnerSince", "createdAt")
+    .select("id", "slug", "name", "governorate", "minOrder", "partnerSince", "createdAt")
     .include("dishes", (dishes) => dishes.where({ isAvailable: true }).select("id", "name", "price", "course"))
     .all();
-  const zones = await db.orm.public.DeliveryZone.select("id", "governorate", "fee", "delay", "freeFrom").all();
+  const zones = await db.orm.public.DeliveryZone.select("id", "governorate", "delay").all();
   const deliverers = await db.orm.public.Deliverer.where({ isActive: true }).select("id", "phone").all();
   const coversByPhone = new Map(DELIVERERS.map((d) => [d.phone, d.covers as string[]]));
 
@@ -781,7 +792,6 @@ async function loadCatalogForOrders(): Promise<CatalogForOrders> {
       slug: r.slug,
       name: r.name,
       governorate: r.governorate,
-      deliveryFee: r.deliveryFee,
       minOrder: r.minOrder,
       partnerSince: r.partnerSince ?? r.createdAt,
       dishes: r.dishes,

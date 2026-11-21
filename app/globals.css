@@ -172,3 +172,145 @@
     background-position: left 0.85rem center;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Brand band of the home page (components/sections/home/brand-marquee.tsx):
+   ONE row of tiles scrolling forever, in CSS only (no JavaScript).
+   The list is rendered twice in .brand-marquee-track (each copy ends with the
+   same gap as between two tiles): moving the track by half its width brings the
+   copy exactly where the first list started, so the loop never jumps.
+   LTR moves left (-50 %), RTL moves right (+50 %): the tiles always travel toward
+   the start of the reading direction. --brand-marquee-duration is set inline
+   (number of tiles × 3.75 s), so the speed stays the same whatever the count.
+   It pauses under the mouse and the focus, and stops with the pause button.
+   -------------------------------------------------------------------------- */
+@keyframes brand-marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes brand-marquee-rtl {
+  to {
+    transform: translate3d(50%, 0, 0);
+  }
+}
+
+@layer components {
+  .brand-marquee {
+    /* width of the soft fade on both edges, and side margin of <Container> */
+    --brand-marquee-fade: 1.75rem;
+    --brand-marquee-gutter: 1rem;
+    overflow: hidden;
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 var(--brand-marquee-fade),
+      #000 calc(100% - var(--brand-marquee-fade)),
+      transparent
+    );
+  }
+
+  @media (width >= 40rem) {
+    .brand-marquee {
+      --brand-marquee-fade: 4rem;
+      --brand-marquee-gutter: 1.5rem;
+    }
+  }
+
+  @media (width >= 64rem) {
+    .brand-marquee {
+      --brand-marquee-fade: 6rem;
+      --brand-marquee-gutter: 2rem;
+    }
+  }
+
+  .brand-marquee-track {
+    display: flex;
+    width: max-content;
+  }
+
+  .brand-marquee-list {
+    display: flex;
+    flex-shrink: 0;
+    gap: --spacing(3);
+    padding-inline-end: --spacing(3);
+
+    & > li {
+      flex-shrink: 0;
+    }
+  }
+
+  /* The loop, for visitors who accept motion */
+  @media (prefers-reduced-motion: no-preference) {
+    .brand-marquee-track {
+      animation: brand-marquee var(--brand-marquee-duration, 40s) linear infinite;
+    }
+
+    [dir="rtl"] .brand-marquee-track {
+      animation-name: brand-marquee-rtl;
+    }
+
+    /* pause under the mouse, and while a tile has the focus */
+    .brand-marquee:hover .brand-marquee-track,
+    .brand-marquee:focus-within .brand-marquee-track {
+      animation-play-state: paused;
+    }
+
+    /* stopped for good with the pause button of the header (a checkbox, brand-marquee.tsx PauseToggle) */
+    .brand-band:has(.brand-marquee-pause :checked) .brand-marquee-track {
+      animation-play-state: paused;
+    }
+  }
+
+  /* Keyboard navigation in the real list: the row stops and shows the whole list, wrapped and centred,
+     so every focused tile is fully visible (browsers do not scroll a half-visible element into view).
+     Only the real list counts: a click (Cmd/Ctrl+click, right-click) can leave the focus on a tile of
+     the copy, which must then stay displayed, or the focus would fall back to the page. */
+  .brand-marquee:has(.brand-marquee-list:not([aria-hidden]) :focus-visible) {
+    mask-image: none;
+  }
+
+  .brand-marquee:has(.brand-marquee-list:not([aria-hidden]) :focus-visible) .brand-marquee-track {
+    width: auto;
+    padding-inline: var(--brand-marquee-gutter);
+    animation: none;
+  }
+
+  .brand-marquee:has(.brand-marquee-list:not([aria-hidden]) :focus-visible) .brand-marquee-list {
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    padding-inline-end: 0;
+  }
+
+  .brand-marquee:has(.brand-marquee-list:not([aria-hidden]) :focus-visible) .brand-marquee-list[aria-hidden="true"] {
+    display: none;
+  }
+
+  /* "Reduce motion": no loop. One still list (the copy is hidden) that scrolls sideways and snaps;
+     it starts in line with the title, with short fades in the side margins. */
+  @media (prefers-reduced-motion: reduce) {
+    .brand-marquee {
+      --brand-marquee-fade: var(--brand-marquee-gutter);
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--brand-marquee-fade);
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-line-strong) transparent;
+    }
+
+    .brand-marquee-track {
+      padding-inline: var(--brand-marquee-fade);
+    }
+
+    .brand-marquee-list[aria-hidden="true"] {
+      display: none;
+    }
+
+    .brand-marquee-list > li {
+      scroll-snap-align: start;
+    }
+  }
+}

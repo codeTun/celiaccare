@@ -15,7 +15,7 @@ import { GuaranteeBadge } from "@/components/ui/guarantee-badge";
 import { getDirection, htmlLang, localeNames } from "@/i18n/config";
 import { getDictionary } from "@/i18n/server";
 import { cn } from "@/lib/utils";
-import { GUARANTEE_LEVELS, type Locale } from "@/types";
+import { LISTED_GUARANTEE_LEVELS, type Locale } from "@/types";
 
 import { InfoBox } from "./info-box";
 import { RichText } from "./rich-text";
@@ -147,15 +147,20 @@ function Block({ block, lang }: { block: ContentBlock; lang: Locale }) {
 
     case "guarantees":
       return (
-        <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-white shadow-soft">
-          {GUARANTEE_LEVELS.map((level) => (
-            <li key={level} className="flex flex-col gap-2.5 p-5 sm:p-6">
-              <GuaranteeBadge level={level} label={common.guarantee[level].label} size="md" className="self-start" />
-              <p className="text-[15px] leading-relaxed">{common.guarantee[level].description}</p>
-              <p className="text-[15px] leading-relaxed font-semibold text-ink">{block.advice[level]}</p>
-            </li>
-          ))}
-        </ul>
+        <div className="overflow-hidden rounded-[var(--radius-card)] border border-line bg-white shadow-soft">
+          <ul className="divide-y divide-line">
+            {LISTED_GUARANTEE_LEVELS.map((level) => (
+              <li key={level} className="flex flex-col gap-2.5 p-5 sm:p-6">
+                <GuaranteeBadge level={level} label={common.guarantee[level].label} size="md" className="self-start" />
+                <p className="text-[15px] leading-relaxed">{common.guarantee[level].description}</p>
+                <p className="text-[15px] leading-relaxed font-semibold text-ink">{block.advice[level]}</p>
+              </li>
+            ))}
+          </ul>
+          <p className="border-t border-line bg-brand-50 px-5 py-4 text-sm leading-relaxed font-medium text-brand-900 sm:px-6">
+            {common.guarantee.policy}
+          </p>
+        </div>
       );
 
     case "cards":

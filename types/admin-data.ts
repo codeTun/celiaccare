@@ -189,6 +189,7 @@ export type AdminOrderDetail = {
   /** Order day in Tunis time, "2026-11-15" (used by the 3-orders-per-day rule). */
   dayKey: string;
   subtotal: number;
+  /** 0 since delivery became free; older orders keep the fee they were charged (historical truth). */
   deliveryFee: number;
   total: number;
   createdAt: string;
@@ -197,7 +198,7 @@ export type AdminOrderDetail = {
   deliveredAt: string | null;
   cancelledAt: string | null;
   restaurant: { id: number; name: string; slug: string; phone: string } | null;
-  zone: { id: number; governorate: string; fee: number; delay: string } | null;
+  zone: { id: number; governorate: string; delay: string } | null;
   deliverer: { id: number; name: string; phone: string; vehicle: VehicleType; isActive: boolean } | null;
   items: AdminOrderItem[];
   /** Statuses the admin may move this order to (buttons to show), see ORDER_STATUS_TRANSITIONS. */
@@ -393,6 +394,8 @@ export type AdminProducerForm = {
   /** "YYYY-MM-DD", ready for <input type="date">. */
   verifiedAt: string;
   imageUrl: string | null;
+  /** Official logo (home page brand band), uploaded only with the business's agreement. */
+  logoUrl: string | null;
   isActive: boolean;
 };
 
@@ -423,6 +426,8 @@ export type ProducerInput = {
   verifiedAt: Date;
   isActive: boolean;
   image?: ImageChange;
+  /** Official logo, same rules as `image` (Cloudinary folder "celiaccare/logos"). */
+  logo?: ImageChange;
 };
 
 /* ---------- Products ---------- */
@@ -588,11 +593,12 @@ export type AdminRestaurantForm = {
   /** "YYYY-MM-DD", ready for <input type="date">. */
   verifiedAt: string;
   imageUrl: string | null;
+  /** Official logo (home page brand band), uploaded only with the business's agreement. */
+  logoUrl: string | null;
   priceRange: number; // 1..3
   isPartner: boolean;
   /** "YYYY-MM-DD" or null. */
   partnerSince: string | null;
-  deliveryFee: number; // millimes
   deliveryTime: string;
   minOrder: number; // millimes
   isActive: boolean;
@@ -627,11 +633,13 @@ export type RestaurantInput = {
   isPartner: boolean;
   /** When the convention was signed. Left empty for a partner → today. */
   partnerSince: Date | null;
-  deliveryFee: number; // millimes
+  // No delivery fee: delivery is free for the customer (the Restaurant.deliveryFee column is saved as 0).
   deliveryTime: string;
   minOrder: number; // millimes
   isActive: boolean;
   image?: ImageChange;
+  /** Official logo, same rules as `image` (Cloudinary folder "celiaccare/logos"). */
+  logo?: ImageChange;
 };
 
 /** Result of setProducerActive / setRestaurantActive. */
@@ -698,12 +706,13 @@ export type DishMutationResult = {
    4) Delivery (zones, deliverers)
    ========================================================================== */
 
+/* Delivery is free for the customer everywhere: a zone only says WHERE we deliver and how fast
+   (its fee / freeFrom columns are kept in the database, always saved as 0 / null). */
+
 export type AdminDeliveryZoneRow = {
   id: number;
   governorate: string;
-  fee: number; // millimes
   delay: string;
-  freeFrom: number | null; // millimes
   isActive: boolean;
   orderCount: number;
   updatedAt: string;
@@ -712,17 +721,13 @@ export type AdminDeliveryZoneRow = {
 export type AdminDeliveryZoneForm = {
   id: number;
   governorate: string;
-  fee: number;
   delay: string;
-  freeFrom: number | null;
   isActive: boolean;
 };
 
 export type DeliveryZoneInput = {
   governorate: string; // one of the 24 governorates (lib/tunisia.ts), unique
-  fee: number; // millimes
   delay: string; // "24–48 h"
-  freeFrom: number | null; // millimes
   isActive: boolean;
 };
 

@@ -2,6 +2,7 @@ import "server-only";
 
 import { and, type ModelAccessor } from "@prisma/orm-postgres/orm-client";
 
+import { publicLabel, publicText } from "@/lib/contacts";
 import { db } from "@/lib/prisma";
 import { localize, normalizeSearch } from "@/lib/utils";
 import type { Contract } from "@/prisma/contract.d";
@@ -138,6 +139,7 @@ export function toIngredientDTO(
   return { id: row.id, slug: row.slug, name: localize(locale, row.name, row.nameAr), isAllergen: row.isAllergen };
 }
 
+/** An approved review. Like every public text, it never carries a contact (lib/contacts.ts). */
 export function toReviewDTO(row: {
   id: number;
   authorName: string;
@@ -147,9 +149,9 @@ export function toReviewDTO(row: {
 }): ReviewDTO {
   return {
     id: row.id,
-    authorName: row.authorName,
+    authorName: publicLabel(row.authorName) ?? "",
     rating: row.rating,
-    comment: row.comment,
+    comment: publicText(row.comment) ?? "",
     createdAt: row.createdAt.toISOString(),
   };
 }

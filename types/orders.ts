@@ -25,12 +25,11 @@ export type CartState = {
   items: CartItem[];
 };
 
+/** A governorate where the shop delivers (delivery is always free: only the delay differs). */
 export type DeliveryZoneDTO = {
   id: number;
   governorate: string;
-  fee: number; // millimes
   delay: string;
-  freeFrom: number | null; // millimes
 };
 
 /** Public order tracking result (no address / phone shown back). */
@@ -41,6 +40,7 @@ export type OrderTrackingDTO = {
   paymentMethod: PaymentMethod;
   customerFirstName: string;
   subtotal: number;
+  /** 0 for every order since delivery became free; older orders keep the fee they were charged. */
   deliveryFee: number;
   total: number;
   createdAt: string;
@@ -51,11 +51,10 @@ export type OrderTrackingDTO = {
   items: { name: string; quantity: number; lineTotal: number }[];
 };
 
-/** What the checkout Server Action returns once an order is saved. */
+/** What the checkout Server Action returns once an order is saved (delivery is free: total = subtotal). */
 export type PlacedOrderDTO = {
   reference: string;
   total: number;
-  deliveryFee: number;
   subtotal: number;
   delay: string;
 };

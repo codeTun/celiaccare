@@ -3,6 +3,7 @@ import {
   BadgeCheck,
   CalendarClock,
   Flag,
+  HandCoins,
   Hourglass,
   Inbox,
   ShieldX,
@@ -147,6 +148,9 @@ function percentChange(current: number, previous: number) {
 /** Spec §2 success criterion: 90 % of the published sheets verified less than 6 months ago. */
 const FRESH_SHEETS_TARGET = 90;
 
+/** "15 %": CeliacCare's share of the sales (siteConfig.commissionRate), paid by the merchants. */
+const COMMISSION_PERCENT = `${Math.round(siteConfig.commissionRate * 100)}\u00a0%`;
+
 async function KeyFigures() {
   await requireAdmin();
   scheduleDailyRetention();
@@ -155,6 +159,7 @@ async function KeyFigures() {
   let freshTone: StatTone = "neutral";
   if (freshPercent !== null) freshTone = freshPercent >= FRESH_SHEETS_TARGET ? "brand" : "amber";
 
+  // 10 cards: 5 rows of 2 (sm), or 4 rows of 3 (xl) with the commission and the sheets cards 2 columns wide.
   return (
     <section aria-label="Chiffres clés" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
       <StatCard
@@ -166,6 +171,17 @@ async function KeyFigures() {
         deltaLabel="vs même période du mois dernier"
         hint={month.previousRevenue > 0 ? undefined : "Pas encore de comparaison"}
         href="/admin/commandes"
+      />
+      <StatCard
+        label="Commission CeliacCare du mois"
+        value={formatDinars(month.commission)}
+        icon={<HandCoins />}
+        tone="brand"
+        delta={percentChange(month.commission, month.previousCommission)}
+        deltaLabel="vs même période du mois dernier"
+        hint={`${COMMISSION_PERCENT} des ventes, payés par les commerçants · livraison offerte aux clients`}
+        href="/admin/commandes"
+        className="xl:col-span-2"
       />
       <StatCard
         label="Commandes aujourd'hui"
@@ -180,7 +196,7 @@ async function KeyFigures() {
         value={formatDinars(stats.averageBasket)}
         icon={<ShoppingBasket />}
         tone="brand"
-        hint="Commandes du mois, livraison comprise"
+        hint="Commandes du mois, montant payé par le client"
         href="/admin/commandes"
       />
       <StatCard
@@ -230,7 +246,7 @@ async function KeyFigures() {
         tone={freshTone}
         hint={`${formatCount(freshness.fresh)} sur ${formatCount(freshness.published)} fiches publiées · objectif ${FRESH_SHEETS_TARGET} %`}
         href="#points-attention"
-        className="sm:col-span-2 xl:col-span-1"
+        className="xl:col-span-2"
       />
     </section>
   );
@@ -308,7 +324,7 @@ async function RevenueCard({ searchParams }: { searchParams: Promise<AdminQuery>
         headers={[pointLabel, "Chiffre d'affaires", "Commandes"]}
         rows={series.map((point) => [point.label, formatDinars(point.revenue), point.orders])}
       />
-      <p className="mt-3 text-xs text-ink-subtle">Commandes non annulées, frais de livraison compris.</p>
+      <p className="mt-3 text-xs text-ink-subtle">Commandes non annulées, montants payés par les clients.</p>
     </FormSection>
   );
 }
@@ -379,7 +395,7 @@ async function RevenueByCategoryCard() {
       id="ca-par-categorie"
       className="xl:col-span-2"
       title="Ventes par catégorie"
-      description="Chiffre d'affaires des produits de l'épicerie (articles seuls, sans la livraison)."
+      description="Chiffre d'affaires des produits de l'épicerie (montant des articles)."
     >
       {categories.length === 0 ? (
         <p className="py-10 text-center text-sm text-ink-muted">Aucun produit vendu pour l&apos;instant.</p>

@@ -73,10 +73,7 @@ export const common = {
     close: "Fermer",
     order: "Commander",
     orderNow: "Commander maintenant",
-    call: "Appeler",
-    whatsapp: "WhatsApp",
     directions: "Itinéraire",
-    website: "Site web",
     reportError: "Signaler une erreur",
     loading: "Chargement…",
     retry: "Réessayer",
@@ -84,13 +81,34 @@ export const common = {
     next: "Suivant",
     share: "Partager",
   },
+  /**
+   * Every purchase goes through CeliacCare: the site never shows a business's own contacts.
+   * Restaurant and artisan pages: "Commander sur CeliacCare" when something can be ordered,
+   * otherwise the request box and its button (our contact form, pre-filled for the business).
+   */
+  ordering: {
+    order: "Commander sur CeliacCare",
+    requestTitle: "Pas encore disponible à la commande sur CeliacCare",
+    requestText: "Demandez-le : nous contactons le commerce pour vous.",
+    request: "Demander sur CeliacCare",
+  },
   guarantee: {
     title: "Niveau de garantie",
+    /** Policy sentence shown next to every public legend / filter of the levels */
+    policy:
+      "CeliacCare ne référence que des commerces 100\u00a0% sans gluten : certifiés par un organisme officiel, ou qui ne travaillent que sans gluten.",
     CERTIFIED: {
       label: "Certifié sans gluten",
       short: "Certifié",
       description: "Produit ou établissement certifié par un organisme officiel (logo, organisme et numéro vérifiés).",
     },
+    DEDICATED: {
+      label: "100\u00a0% sans gluten",
+      short: "100\u00a0% sans gluten",
+      description:
+        "Commerce ou atelier qui ne travaille que sans gluten (ou unité de production entièrement séparée). Vérifié sur sources publiques ; pas de certificat officiel.",
+    },
+    /* Older levels: no longer offered (policy "100 % sans gluten only"), kept to display older sheets correctly. */
     NATURALLY_GF: {
       label: "Naturellement sans gluten",
       short: "Sans gluten",
@@ -110,6 +128,16 @@ export const common = {
     GROCERY: "Épicerie de quartier",
     HOME_SELLER: "Fait maison",
     COOPERATIVE: "Coopérative",
+    MANUFACTURER: "Fabricant sans gluten",
+  },
+  /** Compact form of producerTypes for tight spots (brand band of the home page: "Fabricant · Mohamedia") */
+  producerTypesShort: {
+    BAKERY: "Boulangerie-pâtisserie",
+    SPECIALTY_SHOP: "Boutique spécialisée",
+    GROCERY: "Épicerie",
+    HOME_SELLER: "Fait maison",
+    COOPERATIVE: "Coopérative",
+    MANUFACTURER: "Fabricant",
   },
   courses: {
     STARTER: "Entrées",
@@ -131,6 +159,20 @@ export const common = {
     underReview: "Fiche en cours de révision",
     underReviewText: "Cette fiche a été vérifiée il y a plus de 12 mois. Nous la revérifions.",
   },
+  /** Notice shown while siteConfig.demoMode is true (student prototype listing real businesses) */
+  demo: {
+    label: "Avertissement : site de démonstration",
+    badge: "Démo",
+    text: "Prototype étudiant (Master BioMIS) — les commerces présentés sont réels mais ne sont pas partenaires de CeliacCare : aucune commande ne leur est transmise.",
+    /** Same message for small screens (the bar stays slim) */
+    short: "Prototype étudiant : commerces réels mais non partenaires, aucune commande ne leur est transmise.",
+    checkoutTitle: "Commande de démonstration",
+    checkoutText:
+      "CeliacCare est un prototype étudiant (Master BioMIS). Les commerces présentés sont réels mais ne sont pas partenaires de CeliacCare : votre commande ne leur sera pas transmise, ni préparée, ni livrée. Pour une vraie commande, contactez CeliacCare : nous faisons le lien avec le commerce.",
+    confirmationTitle: "Rappel : ceci est une démonstration",
+    confirmationText:
+      "Cette commande n'a été transmise à aucun commerce : elle ne sera ni préparée ni livrée, et vous n'avez rien à payer. Pour une vraie commande, contactez CeliacCare : nous faisons le lien avec le commerce.",
+  },
   disclaimer: {
     title: "Important",
     text: "CeliacCare informe mais ne garantit pas l'absence totale de gluten. Vérifiez toujours l'étiquette : les recettes peuvent changer. Pour toute question de santé, consultez votre médecin.",
@@ -145,10 +187,10 @@ export const common = {
     email: "E-mail",
     hours: "Horaires",
     delivery: "Livraison",
-    deliveryFee: "Frais de livraison",
     deliveryTime: "Délai de livraison",
     minOrder: "Commande minimum",
     free: "Gratuite",
+    freeDelivery: "Livraison gratuite",
     unavailable: "Indisponible",
     available: "Disponible",
     partner: "Partenaire",
@@ -158,6 +200,8 @@ export const common = {
     reviews: "{count} avis",
     noReviews: "Pas encore d'avis",
     by: "par {name}",
+    /** Card / header label of a business that cannot be ordered online yet (no products or no dishes) */
+    pricesNotPublished: "Sur demande via CeliacCare",
     ingredients: "Ingrédients",
     allergens: "Allergènes",
     category: "Catégorie",

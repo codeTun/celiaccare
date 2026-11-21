@@ -1,18 +1,21 @@
-import { BadgeCheck, Leaf, TriangleExclamationPoint } from "lucide-react";
+import { BadgeCheck, Leaf, TriangleExclamationPoint, WheatOff } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import type { GuaranteeLevel } from "@/types";
 
 const styles: Record<GuaranteeLevel, string> = {
   CERTIFIED: "bg-brand-600 text-white",
+  // strong green too, but outlined instead of filled: never confused with an official certificate
+  DEDICATED: "bg-brand-100 text-brand-900 ring-1 ring-inset ring-brand-600",
   NATURALLY_GF: "bg-brand-50 text-brand-800 ring-1 ring-brand-200",
   TRACES_RISK: "bg-saffron-50 text-saffron-700 ring-1 ring-saffron-100",
 };
 
-const icons = { CERTIFIED: BadgeCheck, NATURALLY_GF: Leaf, TRACES_RISK: TriangleExclamationPoint };
+const icons = { CERTIFIED: BadgeCheck, DEDICATED: WheatOff, NATURALLY_GF: Leaf, TRACES_RISK: TriangleExclamationPoint };
 
 /**
- * Gluten-free guarantee level (spec §5.2): Certified / Naturally GF / Risk of traces.
+ * Gluten-free guarantee level (spec §5.2): Certified / 100 % gluten-free (dedicated, no certificate)
+ * and, for older rows only, Naturally GF / Risk of traces.
  * `label` comes from the dictionary: dict.common.guarantee[level].short or .label
  */
 export function GuaranteeBadge({

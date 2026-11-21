@@ -1,5 +1,5 @@
 /**
- * Product categories (demo data).
+ * Product categories (only the ones that have real products).
  * - `slug` is the unique key: the seed finds an existing category by its slug.
  * - `icon` must be one of the keys of CATEGORY_ICONS in lib/icons.ts.
  * - `sortOrder` decides the order of the categories on the website (1 = first).
@@ -42,22 +42,12 @@ export type SeedCategory = {
 
 export const CATEGORIES: SeedCategory[] = [
   {
-    slug: "pains-viennoiseries",
-    name: "Pains & viennoiseries",
-    nameAr: "الخبز والمخبوزات",
-    description:
-      "Pain de mie, baguettes, pains ronds au sorgho et croissants, pétris sans blé par des boulangers artisans.",
-    descriptionAr: "خبز التوست والباقات والخبز المستدير بالدرع والكرواسون، تُعجن دون قمح لدى خبّازين حرفيين.",
-    icon: "bread",
-    sortOrder: 1,
-  },
-  {
     slug: "patisserie-tunisienne",
     name: "Pâtisserie tunisienne",
     nameAr: "الحلويات التونسية",
     description:
-      "Makroudh, kaak warka, ghraiba et baklawa : les douceurs des fêtes, revisitées sans gluten par des pâtissières de chez nous.",
-    descriptionAr: "مقروض وكعك ورقة وغريبة وبقلاوة: حلويات المناسبات في نسخة خالية من الغلوتين بأيادٍ تونسية.",
+      "Makroudh, ghrayba, bachkoutou et biscuits traditionnels : les douceurs tunisiennes, en version sans gluten.",
+    descriptionAr: "مقروض وغريبة وبشكوتو وبسكويت تقليدي: الحلويات التونسية في نسخة خالية من الغلوتين.",
     icon: "pastry",
     sortOrder: 2,
   },
@@ -66,8 +56,8 @@ export const CATEGORIES: SeedCategory[] = [
     name: "Biscuits & gâteaux",
     nameAr: "البسكويت والمرطبات",
     description:
-      "Sablés, financiers, brownies et biscuits à l'anis pour le goûter, à base de farines de riz, de sarrasin ou d'amande.",
-    descriptionAr: "بسكويت وفينانسيي وبراوني وكعك باليانسون للّمجة، بدقيق الأرز أو الحنطة السوداء أو اللوز.",
+      "Sablés, cookies, financiers, madeleines et desserts pour le goûter, sans gluten.",
+    descriptionAr: "صابلي وكوكيز وفينونسيي ومادلين وتحليات للّمجة، خالية من الغلوتين.",
     icon: "biscuits",
     sortOrder: 3,
   },
@@ -76,8 +66,8 @@ export const CATEGORIES: SeedCategory[] = [
     name: "Couscous & pâtes",
     nameAr: "الكسكسي والعجين",
     description:
-      "Couscous de maïs ou de sorgho roulé à la main, mhamsa, pâtes de riz et feuilles de brik sans gluten pour cuisiner comme d'habitude.",
-    descriptionAr: "كسكسي بالذرة أو بالدرع مفتول باليد، محمّصة، معكرونة الأرز وورقة ملسوقة خالية من الغلوتين للطبخ كالعادة.",
+      "Couscous de maïs, de riz ou de sarrasin, mhamsa, nouasser, fell et pâtes sans gluten de fabricants tunisiens, pour cuisiner comme d'habitude.",
+    descriptionAr: "كسكسي بالذرة أو الأرز أو الحنطة السوداء، محمّص، نواصر، فِل وعجين خالٍ من الغلوتين من مصنّعين تونسيين، للطبخ كالعادة.",
     icon: "couscous",
     sortOrder: 4,
   },
@@ -86,8 +76,8 @@ export const CATEGORIES: SeedCategory[] = [
     name: "Farines & céréales",
     nameAr: "الدقيق والحبوب",
     description:
-      "Farines de riz et de pois chiches, mélanges prêts à l'emploi pour réussir pains, crêpes et gâteaux à la maison.",
-    descriptionAr: "دقيق الأرز والحمص وخلطات جاهزة لتحضير الخبز والكريب والمرطبات في المنزل.",
+      "Farines de riz, de sorgho et de pois chiche, mix pain, pizza et pâtisserie pour cuisiner sans gluten à la maison.",
+    descriptionAr: "دقيق الأرز والدرع والحمّص، وخلطات الخبز والبيتزا والحلويات للطبخ دون غلوتين في المنزل.",
     icon: "flour",
     sortOrder: 5,
   },
@@ -95,18 +85,27 @@ export const CATEGORIES: SeedCategory[] = [
     slug: "petit-dejeuner",
     name: "Petit-déjeuner & bsissa",
     nameAr: "فطور الصباح والبسيسة",
-    description: "Bsissa sans blé, droô de sorgho, granola et halwa chamia : de quoi bien commencer la journée.",
-    descriptionAr: "بسيسة دون قمح، درع، غرانولا وحلوى شامية لبداية يوم موفّقة.",
+    description: "La bsissa sans gluten du petit-déjeuner tunisien, pour bien commencer la journée.",
+    descriptionAr: "بسيسة خالية من الغلوتين لفطور الصباح التونسي، لبداية يوم موفّقة.",
     icon: "breakfast",
     sortOrder: 6,
+  },
+  {
+    slug: "plats-prepares",
+    name: "Sandwichs & plats préparés",
+    nameAr: "السندويتشات والأطباق الجاهزة",
+    description: "Sandwichs et plats prêts à manger sur pain sans gluten, pour le déjeuner.",
+    descriptionAr: "سندويتشات وأطباق جاهزة بخبز خالٍ من الغلوتين، للغداء.",
+    icon: "meals",
+    sortOrder: 10,
   },
   {
     slug: "epicerie-condiments",
     name: "Épicerie & condiments",
     nameAr: "البقالة والتوابل",
     description:
-      "Harissa du Cap Bon, huile d'olive de Sfax, épices de Djerba et mloukhia : les bases de la cuisine tunisienne, sans farine cachée.",
-    descriptionAr: "هريسة الوطن القبلي وزيت زيتون صفاقس وتوابل جربة والملوخية: أساسيات المطبخ التونسي دون دقيق مخفي.",
+      "Miel brut de Sejnan et du Cap Bon, vinaigre de dattes artisanal : des produits d'épicerie de petits producteurs tunisiens.",
+    descriptionAr: "عسل خام من سجنان والوطن القبلي وخلّ تمر تقليدي: مواد بقالة من منتجين تونسيين صغار.",
     icon: "pantry",
     sortOrder: 7,
   },
@@ -114,27 +113,9 @@ export const CATEGORIES: SeedCategory[] = [
     slug: "dattes",
     name: "Dattes",
     nameAr: "التمور",
-    description: "Deglet Nour des oasis de Tozeur, pâte de dattes et dattes fourrées, naturellement sans gluten.",
-    descriptionAr: "دقلة النور من واحات توزر، عجينة التمر والتمر المحشي، خالية من الغلوتين بطبيعتها.",
+    description: "Pâtes à tartiner, confiture et jus à base de dattes Deglet Nour du sud tunisien.",
+    descriptionAr: "كريمات للدهن ومعجون وعصير أساسها تمر دقلة النور من الجنوب التونسي.",
     icon: "dates",
     sortOrder: 8,
-  },
-  {
-    slug: "snacks-aperitifs",
-    name: "Snacks & apéritifs",
-    nameAr: "المقرمشات والمقبلات",
-    description: "Pois chiches grillés, chips de pois chiches et crackers aux graines de lin pour grignoter sans souci.",
-    descriptionAr: "حمص محمّص ورقائق الحمص وبسكويت مالح ببذور الكتان للتسلية دون قلق.",
-    icon: "snacks",
-    sortOrder: 9,
-  },
-  {
-    slug: "plats-prepares",
-    name: "Plats préparés & surgelés",
-    nameAr: "الأطباق الجاهزة والمجمّدة",
-    description: "Pizzas et briks surgelées sans gluten, prêtes à cuire pour les soirs pressés.",
-    descriptionAr: "بيتزا وبريك مجمّدة خالية من الغلوتين، جاهزة للطهي في الأمسيات المستعجلة.",
-    icon: "meals",
-    sortOrder: 10,
   },
 ];

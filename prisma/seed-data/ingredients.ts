@@ -1,5 +1,5 @@
 /**
- * Ingredients (demo data), used by products and restaurant dishes.
+ * Ingredients, used by products and restaurant dishes (lists only what sources publish).
  * - `slug` is the unique key (products and dishes refer to ingredients by slug).
  * - `isAllergen: true` for the major allergens shown on product sheets
  *   (milk, eggs, nuts, sesame, peanuts, fish, soy...). Gluten itself is not listed:
@@ -72,4 +72,31 @@ export const INGREDIENTS: SeedIngredient[] = [
   { slug: "poisson", name: "Poisson", nameAr: "سمك", isAllergen: true },
   { slug: "thon", name: "Thon", nameAr: "تن", isAllergen: true },
   { slug: "soja", name: "Soja", nameAr: "صويا", isAllergen: true },
+  { slug: "noix-de-cajou", name: "Noix de cajou", nameAr: "كاجو", isAllergen: true },
+  { slug: "noix", name: "Noix", nameAr: "جوز", isAllergen: true },
+
+  // --- Found in the published compositions of real products and menus ----------
+  { slug: "legumineuses", name: "Légumineuses", nameAr: "بقوليات", isAllergen: false },
+  { slug: "fibres-vegetales", name: "Fibres végétales", nameAr: "ألياف نباتية", isAllergen: false },
+  { slug: "curcuma", name: "Curcuma", nameAr: "كركم", isAllergen: false },
+  { slug: "poivron", name: "Poivron", nameAr: "فلفل حلو", isAllergen: false },
+  { slug: "graines-de-tournesol", name: "Graines de tournesol", nameAr: "بذور عبّاد الشمس", isAllergen: false },
+  { slug: "graines-de-courge", name: "Graines de courge", nameAr: "بذور القرع", isAllergen: false },
+  { slug: "millet", name: "Millet", nameAr: "دخن", isAllergen: false },
+  { slug: "riz-complet", name: "Riz complet", nameAr: "أرز كامل", isAllergen: false },
+  { slug: "noix-de-coco", name: "Noix de coco", nameAr: "جوز الهند", isAllergen: false },
+  { slug: "avocat", name: "Avocat", nameAr: "أفوكادو", isAllergen: false },
+  { slug: "epinards", name: "Épinards", nameAr: "سبانخ", isAllergen: false },
+  { slug: "chou", name: "Chou", nameAr: "كرنب", isAllergen: false },
+  { slug: "the", name: "Thé", nameAr: "شاي", isAllergen: false },
+  { slug: "matcha", name: "Matcha", nameAr: "ماتشا", isAllergen: false },
+  { slug: "fruits", name: "Fruits frais", nameAr: "فواكه طازجة", isAllergen: false },
+  { slug: "raisins-secs", name: "Raisins secs", nameAr: "زبيب", isAllergen: false },
+
+  // --- Generic terms of published compositions (the maker does not detail them: Glucélia mixes) ---
+  { slug: "farines-sans-gluten", name: "Farines sans gluten", nameAr: "دقيق خالٍ من الغلوتين", isAllergen: false },
+  { slug: "amidon-sans-gluten", name: "Amidon sans gluten", nameAr: "نشا خالٍ من الغلوتين", isAllergen: false },
+  { slug: "semoule-sans-gluten", name: "Semoule sans gluten", nameAr: "سميد خالٍ من الغلوتين", isAllergen: false },
+  { slug: "levure-sans-gluten", name: "Levure sans gluten", nameAr: "خميرة خالية من الغلوتين", isAllergen: false },
+  { slug: "emulsifiant", name: "Émulsifiant", nameAr: "مستحلب", isAllergen: false },
 ];

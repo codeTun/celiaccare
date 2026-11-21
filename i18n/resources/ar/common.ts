@@ -75,10 +75,7 @@ export const common: CommonDict = {
     close: "إغلاق",
     order: "اطلب",
     orderNow: "اطلب الآن",
-    call: "اتصال",
-    whatsapp: "واتساب",
     directions: "الاتجاهات",
-    website: "الموقع",
     reportError: "الإبلاغ عن خطأ",
     loading: "جارٍ التحميل…",
     retry: "إعادة المحاولة",
@@ -86,12 +83,26 @@ export const common: CommonDict = {
     next: "التالي",
     share: "مشاركة",
   },
+  ordering: {
+    order: "اطلب عبر CeliacCare",
+    requestTitle: "غير متاح للطلب على CeliacCare بعد",
+    requestText: "راسلنا بشأنه: نتواصل معه نيابةً عنك.",
+    request: "اطلب توفيره عبر CeliacCare",
+  },
   guarantee: {
     title: "مستوى الضمان",
+    policy:
+      "لا يدرج CeliacCare إلا المتاجر الخالية تمامًا من الغلوتين: الحاصلة على شهادة من هيئة رسمية، أو التي لا تعمل إلا بدون غلوتين.",
     CERTIFIED: {
       label: "حاصل على شهادة خالٍ من الغلوتين",
       short: "معتمد",
       description: "منتج أو مؤسسة حاصلة على شهادة من هيئة رسمية (تم التحقق من الشعار والهيئة والرقم).",
+    },
+    DEDICATED: {
+      label: "خالٍ تمامًا من الغلوتين",
+      short: "خالٍ تمامًا من الغلوتين",
+      description:
+        "متجر أو ورشة لا تعمل إلا بدون غلوتين (أو وحدة إنتاج منفصلة تمامًا). تم التحقق من ذلك عبر مصادر عامة، دون شهادة رسمية.",
     },
     NATURALLY_GF: {
       label: "خالٍ من الغلوتين بطبيعته",
@@ -110,6 +121,15 @@ export const common: CommonDict = {
     GROCERY: "بقالة الحي",
     HOME_SELLER: "صنع منزلي",
     COOPERATIVE: "تعاضدية",
+    MANUFACTURER: "مصنّع منتجات خالية من الغلوتين",
+  },
+  producerTypesShort: {
+    BAKERY: "مخبزة وحلويات",
+    SPECIALTY_SHOP: "متجر متخصص",
+    GROCERY: "بقالة",
+    HOME_SELLER: "صنع منزلي",
+    COOPERATIVE: "تعاضدية",
+    MANUFACTURER: "مصنّع",
   },
   courses: {
     STARTER: "المقبلات",
@@ -131,6 +151,18 @@ export const common: CommonDict = {
     underReview: "البطاقة قيد المراجعة",
     underReviewText: "تم التحقق من هذه البطاقة منذ أكثر من 12 شهرًا. نحن بصدد مراجعتها.",
   },
+  demo: {
+    label: "تنبيه: موقع تجريبي",
+    badge: "تجريبي",
+    text: "نموذج أولي طلابي (ماستر BioMIS) — المتاجر المعروضة حقيقية لكنها ليست شريكة لـ CeliacCare: لا يُرسَل إليها أي طلب.",
+    short: "نموذج أولي طلابي: متاجر حقيقية لكنها غير شريكة، ولا يُرسَل إليها أي طلب.",
+    checkoutTitle: "طلب تجريبي",
+    checkoutText:
+      "CeliacCare نموذج أولي طلابي (ماستر BioMIS). المتاجر المعروضة حقيقية لكنها ليست شريكة لـ CeliacCare: لن يُرسَل طلبك إليها، ولن يُحضَّر ولن يُوصَّل. لطلب حقيقي، تواصل مع CeliacCare: نتولّى نحن التواصل مع التاجر.",
+    confirmationTitle: "تذكير: هذا عرض تجريبي",
+    confirmationText:
+      "لم يُرسَل هذا الطلب إلى أي متجر: لن يُحضَّر ولن يُوصَّل، ولا شيء عليك دفعه. لطلب حقيقي، تواصل مع CeliacCare: نتولّى نحن التواصل مع التاجر.",
+  },
   disclaimer: {
     title: "هام",
     text: "يقدّم CeliacCare معلومات لكنه لا يضمن الغياب التام للغلوتين. تحقّق دائمًا من الملصق لأن الوصفات قد تتغير، واستشر طبيبك في كل ما يتعلق بصحتك.",
@@ -145,10 +177,10 @@ export const common: CommonDict = {
     email: "البريد الإلكتروني",
     hours: "أوقات العمل",
     delivery: "التوصيل",
-    deliveryFee: "معلوم التوصيل",
     deliveryTime: "مدة التوصيل",
     minOrder: "الحد الأدنى للطلب",
     free: "مجاني",
+    freeDelivery: "التوصيل مجاني",
     unavailable: "غير متوفر",
     available: "متوفر",
     partner: "شريك",
@@ -158,6 +190,7 @@ export const common: CommonDict = {
     reviews: "{count} تقييم",
     noReviews: "لا توجد تقييمات بعد",
     by: "من {name}",
+    pricesNotPublished: "حسب الطلب عبر CeliacCare",
     ingredients: "المكونات",
     allergens: "مسببات الحساسية",
     category: "الصنف",

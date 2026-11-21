@@ -5,6 +5,7 @@ import { lang as getLang } from "next/root-params";
 
 import { CartProvider } from "@/components/cart/cart-provider";
 import { CookieNotice } from "@/components/cookie-notice";
+import { DemoBar } from "@/components/demo-notice";
 import { Footer } from "@/components/footer";
 import { JsonLd } from "@/components/json-ld";
 import { Navbar } from "@/components/navbar";
@@ -86,6 +87,8 @@ export default async function PublicLayout({ children }: LayoutProps<"/[lang]">)
         >
           {common.nav.skipToContent}
         </a>
+        {/* Student prototype listing real businesses that are not partners (lib/site-config.ts: demoMode) */}
+        {siteConfig.demoMode ? <DemoBar texts={common.demo} /> : null}
         <CartProvider>
           <Navbar lang={locale} labels={common.nav} cartLabels={common.cartButton} />
           <main id="main" tabIndex={-1} className="flex-1 outline-none">

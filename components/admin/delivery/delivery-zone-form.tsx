@@ -4,7 +4,6 @@ import { useActionState } from "react";
 
 import { FormActions, FormGrid, FormMessage } from "@/components/admin/admin-form";
 import { FormSection } from "@/components/admin/form-section";
-import { MoneyField } from "@/components/admin/money-field";
 import { EnumSelectField } from "@/components/admin/select-fields";
 import { SwitchField } from "@/components/admin/switch-field";
 import { TextField } from "@/components/ui/form";
@@ -14,8 +13,9 @@ import type { AdminDeliveryZoneForm } from "@/types/admin-data";
 import { ZONES_PATH } from "./delivery-routes";
 
 /**
- * Create / edit a delivery zone (one per governorate): fee, announced delay, free delivery
- * threshold and open / closed. The Server Action is bound on the server and passed as `action`.
+ * Create / edit a delivery zone (one per governorate): announced delay and open / closed.
+ * Delivery is free for the customer everywhere, so there is no fee to set.
+ * The Server Action is bound on the server and passed as `action`.
  *
  * @example
  * <DeliveryZoneForm action={createDeliveryZoneAction} governorates={freeGovernorates} />
@@ -42,7 +42,7 @@ export function DeliveryZoneForm({
       <FormMessage state={state} />
       <FormSection
         title="Zone de livraison"
-        description="Ce que le client voit avant de commander : frais, délai et livraison offerte."
+        description="Ce que le client voit avant de commander : le délai. La livraison est gratuite pour le client, partout."
       >
         <FormGrid>
           <EnumSelectField
@@ -64,23 +64,6 @@ export function DeliveryZoneForm({
             defaultValue={values?.delay ?? zone?.delay ?? ""}
             hint="Affiché au client avant la commande, ex. « 24 h » ou « 48–72 h »."
             error={errors?.delay}
-          />
-          <MoneyField
-            name="fee"
-            label="Frais de livraison"
-            required
-            defaultMillimes={zone?.fee}
-            defaultValue={values?.fee}
-            hint="Payés par le client. 0 = livraison gratuite."
-            error={errors?.fee}
-          />
-          <MoneyField
-            name="freeFrom"
-            label="Livraison offerte à partir de"
-            defaultMillimes={zone?.freeFrom}
-            defaultValue={values?.freeFrom}
-            hint="Montant des articles à partir duquel la livraison est gratuite. Laissez vide pour ne jamais l'offrir."
-            error={errors?.freeFrom}
           />
           <SwitchField
             name="isActive"

@@ -6,13 +6,13 @@ import { localePath } from "@/i18n/config";
 import type { CommonDict } from "@/i18n/resources/fr/common";
 import type { RestaurantsDict } from "@/i18n/resources/fr/restaurants";
 import { GOVERNORATES } from "@/lib/tunisia";
-import { GUARANTEE_LEVELS, type GuaranteeLevel, type Locale } from "@/types";
+import { LISTED_GUARANTEE_LEVELS, type ListedGuaranteeLevel, type Locale } from "@/types";
 
 /** The filters as they appear in the URL of /restaurants ("" = no filter). */
 export type RestaurantSearch = {
   q: string;
   governorate: string;
-  guarantee: GuaranteeLevel | "";
+  guarantee: ListedGuaranteeLevel | "";
   partnerOnly: boolean;
 };
 
@@ -44,6 +44,7 @@ export function RestaurantFilters({
       resetLabel={dict.filters.reset}
       showReset={hasFilters}
       className={className}
+      note={dict.filters.guaranteeHint}
       extra={
         // "Partners only" toggle: the pill turns green when it is checked
         <label className="flex min-h-11 w-fit cursor-pointer items-center gap-2.5 rounded-full border border-line-strong bg-white py-1.5 ps-3.5 pe-4 transition-colors hover:border-brand-300 has-[:checked]:border-brand-500 has-[:checked]:bg-brand-50">
@@ -86,7 +87,7 @@ export function RestaurantFilters({
 
       <SelectField id="filter-guarantee" name="garantie" label={dict.filters.guarantee} defaultValue={values.guarantee}>
         <option value="">{dict.filters.allGuarantees}</option>
-        {GUARANTEE_LEVELS.map((level) => (
+        {LISTED_GUARANTEE_LEVELS.map((level) => (
           <option key={level} value={level}>
             {common.guarantee[level].label}
           </option>

@@ -1,7 +1,7 @@
 import { Bike, Clock, Handshake, MapPin, ShoppingBasket, Star } from "lucide-react";
 
-import { ContactButtons } from "@/components/directory/contact-buttons";
 import { DetailHero } from "@/components/directory/detail-hero";
+import { OrderRequestButton } from "@/components/directory/order-request";
 import { placeLabel } from "@/components/directory/place";
 import { Badge } from "@/components/ui/badge";
 import { buttonStyles } from "@/components/ui/button";
@@ -10,8 +10,7 @@ import { GuaranteeBadge } from "@/components/ui/guarantee-badge";
 import { RatingStars } from "@/components/ui/rating-stars";
 import { interpolate } from "@/i18n/interpolate";
 import type { CommonDict } from "@/i18n/resources/fr/common";
-import type { RestaurantsDict } from "@/i18n/resources/fr/restaurants";
-import { formatPrice, formatRating } from "@/lib/format";
+import { formatRating } from "@/lib/format";
 import { pluralize, type PluralForms } from "@/lib/utils";
 import type { Locale, RestaurantDetailDTO } from "@/types";
 
@@ -20,14 +19,15 @@ import { PriceLevel } from "./price-level";
 /**
  * Top of a restaurant page: cover photo, badges (partner, guarantee level),
  * name (the page's <h1>), cuisine and city, rating, price range,
- * delivery summary (partners) and the main actions.
+ * delivery summary (partners) and the main action. Every order goes through CeliacCare:
+ * "Commander sur CeliacCare" (down to the menu) or "Demander sur CeliacCare" (our contact form),
+ * never the restaurant's own contacts.
  */
 export function RestaurantHeader({
   restaurant,
   canOrder,
   locale,
   common,
-  dict,
   reviewCount,
 }: {
   restaurant: RestaurantDetailDTO;
@@ -35,7 +35,6 @@ export function RestaurantHeader({
   canOrder: boolean;
   locale: Locale;
   common: CommonDict;
-  dict: RestaurantsDict;
   /** "12 avis" in every plural form: dict.community.reviews.count */
   reviewCount: PluralForms;
 }) {
@@ -120,8 +119,7 @@ export function RestaurantHeader({
               </li>
               <li className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 ring-1 ring-line">
                 <Bike className="size-3.5 text-brand-600" aria-hidden="true" />
-                <span className="text-ink-muted">{common.labels.delivery}</span>
-                {restaurant.deliveryFee === 0 ? common.labels.free : formatPrice(restaurant.deliveryFee, locale)}
+                {common.labels.freeDelivery}
               </li>
             </ul>
           ) : null}
@@ -130,16 +128,17 @@ export function RestaurantHeader({
             {canOrder ? (
               <a href="#carte" className={buttonStyles({ size: "lg", className: "w-full sm:w-auto" })}>
                 <ShoppingBasket aria-hidden="true" />
-                {dict.page.orderOnline}
+                {common.ordering.order}
               </a>
-            ) : null}
-            <ContactButtons
-              contact={restaurant}
-              common={common}
-              labels={dict.sheet}
-              primary={canOrder ? undefined : "call"}
-              className="w-full sm:w-auto"
-            />
+            ) : (
+              <OrderRequestButton
+                target={{ kind: "restaurant", slug: restaurant.slug }}
+                locale={locale}
+                label={common.ordering.request}
+                size="lg"
+                className="w-full sm:w-auto"
+              />
+            )}
           </div>
         </div>
       </div>

@@ -20,11 +20,10 @@ import { Price } from "@/components/ui/price";
 import { interpolate } from "@/i18n/interpolate";
 import type { CheckoutDict } from "@/i18n/resources/fr/checkout";
 import { formatDateTime } from "@/lib/format";
-import { siteConfig } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
 import type { Locale, OrderStatus, OrderTrackingDTO } from "@/types";
 
-import { ltr } from "./text";
+import { OrderHelp } from "./order-help";
 
 /** The normal life of an order, in order. */
 const STATUS_FLOW: OrderStatus[] = ["PENDING", "CONFIRMED", "PREPARING", "OUT_FOR_DELIVERY", "DELIVERED"];
@@ -78,11 +77,15 @@ function timelineSteps(order: OrderTrackingDTO): TimelineStep[] {
   }));
 }
 
-/** Result of the order tracking: status, timeline with dates, lines and amounts (no address, no phone). */
+/**
+ * Result of the order tracking: status, timeline with dates, lines and amounts (no address, no phone),
+ * and CeliacCare's own support contacts (never the business's).
+ */
 export function OrderTracking({
   lang,
   texts,
   paymentTexts,
+  helpTexts,
   order,
 }: {
   lang: Locale;
@@ -90,6 +93,8 @@ export function OrderTracking({
   texts: CheckoutDict["tracking"];
   /** dict.checkout.payment */
   paymentTexts: CheckoutDict["payment"];
+  /** dict.checkout.help */
+  helpTexts: CheckoutDict["help"];
   order: OrderTrackingDTO;
 }) {
   const t = texts.result;
@@ -222,6 +227,7 @@ export function OrderTracking({
           <div className="flex items-baseline justify-between gap-3">
             <dt className="text-ink-muted">{t.delivery}</dt>
             <dd>
+              {/* Free for every order since delivery became free; older orders show the fee they were charged. */}
               {order.deliveryFee === 0 ? (
                 <span className="font-bold text-brand-700">{t.free}</span>
               ) : (
@@ -240,9 +246,14 @@ export function OrderTracking({
             <dd className="text-end font-semibold text-ink">{paymentTexts[order.paymentMethod].label}</dd>
           </div>
         </dl>
-        <p className="mt-5 rounded-2xl bg-canvas p-4 text-xs leading-relaxed text-ink-muted">
-          {interpolate(t.help, { phone: ltr(siteConfig.phone) })}
-        </p>
+        {/* Questions about the order come to CeliacCare (lib/site-config.ts), never to the business directly. */}
+        <OrderHelp
+          lang={lang}
+          texts={helpTexts}
+          text={helpTexts.orderText}
+          id="tracking-help-title"
+          className="mt-5"
+        />
       </aside>
     </section>
   );

@@ -17,7 +17,7 @@ import { formToCatalogHref, submitForm } from "./catalog-url";
 /** One choice of a filter (a category, an allergen, an ingredient). `value` is what goes in the URL. */
 export type FilterChoice = { value: string; label: string; count?: number; icon?: ReactNode };
 
-/** A guarantee level and its URL value ("certifie", "naturel", "traces"). */
+/** A guarantee level and its URL value ("certifie", "100-sans-gluten"). */
 export type GuaranteeChoice = { value: string; label: string; level: GuaranteeLevel };
 
 /** The current filters, written as in the URL. They pre-fill the form. */
@@ -178,6 +178,7 @@ export function CatalogFilterForm({
       {/* Guarantee level (one choice) */}
       <fieldset className="min-w-0">
         <legend className={sectionTitle}>{labels.guarantee}</legend>
+        <p className={hintText}>{labels.guaranteeHint}</p>
         <div className="flex flex-col gap-0.5">
           <ChoiceRow name="garantie" value="" label={labels.allGuarantees} defaultChecked={!values.garantie} />
           {options.guarantees.map((guarantee) => (

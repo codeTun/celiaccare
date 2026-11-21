@@ -1,4 +1,4 @@
-import { Croissant, House, ShoppingBasket, Sprout, Store, type LucideIcon } from "lucide-react";
+import { Croissant, Factory, House, ShoppingBasket, Sprout, Store, type LucideIcon } from "lucide-react";
 
 import type { ProducerType } from "@/types";
 
@@ -9,4 +9,5 @@ export const PRODUCER_TYPE_ICONS: Record<ProducerType, LucideIcon> = {
   GROCERY: ShoppingBasket, // épiceries
   HOME_SELLER: House, // vendeurs à domicile (fait maison)
   COOPERATIVE: Sprout, // coopératives
+  MANUFACTURER: Factory, // fabricants / petites marques sans gluten
 };

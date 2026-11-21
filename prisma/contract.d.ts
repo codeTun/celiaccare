@@ -23,7 +23,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'6f3417227960ab4c38b3b17f60a6be9b883e8f2d6547eb48d2d7b3a3cb01fb76'>;
+  StorageHashBase<'39c01f20e1730337c441946bad8270c6f06dc294551d0ef86c2bffbc576b3a3c'>;
 export type ExecutionHash =
   ExecutionHashBase<'09b774c54b0193861e14afeb8761361ec5fcf86759e6b08bb22cffdb00ce25ea'>;
 export type ProfileHash =
@@ -333,18 +333,30 @@ type FieldTypeOverrides = {
       };
       readonly Producer: {
         readonly guaranteeLevel: {
-          readonly output: 'CERTIFIED' | 'NATURALLY_GF' | 'TRACES_RISK';
-          readonly input: 'CERTIFIED' | 'NATURALLY_GF' | 'TRACES_RISK';
+          readonly output: 'CERTIFIED' | 'DEDICATED' | 'NATURALLY_GF' | 'TRACES_RISK';
+          readonly input: 'CERTIFIED' | 'DEDICATED' | 'NATURALLY_GF' | 'TRACES_RISK';
         };
         readonly type: {
-          readonly output: 'BAKERY' | 'SPECIALTY_SHOP' | 'GROCERY' | 'HOME_SELLER' | 'COOPERATIVE';
-          readonly input: 'BAKERY' | 'SPECIALTY_SHOP' | 'GROCERY' | 'HOME_SELLER' | 'COOPERATIVE';
+          readonly output:
+            | 'BAKERY'
+            | 'SPECIALTY_SHOP'
+            | 'GROCERY'
+            | 'HOME_SELLER'
+            | 'COOPERATIVE'
+            | 'MANUFACTURER';
+          readonly input:
+            | 'BAKERY'
+            | 'SPECIALTY_SHOP'
+            | 'GROCERY'
+            | 'HOME_SELLER'
+            | 'COOPERATIVE'
+            | 'MANUFACTURER';
         };
       };
       readonly Product: {
         readonly guaranteeLevel: {
-          readonly output: 'CERTIFIED' | 'NATURALLY_GF' | 'TRACES_RISK';
-          readonly input: 'CERTIFIED' | 'NATURALLY_GF' | 'TRACES_RISK';
+          readonly output: 'CERTIFIED' | 'DEDICATED' | 'NATURALLY_GF' | 'TRACES_RISK';
+          readonly input: 'CERTIFIED' | 'DEDICATED' | 'NATURALLY_GF' | 'TRACES_RISK';
         };
       };
       readonly Report: {
@@ -363,8 +375,8 @@ type FieldTypeOverrides = {
       };
       readonly Restaurant: {
         readonly guaranteeLevel: {
-          readonly output: 'CERTIFIED' | 'NATURALLY_GF' | 'TRACES_RISK';
-          readonly input: 'CERTIFIED' | 'NATURALLY_GF' | 'TRACES_RISK';
+          readonly output: 'CERTIFIED' | 'DEDICATED' | 'NATURALLY_GF' | 'TRACES_RISK';
+          readonly input: 'CERTIFIED' | 'DEDICATED' | 'NATURALLY_GF' | 'TRACES_RISK';
         };
       };
       readonly Review: {
@@ -449,18 +461,20 @@ type ColumnTypeOverrides = {
     };
     readonly Producer: {
       readonly guaranteeLevel: {
-        readonly output: 'CERTIFIED' | 'NATURALLY_GF' | 'TRACES_RISK';
-        readonly input: 'CERTIFIED' | 'NATURALLY_GF' | 'TRACES_RISK';
+        readonly output: 'CERTIFIED' | 'DEDICATED' | 'NATURALLY_GF' | 'TRACES_RISK';
+        readonly input: 'CERTIFIED' | 'DEDICATED' | 'NATURALLY_GF' | 'TRACES_RISK';
       };
       readonly type: {
-        readonly output: 'BAKERY' | 'SPECIALTY_SHOP' | 'GROCERY' | 'HOME_SELLER' | 'COOPERATIVE';
-        readonly input: 'BAKERY' | 'SPECIALTY_SHOP' | 'GROCERY' | 'HOME_SELLER' | 'COOPERATIVE';
+        readonly output:
+          'BAKERY' | 'SPECIALTY_SHOP' | 'GROCERY' | 'HOME_SELLER' | 'COOPERATIVE' | 'MANUFACTURER';
+        readonly input:
+          'BAKERY' | 'SPECIALTY_SHOP' | 'GROCERY' | 'HOME_SELLER' | 'COOPERATIVE' | 'MANUFACTURER';
       };
     };
     readonly Product: {
       readonly guaranteeLevel: {
-        readonly output: 'CERTIFIED' | 'NATURALLY_GF' | 'TRACES_RISK';
-        readonly input: 'CERTIFIED' | 'NATURALLY_GF' | 'TRACES_RISK';
+        readonly output: 'CERTIFIED' | 'DEDICATED' | 'NATURALLY_GF' | 'TRACES_RISK';
+        readonly input: 'CERTIFIED' | 'DEDICATED' | 'NATURALLY_GF' | 'TRACES_RISK';
       };
     };
     readonly Report: {
@@ -479,8 +493,8 @@ type ColumnTypeOverrides = {
     };
     readonly Restaurant: {
       readonly guaranteeLevel: {
-        readonly output: 'CERTIFIED' | 'NATURALLY_GF' | 'TRACES_RISK';
-        readonly input: 'CERTIFIED' | 'NATURALLY_GF' | 'TRACES_RISK';
+        readonly output: 'CERTIFIED' | 'DEDICATED' | 'NATURALLY_GF' | 'TRACES_RISK';
+        readonly input: 'CERTIFIED' | 'DEDICATED' | 'NATURALLY_GF' | 'TRACES_RISK';
       };
     };
     readonly Review: {
@@ -746,6 +760,8 @@ export namespace Models {
     instagram: FieldOutputTypes['public']['Producer']['instagram'];
     isActive: FieldOutputTypes['public']['Producer']['isActive'];
     latitude: FieldOutputTypes['public']['Producer']['latitude'];
+    logoPublicId: FieldOutputTypes['public']['Producer']['logoPublicId'];
+    logoUrl: FieldOutputTypes['public']['Producer']['logoUrl'];
     longitude: FieldOutputTypes['public']['Producer']['longitude'];
     name: FieldOutputTypes['public']['Producer']['name'];
     openingHours: FieldOutputTypes['public']['Producer']['openingHours'];
@@ -843,6 +859,8 @@ export namespace Models {
     isActive: FieldOutputTypes['public']['Restaurant']['isActive'];
     isPartner: FieldOutputTypes['public']['Restaurant']['isPartner'];
     latitude: FieldOutputTypes['public']['Restaurant']['latitude'];
+    logoPublicId: FieldOutputTypes['public']['Restaurant']['logoPublicId'];
+    logoUrl: FieldOutputTypes['public']['Restaurant']['logoUrl'];
     longitude: FieldOutputTypes['public']['Restaurant']['longitude'];
     minOrder: FieldOutputTypes['public']['Restaurant']['minOrder'];
     name: FieldOutputTypes['public']['Restaurant']['name'];
@@ -2501,6 +2519,18 @@ type ContractBase = Omit<
                   readonly nullable: true;
                   readonly many: false;
                 };
+                readonly logoPublicId: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly logoUrl: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
                 readonly longitude: {
                   readonly dataType: 'pg/float8';
                   readonly codecId: 'pg/float8@1';
@@ -3168,6 +3198,18 @@ type ContractBase = Omit<
                   readonly nullable: true;
                   readonly many: false;
                 };
+                readonly logoPublicId: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly logoUrl: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
                 readonly longitude: {
                   readonly dataType: 'pg/float8';
                   readonly codecId: 'pg/float8@1';
@@ -3419,7 +3461,7 @@ type ContractBase = Omit<
             };
             readonly GuaranteeLevel: {
               readonly kind: 'valueSet';
-              readonly values: readonly ['CERTIFIED', 'NATURALLY_GF', 'TRACES_RISK'];
+              readonly values: readonly ['CERTIFIED', 'DEDICATED', 'NATURALLY_GF', 'TRACES_RISK'];
             };
             readonly ItemKind: {
               readonly kind: 'valueSet';
@@ -3464,6 +3506,7 @@ type ContractBase = Omit<
                 'GROCERY',
                 'HOME_SELLER',
                 'COOPERATIVE',
+                'MANUFACTURER',
               ];
             };
             readonly RefusalReason: {
@@ -4953,6 +4996,14 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
               };
+              readonly logoPublicId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly logoUrl: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly longitude: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
@@ -5044,6 +5095,8 @@ type ContractBase = Omit<
                 readonly instagram: { readonly column: 'instagram' };
                 readonly isActive: { readonly column: 'isActive' };
                 readonly latitude: { readonly column: 'latitude' };
+                readonly logoPublicId: { readonly column: 'logoPublicId' };
+                readonly logoUrl: { readonly column: 'logoUrl' };
                 readonly longitude: { readonly column: 'longitude' };
                 readonly name: { readonly column: 'name' };
                 readonly openingHours: { readonly column: 'openingHours' };
@@ -5516,6 +5569,14 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
               };
+              readonly logoPublicId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly logoUrl: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly longitude: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
@@ -5642,6 +5703,8 @@ type ContractBase = Omit<
                 readonly isActive: { readonly column: 'isActive' };
                 readonly isPartner: { readonly column: 'isPartner' };
                 readonly latitude: { readonly column: 'latitude' };
+                readonly logoPublicId: { readonly column: 'logoPublicId' };
+                readonly logoUrl: { readonly column: 'logoUrl' };
                 readonly longitude: { readonly column: 'longitude' };
                 readonly minOrder: { readonly column: 'minOrder' };
                 readonly name: { readonly column: 'name' };
@@ -5768,6 +5831,7 @@ type ContractBase = Omit<
             readonly codecId: 'pg/text@1';
             readonly members: readonly [
               { readonly name: 'CERTIFIED'; readonly value: 'CERTIFIED' },
+              { readonly name: 'DEDICATED'; readonly value: 'DEDICATED' },
               { readonly name: 'NATURALLY_GF'; readonly value: 'NATURALLY_GF' },
               { readonly name: 'TRACES_RISK'; readonly value: 'TRACES_RISK' },
             ];
@@ -5838,6 +5902,7 @@ type ContractBase = Omit<
               { readonly name: 'GROCERY'; readonly value: 'GROCERY' },
               { readonly name: 'HOME_SELLER'; readonly value: 'HOME_SELLER' },
               { readonly name: 'COOPERATIVE'; readonly value: 'COOPERATIVE' },
+              { readonly name: 'MANUFACTURER'; readonly value: 'MANUFACTURER' },
             ];
           };
           readonly RefusalReason: {
@@ -5901,6 +5966,7 @@ type ContractBase = Omit<
           ];
           readonly GuaranteeLevel: readonly [
             { readonly name: 'CERTIFIED'; readonly value: 'CERTIFIED' },
+            { readonly name: 'DEDICATED'; readonly value: 'DEDICATED' },
             { readonly name: 'NATURALLY_GF'; readonly value: 'NATURALLY_GF' },
             { readonly name: 'TRACES_RISK'; readonly value: 'TRACES_RISK' },
           ];
@@ -5947,6 +6013,7 @@ type ContractBase = Omit<
             { readonly name: 'GROCERY'; readonly value: 'GROCERY' },
             { readonly name: 'HOME_SELLER'; readonly value: 'HOME_SELLER' },
             { readonly name: 'COOPERATIVE'; readonly value: 'COOPERATIVE' },
+            { readonly name: 'MANUFACTURER'; readonly value: 'MANUFACTURER' },
           ];
           readonly RefusalReason: readonly [
             { readonly name: 'DAILY_LIMIT'; readonly value: 'DAILY_LIMIT' },

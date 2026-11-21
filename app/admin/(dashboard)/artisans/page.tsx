@@ -8,7 +8,7 @@ import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { AdminPagination } from "@/components/admin/admin-pagination";
 import { FilterBar } from "@/components/admin/catalog/filter-bar";
 import { GuaranteeLevelBadge } from "@/components/admin/catalog/guarantee";
-import { PHOTO_SKIPPED_CODE, PHOTO_SKIPPED_MESSAGE, PRODUCER_TYPE_ICON_KEYS, PRODUCER_TYPE_LABELS } from "@/components/admin/catalog/labels";
+import { IMAGE_SKIPPED_MESSAGE, PHOTO_SKIPPED_CODE, PRODUCER_TYPE_ICON_KEYS, PRODUCER_TYPE_LABELS } from "@/components/admin/catalog/labels";
 import { choiceParam, listQuery, pageParam, paginateRows, plural, textParam } from "@/components/admin/catalog/list-query";
 import { QuickToggle } from "@/components/admin/catalog/quick-toggle";
 import { DeleteLocked, EditRowLink } from "@/components/admin/catalog/record-parts";
@@ -37,7 +37,8 @@ const FLASH_MESSAGES = {
   created: "L'artisan a été ajouté.",
   updated: "La fiche de l'artisan a été mise à jour.",
   deleted: "L'artisan a été supprimé.",
-  [PHOTO_SKIPPED_CODE]: PHOTO_SKIPPED_MESSAGE,
+  // the artisan sheet has a photo AND a logo
+  [PHOTO_SKIPPED_CODE]: IMAGE_SKIPPED_MESSAGE,
 };
 
 const STATUSES = ["active", "inactive", "review"] as const;
@@ -51,7 +52,7 @@ export default function ProducersPage({ searchParams }: PageProps<"/admin/artisa
     <>
       <AdminPageHeader
         title="Artisans"
-        description="Boulangeries, boutiques, épiceries, cuisines à domicile et coopératives partenaires, avec leur niveau de garantie."
+        description="Boulangeries, boutiques, épiceries, cuisines à domicile, coopératives et fabricants sans gluten, avec leur niveau de garantie."
         breadcrumbs={[{ label: "Tableau de bord", href: "/admin" }, { label: "Artisans" }]}
         actions={
           <Link href="/admin/artisans/nouveau" className={buttonStyles()}>

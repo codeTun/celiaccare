@@ -71,7 +71,8 @@ export function Navbar({ lang, labels, cartLabels }: NavbarProps) {
           </Suspense>
         </nav>
 
-        <div className="ms-auto flex items-center gap-0.5 sm:gap-1 lg:ms-0">
+        {/* no gap under 340 px: logo + 3 round buttons need every pixel of a 320 px screen */}
+        <div className="ms-auto flex items-center gap-0 min-[340px]:gap-0.5 sm:gap-1 lg:ms-0">
           <SearchButton lang={lang} labels={labels} />
           <LanguageSwitcher
             lang={lang}

@@ -6,10 +6,11 @@ import { Suspense } from "react";
 import { ReviewsSection } from "@/components/community/reviews-section";
 import { InfoRow, InfoSheet } from "@/components/directory/info-sheet";
 import { MapEmbed } from "@/components/directory/map-embed";
+import { OrderRequestBox } from "@/components/directory/order-request";
 import { SheetReport } from "@/components/directory/sheet-report";
 import { DetailPageSkeleton } from "@/components/directory/skeletons";
 import { JsonLd } from "@/components/json-ld";
-import { DeliveryInfo, OfflineOrderNotice } from "@/components/restaurants/delivery-info";
+import { DeliveryInfo } from "@/components/restaurants/delivery-info";
 import { PriceLevel } from "@/components/restaurants/price-level";
 import { RestaurantCartBar, RestaurantCartCard } from "@/components/restaurants/restaurant-cart";
 import { RestaurantHeader } from "@/components/restaurants/restaurant-header";
@@ -24,7 +25,8 @@ import { pageMetadata, restaurantJsonLd } from "@/lib/seo";
 import { getRestaurantBySlug, getRestaurantSlugs } from "@/models/fetchers/restaurants";
 
 /* /fr/restaurants/[slug] — one restaurant: sheet (spec 5.2), gluten-free menu,
-   online ordering for partner restaurants, reviews and error reports. */
+   online ordering for partner restaurants, reviews and error reports. Every order goes
+   through CeliacCare: no contact of the restaurant, but "Commander / Demander sur CeliacCare". */
 
 type RestaurantPageProps = PageProps<"/[lang]/restaurants/[slug]">;
 
@@ -92,7 +94,6 @@ async function RestaurantContent({ params }: Pick<RestaurantPageProps, "params">
         canOrder={canOrder}
         locale={lang}
         common={common}
-        dict={texts}
         reviewCount={dict.community.reviews.count}
       />
 
@@ -102,8 +103,11 @@ async function RestaurantContent({ params }: Pick<RestaurantPageProps, "params">
           <div className="min-w-0 space-y-10">
             {restaurant.isPartner ? (
               <DeliveryInfo restaurant={restaurant} locale={lang} common={common} dict={texts} />
-            ) : (
-              <OfflineOrderNotice restaurant={restaurant} common={common} dict={texts} />
+            ) : null}
+            {/* Not a partner, or nothing on the menu to order: the visitor asks CeliacCare, never the restaurant directly.
+                Without any dish, the box sits inside the menu section instead (RestaurantMenu). */}
+            {canOrder || restaurant.menu.length === 0 ? null : (
+              <OrderRequestBox target={{ kind: "restaurant", slug: restaurant.slug }} locale={lang} texts={common.ordering} />
             )}
             <RestaurantMenu restaurant={restaurant} canOrder={canOrder} locale={lang} common={common} dict={texts} />
             {/* Spec 6.5: visible warning on every sheet */}

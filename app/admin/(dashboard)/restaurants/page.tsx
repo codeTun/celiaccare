@@ -23,7 +23,7 @@ import { buttonStyles } from "@/components/ui/button";
 import { CloudImage } from "@/components/ui/cloud-image";
 import { GuaranteeBadge } from "@/components/ui/guarantee-badge";
 import { requireAdmin } from "@/lib/auth/session";
-import { formatDate } from "@/lib/format";
+import { formatDate, formatPrice } from "@/lib/format";
 import { GOVERNORATES } from "@/lib/tunisia";
 import { governorate } from "@/lib/validators";
 import { countRestaurants, listRestaurantsPage, type AdminRestaurantListRow } from "@/models/fetchers/admin/restaurants";
@@ -36,9 +36,10 @@ const BASE_PATH = "/admin/restaurants";
 
 const FLASH_MESSAGES = {
   created: "Le restaurant a été créé.",
-  "created-without-photo": "Le restaurant a été créé, sans la photo : Cloudinary n'est pas configuré.",
+  "created-without-photo": "Le restaurant a été créé, sans l'image choisie (photo ou logo) : Cloudinary n'est pas configuré.",
   updated: "Les modifications du restaurant ont été enregistrées.",
-  "updated-without-photo": "Les modifications ont été enregistrées, sans la nouvelle photo : Cloudinary n'est pas configuré.",
+  "updated-without-photo":
+    "Les modifications ont été enregistrées, sans la nouvelle image (photo ou logo) : Cloudinary n'est pas configuré.",
   deleted: "Le restaurant et son menu ont été supprimés.",
 };
 
@@ -230,6 +231,10 @@ function RestaurantRow({ restaurant }: { restaurant: AdminRestaurantListRow }) {
             {restaurant.partnerSince ? (
               <span className="mt-1 block text-xs text-ink-subtle">depuis le {formatDate(restaurant.partnerSince)}</span>
             ) : null}
+            <span className="block text-xs text-ink-subtle">
+              Livraison : gratuite
+              {restaurant.minOrder > 0 ? ` · min. ${formatPrice(restaurant.minOrder)}` : ""}
+            </span>
           </>
         ) : (
           <Badge tone="neutral">Annuaire</Badge>

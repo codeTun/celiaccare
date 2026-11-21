@@ -18,7 +18,6 @@ import { containsPattern, isValidId, pageWindow, paginated, toDateInput, toIso }
 export type AdminRestaurantListRow = AdminRestaurantRow & {
   /** When the convention was signed (ISO), null for a directory-only restaurant. */
   partnerSince: string | null;
-  deliveryFee: number; // millimes
   minOrder: number; // millimes
 };
 
@@ -64,7 +63,6 @@ async function findRestaurantRows(filters: AdminRestaurantFilters, window?: { li
       "imageUrl",
       "isPartner",
       "partnerSince",
-      "deliveryFee",
       "minOrder",
       "isActive",
       "verificationSource",
@@ -94,7 +92,6 @@ type RestaurantRowFields = {
   imageUrl: string | null;
   isPartner: boolean;
   partnerSince: Date | null;
-  deliveryFee: number;
   minOrder: number;
   isActive: boolean;
   verificationSource: string;
@@ -116,7 +113,6 @@ function toListRow(row: RestaurantRowFields, now: Date): AdminRestaurantListRow 
     imageUrl: row.imageUrl,
     isPartner: row.isPartner,
     partnerSince: toIso(row.partnerSince),
-    deliveryFee: row.deliveryFee,
     minOrder: row.minOrder,
     isActive: row.isActive,
     verificationSource: row.verificationSource,
@@ -200,10 +196,10 @@ export async function getRestaurant(id: number): Promise<AdminRestaurantForm | n
     verificationSource: row.verificationSource,
     verifiedAt: toDateInput(row.verifiedAt),
     imageUrl: row.imageUrl,
+    logoUrl: row.logoUrl,
     priceRange: row.priceRange,
     isPartner: row.isPartner,
     partnerSince: toDateInput(row.partnerSince),
-    deliveryFee: row.deliveryFee,
     deliveryTime: row.deliveryTime,
     minOrder: row.minOrder,
     isActive: row.isActive,

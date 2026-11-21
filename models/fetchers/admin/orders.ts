@@ -147,7 +147,7 @@ export async function getOrderDetail(id: number): Promise<AdminOrderDetail | nul
       items.orderBy((item) => item.id.asc()).include("product", (product) => product.select("slug")),
     )
     .include("restaurant", (restaurant) => restaurant.select("id", "name", "slug", "phone"))
-    .include("zone", (zone) => zone.select("id", "governorate", "fee", "delay"))
+    .include("zone", (zone) => zone.select("id", "governorate", "delay"))
     .include("deliverer", (deliverer) => deliverer.select("id", "name", "phone", "vehicle", "isActive"))
     .first();
   if (!row) return null;
@@ -178,9 +178,7 @@ export async function getOrderDetail(id: number): Promise<AdminOrderDetail | nul
     restaurant: row.restaurant
       ? { id: row.restaurant.id, name: row.restaurant.name, slug: row.restaurant.slug, phone: row.restaurant.phone }
       : null,
-    zone: row.zone
-      ? { id: row.zone.id, governorate: row.zone.governorate, fee: row.zone.fee, delay: row.zone.delay }
-      : null,
+    zone: row.zone ? { id: row.zone.id, governorate: row.zone.governorate, delay: row.zone.delay } : null,
     deliverer: row.deliverer
       ? {
           id: row.deliverer.id,

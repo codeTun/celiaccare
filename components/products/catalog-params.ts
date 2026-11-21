@@ -4,7 +4,7 @@ import { z } from "zod";
 
 import { localePath } from "@/i18n/config";
 import { parsePriceToMillimes } from "@/lib/format";
-import type { GuaranteeLevel, Locale, ProductFilters, ProductSort } from "@/types";
+import { isListedGuaranteeLevel, type GuaranteeLevel, type Locale, type ProductFilters, type ProductSort } from "@/types";
 
 import { buildCatalogHref, type CatalogQuery } from "./catalog-url";
 
@@ -19,9 +19,13 @@ import { buildCatalogHref, type CatalogQuery } from "./catalog-url";
 /** What Next.js gives a page in `searchParams` (after `await`). */
 export type RawSearchParams = Record<string, string | string[] | undefined>;
 
-/** ?garantie= values (French words are nicer to read and share than "CERTIFIED"). */
+/**
+ * ?garantie= values (French words are nicer to read and share than "CERTIFIED").
+ * Only the listed levels (CERTIFIED, DEDICATED) are read from the URL: policy "100 % sans gluten only".
+ */
 export const GUARANTEE_PARAM: Record<GuaranteeLevel, string> = {
   CERTIFIED: "certifie",
+  DEDICATED: "100-sans-gluten",
   NATURALLY_GF: "naturel",
   TRACES_RISK: "traces",
 };
@@ -85,7 +89,10 @@ const slugListParam = z.unknown().transform((value) => {
   return [...new Set(slugs)].sort().slice(0, MAX_LIST_ITEMS);
 });
 
-const guaranteeParam = z.preprocess(firstValue, z.string()).transform((text) => keyOfParam(GUARANTEE_PARAM, text));
+const guaranteeParam = z.preprocess(firstValue, z.string()).transform((text) => {
+  const level = keyOfParam(GUARANTEE_PARAM, text);
+  return isListedGuaranteeLevel(level) ? level : undefined;
+});
 
 const sortParam = z.preprocess(firstValue, z.string()).transform((text) => keyOfParam(SORT_PARAM, text));
 

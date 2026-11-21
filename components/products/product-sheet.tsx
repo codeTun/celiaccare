@@ -6,6 +6,7 @@ import { ProductCard } from "@/components/cards/product-card";
 import { cartLabels } from "@/components/cart/labels";
 import { ReportButton } from "@/components/community/report-button";
 import { ReviewsSection } from "@/components/community/reviews-section";
+import { OrderRequestButton } from "@/components/directory/order-request";
 import { placeLabel } from "@/components/directory/place";
 import { JsonLd } from "@/components/json-ld";
 import { Alert } from "@/components/ui/alert";
@@ -50,7 +51,7 @@ export function ProductSheet({
   product: ProductDetailDTO;
   /** Other products of the same category */
   related: ProductCardDTO[];
-  /** Delivery zones of the shop (fees and delays) */
+  /** Delivery zones of the shop and their delays (delivery is free) */
   zones: DeliveryZoneDTO[];
   dict: Dictionary;
 }) {
@@ -190,7 +191,20 @@ export function ProductSheet({
                 />
                 {product.isAvailable ? common.labels.available : labels.unavailable}
               </p>
-              {product.isAvailable ? null : <p className="mt-1 text-sm text-ink-muted">{labels.unavailableText}</p>}
+              {product.isAvailable ? null : (
+                <>
+                  <p className="mt-1 text-sm text-ink-muted">{labels.unavailableText}</p>
+                  {/* Every purchase goes through CeliacCare: the visitor asks us for this product, never the artisan directly. */}
+                  <OrderRequestButton
+                    target={{ kind: "product", slug: product.slug }}
+                    locale={locale}
+                    label={common.ordering.request}
+                    variant="outline"
+                    size="sm"
+                    className="mt-3 self-start"
+                  />
+                </>
+              )}
 
               <ProductPurchaseBox {...purchase} className="mt-5" />
 
@@ -250,13 +264,7 @@ export function ProductSheet({
             </div>
 
             <div className="flex flex-col gap-5">
-              <ProducerBox
-                locale={locale}
-                producer={product.producer}
-                productName={product.name}
-                labels={labels}
-                common={common}
-              />
+              <ProducerBox locale={locale} producer={product.producer} labels={labels} common={common} />
               <DeliveryBox locale={locale} zones={zones} labels={labels} common={common} />
 
               <section aria-labelledby="verification-title" className="rounded-[var(--radius-card)] border border-line bg-canvas p-5">

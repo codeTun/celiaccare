@@ -8,6 +8,7 @@ import { Container } from "@/components/ui/container";
 import { isLocale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/server";
 import { pageMetadata } from "@/lib/seo";
+import { siteConfig } from "@/lib/site-config";
 import { getDeliveryZones } from "@/models/fetchers/delivery";
 import { getRestaurants } from "@/models/fetchers/restaurants";
 
@@ -35,7 +36,7 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/commande">
 export default async function CheckoutPage({ params }: PageProps<"/[lang]/commande">) {
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
-  const { cart, checkout } = getDictionary(lang);
+  const { cart, checkout, common } = getDictionary(lang);
 
   const [zones, partnerRestaurants] = await Promise.all([
     getDeliveryZones(),
@@ -61,6 +62,7 @@ export default async function CheckoutPage({ params }: PageProps<"/[lang]/comman
           cartTexts={cart}
           zones={zones}
           restaurants={toCheckoutRestaurants(partnerRestaurants)}
+          demo={siteConfig.demoMode ? common.demo : null}
           // Bound ONCE here, on the server (binding inside the Client Component loops forever, see KNOWN-ISSUES).
           placeOrder={placeOrder.bind(null, lang)}
         />

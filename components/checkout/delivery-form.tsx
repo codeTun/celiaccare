@@ -7,13 +7,10 @@ import type { ReactNode, Ref, SubmitEvent } from "react";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { CheckboxField, HoneypotField, SelectField, TextareaField, TextField } from "@/components/ui/form";
-import { Price } from "@/components/ui/price";
 import { localePath } from "@/i18n/config";
 import { interpolate } from "@/i18n/interpolate";
 import type { CheckoutDict } from "@/i18n/resources/fr/checkout";
-import { formatPrice } from "@/lib/format";
 import { GOVERNORATES, governorateLabel } from "@/lib/tunisia";
-import { cn } from "@/lib/utils";
 import { PAYMENT_METHODS, type DeliveryZoneDTO, type Locale, type OrderType, type PaymentMethod } from "@/types";
 
 import type { DeliveryQuote } from "./delivery";
@@ -59,7 +56,7 @@ export function DeliveryForm({
   cartType: OrderType;
   zones: DeliveryZoneDTO[];
   restaurant: CheckoutRestaurant | null;
-  /** Fee and delay for the chosen governorate (null when none or not covered) */
+  /** Delay of the (free) delivery to the chosen governorate (null when none or not covered) */
   quote: DeliveryQuote | null;
   headingRef: Ref<HTMLHeadingElement>;
   onFieldChange: <F extends DeliveryField>(field: F, value: DeliveryValues[F]) => void;
@@ -79,20 +76,18 @@ export function DeliveryForm({
     };
   }
 
-  /** Text of a governorate in the select, e.g. "Sousse — 8,000 DT · 48 h" or "Kébili — pas encore desservi". */
+  /** Text of a governorate in the select, e.g. "Sousse — 24–48 h" or "Kébili — pas encore desservi". */
   function governorateOption(value: string): { label: string; deliverable: boolean } {
     const name = governorateLabel(value, lang);
     if (cartType === "RESTAURANT") {
       if (restaurant && restaurant.governorate === value) {
-        const fee = restaurant.deliveryFee === 0 ? texts.summary.free : formatPrice(restaurant.deliveryFee, lang);
-        return { label: `${name} — ${fee} · ${isolate(restaurant.deliveryTime)}`, deliverable: true };
+        return { label: `${name} — ${isolate(restaurant.deliveryTime)}`, deliverable: true };
       }
       return { label: `${name} — ${fields.governorate.outsideRestaurant}`, deliverable: false };
     }
     const zone = zones.find((item) => item.governorate === value);
     if (!zone) return { label: `${name} — ${fields.governorate.notCovered}`, deliverable: false };
-    const fee = zone.fee === 0 ? texts.summary.free : formatPrice(zone.fee, lang);
-    return { label: `${name} — ${fee} · ${isolate(zone.delay)}`, deliverable: true };
+    return { label: `${name} — ${isolate(zone.delay)}`, deliverable: true };
   }
 
   return (
@@ -170,7 +165,7 @@ export function DeliveryForm({
                 );
               })}
             </SelectField>
-            {quote ? <ZoneDetails lang={lang} texts={texts} quote={quote} /> : null}
+            {quote ? <ZoneDetails texts={texts} quote={quote} /> : null}
           </div>
           <TextField
             {...textProps("city")}
@@ -306,30 +301,16 @@ function Section({ icon, legend, children }: { icon: ReactNode; legend: string; 
   );
 }
 
-/** Fee and delay of the chosen governorate, under the select. */
-function ZoneDetails({ lang, texts, quote }: { lang: Locale; texts: CheckoutDict; quote: DeliveryQuote }) {
-  // Zones with a free-delivery threshold: "offerte dès 80 DT" or "offerte pour cette commande".
-  let freeText: string | null = null;
-  if (quote.freeFrom !== null) {
-    freeText = quote.isFree
-      ? texts.zone.freeApplied
-      : interpolate(texts.zone.freeFrom, { price: formatPrice(quote.freeFrom, lang) });
-  }
-
+/** Free delivery and the delay for the chosen governorate, under the select. */
+function ZoneDetails({ texts, quote }: { texts: CheckoutDict; quote: DeliveryQuote }) {
   return (
     <div className="mt-3 rounded-xl bg-brand-50/70 p-3.5 ring-1 ring-brand-100">
       <div className="flex items-start gap-3">
         <Truck className="mt-0.5 size-4 shrink-0 text-brand-700" aria-hidden="true" />
         <dl className="grid flex-1 grid-cols-2 gap-3 text-sm">
           <div>
-            <dt className="text-xs text-ink-muted">{texts.zone.fee}</dt>
-            <dd className="font-bold text-ink">
-              {quote.fee === 0 ? (
-                <span className="text-brand-700">{texts.summary.free}</span>
-              ) : (
-                <Price value={quote.fee} locale={lang} />
-              )}
-            </dd>
+            <dt className="text-xs text-ink-muted">{texts.zone.delivery}</dt>
+            <dd className="font-bold text-brand-700">{texts.summary.free}</dd>
           </div>
           <div>
             <dt className="text-xs text-ink-muted">{texts.zone.delay}</dt>
@@ -339,9 +320,6 @@ function ZoneDetails({ lang, texts, quote }: { lang: Locale; texts: CheckoutDict
           </div>
         </dl>
       </div>
-      {freeText ? (
-        <p className={cn("mt-2 ps-7 text-xs text-brand-700", quote.isFree && "font-semibold")}>{freeText}</p>
-      ) : null}
     </div>
   );
 }

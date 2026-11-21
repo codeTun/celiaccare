@@ -28,7 +28,7 @@ import { checkbox, formDataToObject, idList, idSchema, optionalText, requiredTex
 import { deleteProduct } from "@/models/deleters/products";
 import { createProduct } from "@/models/posters/products";
 import { setProductActive, setProductAvailable, setProductFeatured, updateProduct } from "@/models/puters/products";
-import { GUARANTEE_LEVELS } from "@/types";
+import { LISTED_GUARANTEE_LEVELS } from "@/types";
 import type { ProductDeleteResult, ProductInput } from "@/types/admin-data";
 
 /* ==========================================================================
@@ -50,12 +50,12 @@ const productSchema = z.object({
   price: productPrice,
   categoryId: requiredId("Choisissez une catégorie."),
   producerId: requiredId("Choisissez l'artisan qui fabrique ou vend ce produit."),
-  // Ingrédients (spec 5.3: ingredients and allergens on every product sheet)
-  ingredientIds: idList
-    .refine((ids) => ids.length > 0, "Cochez au moins un ingrédient.")
-    .refine((ids) => ids.length <= 80, "80 ingrédients maximum."),
+  // Ingrédients (spec 5.3). Only the composition the maker publishes: when it is not published,
+  // leave the list empty and the product sheet says "composition non publiée" (never guess).
+  ingredientIds: idList.refine((ids) => ids.length <= 80, "80 ingrédients maximum."),
   // Garantie
-  guaranteeLevel: z.enum(GUARANTEE_LEVELS, { error: "Choisissez le niveau de garantie." }),
+  // Policy "100 % sans gluten only": the older levels (NATURALLY_GF, TRACES_RISK) can no longer be chosen
+  guaranteeLevel: z.enum(LISTED_GUARANTEE_LEVELS, { error: "Choisissez le niveau de garantie." }),
   certification: optionalText(200),
   mayContain: optionalText(300),
   // Vérification (spec 6.1)

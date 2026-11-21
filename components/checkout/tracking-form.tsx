@@ -114,6 +114,7 @@ export function TrackingForm({
           lang={lang}
           texts={t}
           paymentTexts={texts.payment}
+          helpTexts={texts.help}
           order={order}
         />
       ) : null}

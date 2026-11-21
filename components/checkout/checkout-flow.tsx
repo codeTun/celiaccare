@@ -15,6 +15,7 @@ import {
 import { flushSync } from "react-dom";
 
 import { useCart } from "@/components/cart/cart-provider";
+import { DemoNotice, type DemoTexts } from "@/components/demo-notice";
 import { Button, buttonStyles } from "@/components/ui/button";
 import { localePath } from "@/i18n/config";
 import { interpolate } from "@/i18n/interpolate";
@@ -29,6 +30,7 @@ import { canDeliverTo, findCartBlocker, findCartRestaurant, quoteDelivery } from
 import { DeliveryForm, type DeliveryErrors } from "./delivery-form";
 import { EmptyCart } from "./empty-cart";
 import { OrderConfirmation } from "./order-confirmation";
+import { OrderHelp } from "./order-help";
 import { OrderReview } from "./order-review";
 import { OrderSummary } from "./order-summary";
 import { RefusalAlert } from "./refusal-alert";
@@ -51,6 +53,8 @@ export type CheckoutFlowProps = {
    * by the page (placeOrder.bind(null, lang)). Never bind it here: see KNOWN-ISSUES (React 19).
    */
   placeOrder: PlaceOrderAction;
+  /** dict.common.demo while siteConfig.demoMode is on (no order reaches the businesses), otherwise null */
+  demo: DemoTexts | null;
 };
 
 const INITIAL_STATE: PlaceOrderState = { status: "idle" };
@@ -77,6 +81,7 @@ function CheckoutRun({
   zones,
   restaurants,
   placeOrder,
+  demo,
   onRestart,
 }: CheckoutFlowProps & { onRestart: () => void }) {
   const { cart, ready, subtotal, remove, clear } = useCart();
@@ -128,7 +133,7 @@ function CheckoutRun({
   const restaurant = findCartRestaurant(cart, restaurants);
   // A restaurant only delivers in its own governorate: it is chosen by default.
   const governorate = values.governorate || restaurant?.governorate || "";
-  const quote = quoteDelivery(governorate, cart, zones, restaurant, subtotal);
+  const quote = quoteDelivery(governorate, cart, zones, restaurant);
   const blocker = findCartBlocker(cart, zones, restaurant, subtotal);
   const deliverable = (name: string) => canDeliverTo(name, cart, zones, restaurant);
   const merchant =
@@ -149,6 +154,7 @@ function CheckoutRun({
           firstName={values.fullName.trim().split(/\s+/)[0] ?? ""}
           phone={normalizeTunisianPhone(values.phone) ?? values.phone}
           paymentMethod={values.paymentMethod}
+          demo={demo}
         />
       </div>
     );
@@ -255,6 +261,10 @@ function CheckoutRun({
 
   return (
     <div>
+      {/* Demo: said before the visitor fills in the form (step 1), and again next to the confirm button (step 2) */}
+      {demo && step === "details" ? (
+        <DemoNotice title={demo.checkoutTitle} text={demo.checkoutText} className="mb-8" />
+      ) : null}
       <CheckoutSteps current={step} texts={texts.steps} className="mb-8" />
 
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start xl:grid-cols-[minmax(0,1fr)_24rem]">
@@ -289,9 +299,19 @@ function CheckoutRun({
               onEdit={() => goToStep("details")}
             />
           )}
+          {/* A question before or after ordering: CeliacCare answers (never the business directly). */}
+          <OrderHelp
+            lang={lang}
+            texts={texts.help}
+            text={texts.help.checkoutText}
+            id="checkout-help-title"
+            headingLevel={2}
+            className="mt-8"
+          />
         </div>
 
-        <aside className="lg:sticky lg:top-24">
+        {/* min-w-0: a long item name is cut with "…" instead of widening the page on phones */}
+        <aside className="min-w-0 lg:sticky lg:top-24">
           <OrderSummary
             lang={lang}
             texts={texts.summary}
@@ -299,7 +319,6 @@ function CheckoutRun({
             items={cart.items}
             showItems={step === "details"}
             subtotal={subtotal}
-            quote={quote}
           >
             {step === "review" ? (
               <div className="mt-5 space-y-4">
@@ -319,6 +338,7 @@ function CheckoutRun({
                     onEditDetails={() => goToStep("details")}
                   />
                 ) : null}
+                {demo ? <DemoNotice title={demo.checkoutTitle} text={demo.checkoutText} /> : null}
                 <Button size="lg" className="w-full" onClick={handleConfirm} disabled={isSending} aria-busy={isSending || undefined}>
                   {isSending ? (
                     <LoaderCircle className="animate-spin" aria-hidden="true" />

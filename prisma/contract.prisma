@@ -15,6 +15,7 @@
 enum GuaranteeLevel {
   @@type("pg/text@1")
   CERTIFIED    = "CERTIFIED"    // Certifié sans gluten
+  DEDICATED    = "DEDICATED"    // 100 % sans gluten — atelier ou unité de production dédiée, sans certificat officiel
   NATURALLY_GF = "NATURALLY_GF" // Naturellement sans gluten / option sans gluten
   TRACES_RISK  = "TRACES_RISK"  // Risque de traces / contamination croisée possible
 }
@@ -27,6 +28,7 @@ enum ProducerType {
   GROCERY        = "GROCERY"        // Épicerie de quartier / supérette
   HOME_SELLER    = "HOME_SELLER"    // Vendeur·se à domicile (fait maison)
   COOPERATIVE    = "COOPERATIVE"    // Coopérative / producteur agricole
+  MANUFACTURER   = "MANUFACTURER"   // Fabricant / petite marque sans gluten
 }
 
 /// Section of a restaurant menu.
@@ -193,6 +195,8 @@ model Producer {
   verifiedAt         DateTime
   imageUrl           String?
   imagePublicId      String?
+  logoUrl            String?        // official logo (home page brand band): uploaded by the admin ONLY with the business's agreement
+  logoPublicId       String?
   isActive           Boolean        @default(true)
   products           Product[]
   createdAt          DateTime       @default(now()) @onCreate(now())
@@ -277,6 +281,8 @@ model Restaurant {
   verifiedAt         DateTime
   imageUrl           String?
   imagePublicId      String?
+  logoUrl            String?        // official logo (home page brand band): uploaded by the admin ONLY with the business's agreement
+  logoPublicId       String?
   priceRange         Int            @default(2) // 1 = €, 2 = €€, 3 = €€€
   isPartner          Boolean        @default(false) // convention signed -> online ordering
   partnerSince       DateTime?

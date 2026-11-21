@@ -5,9 +5,18 @@ import { Alert } from "@/components/ui/alert";
 import { Container } from "@/components/ui/container";
 import { getDictionary } from "@/i18n/server";
 import { pageMetadata } from "@/lib/seo";
-import type { CategoryDTO, Locale, ProducerCardDTO, ProductCardDTO, RestaurantCardDTO, SiteStatsDTO } from "@/types";
+import type {
+  BrandDTO,
+  CategoryDTO,
+  Locale,
+  ProducerCardDTO,
+  ProductCardDTO,
+  RestaurantCardDTO,
+  SiteStatsDTO,
+} from "@/types";
 
 import { ApproachTeaser } from "./approach-teaser";
+import { BrandMarquee } from "./brand-marquee";
 import { CategoriesSection } from "./categories-section";
 import { FeaturedProducts } from "./featured-products";
 import { GuaranteesSection } from "./guarantees-section";
@@ -24,6 +33,8 @@ type HomePageProps = {
   featuredProducts: ProductCardDTO[];
   partnerRestaurants: RestaurantCardDTO[];
   producers: ProducerCardDTO[];
+  /** Every active artisan and restaurant, for the brand band above the footer. */
+  brands: BrandDTO[];
 };
 
 /**
@@ -38,6 +49,7 @@ export function HomePage({
   featuredProducts,
   partnerRestaurants,
   producers,
+  brands,
 }: HomePageProps): JSX.Element {
   const { common, home } = getDictionary(lang);
 
@@ -55,7 +67,7 @@ export function HomePage({
       {/* 4. How it works */}
       <HowItWorks lang={lang} home={home} />
 
-      {/* 5. The 3 guarantee levels */}
+      {/* 5. The guarantee levels (policy "100 % sans gluten only") */}
       <GuaranteesSection lang={lang} common={common} home={home} />
 
       {/* 6. Partner restaurants */}
@@ -80,6 +92,9 @@ export function HomePage({
           {common.disclaimer.text}
         </Alert>
       </Container>
+
+      {/* 11. The businesses we list, as a calm scrolling band of logos, right above the footer */}
+      <BrandMarquee lang={lang} home={home} brands={brands} />
     </>
   );
 }

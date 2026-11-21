@@ -8,7 +8,7 @@ import type { IngredientOption } from "@/types/admin-data";
 
 /** "3 ingrédients cochés, dont 1 allergène." */
 function summaryText(count: number, allergens: number) {
-  if (count === 0) return "Aucun ingrédient coché : cochez au moins un ingrédient.";
+  if (count === 0) return "Aucun ingrédient coché : la fiche indiquera « composition non publiée ». Ne cochez que la composition publiée par le fabricant.";
   const ingredients = `${count} ingrédient${count > 1 ? "s" : ""} coché${count > 1 ? "s" : ""}`;
   if (allergens === 0) return `${ingredients}, sans allergène.`;
   return `${ingredients}, dont ${allergens} allergène${allergens > 1 ? "s" : ""}.`;

@@ -266,7 +266,7 @@ export const guide: Record<Locale, ContentSection[]> = {
         {
           type: "callout",
           tone: "warning",
-          text: "Un plat sans ingrédient à gluten, préparé dans une cuisine où l'on travaille la farine, peut contenir des traces. C'est exactement ce que signale notre niveau **« Risque de traces »**.",
+          text: "Un plat sans ingrédient à gluten, préparé dans une cuisine où l'on travaille la farine, peut contenir des traces. C'est pourquoi CeliacCare ne référence que des commerces **100\u00a0% sans gluten** : ateliers et cuisines où la farine de blé n'entre jamais.",
         },
       ],
     },
@@ -286,7 +286,7 @@ export const guide: Record<Locale, ContentSection[]> = {
             "**Traquez les mots qui cachent du gluten** : farine, semoule, chapelure, amidon de blé, malt, extrait ou sirop de malt, protéines de blé, boulgour, frik.",
             "**Lisez la mention « peut contenir »** : « peut contenir des traces de blé » ou « fabriqué dans un atelier qui utilise du gluten » signale un risque de contamination croisée. La plupart des personnes cœliaques évitent ces produits.",
             "**Cherchez les logos fiables** : l'épi de blé barré ou une mention « sans gluten » certifiée indiquent un produit qui respecte le seuil international de 20 mg de gluten par kilo (20 ppm).",
-            "**En cas de doute, abstenez-vous** ou contactez le fabricant.",
+            "**En cas de doute, abstenez-vous.** Pour un produit vendu sur CeliacCare, [posez-nous la question](/contact) : nous interrogeons le fabricant pour vous.",
           ],
         },
         {
@@ -353,7 +353,7 @@ export const guide: Record<Locale, ContentSection[]> = {
           tone: "tip",
           title: "Nos conseils",
           items: [
-            "Appelez avant de vous déplacer, de préférence en dehors des heures de pointe.",
+            "Allez-y de préférence en dehors des heures de pointe : l'équipe en cuisine a plus de temps pour préparer votre plat avec soin.",
             "Parlez de **maladie cœliaque** plutôt que de « régime » : c'est une raison médicale, pas une préférence.",
             "Sur CeliacCare, chaque restaurant affiche ses **pratiques de préparation** (cuisine séparée, ustensiles dédiés, personnel formé) et son niveau de garantie : [voir les restaurants partenaires](/restaurants).",
           ],
@@ -362,18 +362,18 @@ export const guide: Record<Locale, ContentSection[]> = {
     },
     {
       id: "nos-garanties",
-      title: "Nos trois niveaux de garantie",
+      title: "Nos niveaux de garantie",
       blocks: [
         {
           type: "paragraph",
-          text: "Sur CeliacCare, chaque produit, artisan et restaurant affiche un niveau de garantie, la **source** de l'information (certificat, visite, déclaration du commerçant…) et sa **date de vérification**. Une fiche qui n'a pas été revérifiée depuis plus de 12 mois est signalée et remise en révision.",
+          text: "CeliacCare ne référence que des commerces **100\u00a0% sans gluten**. Chaque produit, artisan et restaurant affiche son niveau de garantie, la **source** de l'information (certificat, site officiel, réseaux sociaux, étiquette, presse…) et sa **date de vérification**. Une fiche qui n'a pas été revérifiée depuis plus de 12 mois est signalée et remise en révision.",
         },
         {
           type: "guarantees",
           advice: {
-            CERTIFIED: "Le choix le plus sûr pour les personnes cœliaques.",
-            NATURALLY_GF: "Adapté à la plupart des personnes cœliaques, en restant attentif aux pratiques affichées.",
-            TRACES_RISK: "Déconseillé en cas de maladie cœliaque : plutôt pour les personnes moins sensibles, après avis médical.",
+            CERTIFIED: "Le choix le plus sûr : un organisme officiel contrôle le produit ou l'établissement.",
+            DEDICATED:
+              "Aucune farine de blé dans l'atelier ou la cuisine, mais pas de contrôle officiel : en cas de doute, posez-nous vos questions (nous interrogeons le commerce pour vous) et lisez l'étiquette.",
           },
         },
         {
@@ -638,7 +638,7 @@ export const guide: Record<Locale, ContentSection[]> = {
         {
           type: "callout",
           tone: "warning",
-          text: "قد يحتوي طبق خالٍ من مكوّنات الغلوتين على آثار منه إذا حُضّر في مطبخ يُستعمل فيه الدقيق. وهذا تحديدًا ما يشير إليه مستوى **«احتمال وجود آثار»** لدينا.",
+          text: "قد يحتوي طبق خالٍ من مكوّنات الغلوتين على آثار منه إذا حُضّر في مطبخ يُستعمل فيه الدقيق. لهذا لا يدرج CeliacCare إلا المتاجر **الخالية تمامًا من الغلوتين**: ورشات ومطابخ لا يدخلها دقيق القمح أبدًا.",
         },
       ],
     },
@@ -658,7 +658,7 @@ export const guide: Record<Locale, ContentSection[]> = {
             "**تعقّب الكلمات التي تُخفي الغلوتين**: الدقيق، السميد، فتات الخبز، نشا القمح، المالت، مستخلص المالت أو شرابه، بروتينات القمح، البرغل، الفريك.",
             "**اقرأ عبارة «قد يحتوي على»**: عبارة «قد يحتوي على آثار القمح» أو «صُنع في ورشة تستعمل الغلوتين» تنبّه إلى خطر التلوث المتبادل، ويتجنّب أغلب مرضى السيلياك هذه المنتجات.",
             "**ابحث عن الشعارات الموثوقة**: سنبلة القمح المشطوبة أو عبارة «خالٍ من الغلوتين» المعتمدة تدلّان على منتج يحترم الحدّ الدولي المحدّد بـ20 ملغ من الغلوتين في الكيلوغرام (20 جزءًا في المليون).",
-            "**عند الشك، امتنع** أو اتصل بالمصنّع.",
+            "**عند الشك، امتنع.** وإذا كان المنتج معروضًا على CeliacCare، [اطرح علينا سؤالك](/contact): نستفسر لدى المصنّع نيابةً عنك.",
           ],
         },
         {
@@ -725,7 +725,7 @@ export const guide: Record<Locale, ContentSection[]> = {
           tone: "tip",
           title: "نصائحنا",
           items: [
-            "اتصل قبل التنقّل، ويُفضّل أن يكون ذلك خارج أوقات الذروة.",
+            "يُفضَّل أن تذهب خارج أوقات الذروة: يكون لدى فريق المطبخ وقت أكبر لتحضير طبقك بعناية.",
             "تحدّث عن **مرض السيلياك** بدل «الحمية»: فهو سبب طبي وليس تفضيلًا.",
             "على CeliacCare، يعرض كل مطعم **طرق التحضير** المعتمدة لديه (مطبخ منفصل، أدوات مخصصة، طاقم مدرّب) ومستوى الضمان: [تصفّح المطاعم الشريكة](/restaurants).",
           ],
@@ -734,18 +734,18 @@ export const guide: Record<Locale, ContentSection[]> = {
     },
     {
       id: "nos-garanties",
-      title: "مستويات الضمان الثلاثة لدينا",
+      title: "مستويات الضمان لدينا",
       blocks: [
         {
           type: "paragraph",
-          text: "على CeliacCare، يعرض كل منتج وحرفي ومطعم مستوى الضمان، و**مصدر** المعلومة (شهادة، زيارة، تصريح التاجر…) و**تاريخ التحقق** منها. وإذا لم تتم مراجعة بطاقة منذ أكثر من 12 شهرًا، يُشار إليها وتُعاد إلى المراجعة.",
+          text: "لا يدرج CeliacCare إلا المتاجر **الخالية تمامًا من الغلوتين**. يعرض كل منتج وحرفي ومطعم مستوى الضمان، و**مصدر** المعلومة (شهادة، موقع رسمي، شبكات التواصل، ملصق، صحافة…) و**تاريخ التحقق** منها. وإذا لم تتم مراجعة بطاقة منذ أكثر من 12 شهرًا، يُشار إليها وتُعاد إلى المراجعة.",
         },
         {
           type: "guarantees",
           advice: {
-            CERTIFIED: "الخيار الأكثر أمانًا لمرضى السيلياك.",
-            NATURALLY_GF: "مناسب لأغلب مرضى السيلياك، مع الانتباه إلى طرق التحضير المعروضة.",
-            TRACES_RISK: "لا يُنصح به في حالة مرض السيلياك: موجّه بالأحرى إلى الأشخاص الأقل حساسية، بعد استشارة الطبيب.",
+            CERTIFIED: "الخيار الأكثر أمانًا: هيئة رسمية تراقب المنتج أو المؤسسة.",
+            DEDICATED:
+              "لا يدخل دقيق القمح إلى الورشة أو المطبخ، لكن دون رقابة رسمية: عند الشك، اطرح علينا أسئلتك (نستفسر لدى المتجر نيابةً عنك) واقرأ الملصق.",
           },
         },
         {

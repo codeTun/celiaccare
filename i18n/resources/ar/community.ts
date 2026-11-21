@@ -74,6 +74,7 @@ export const community: CommunityDict = {
     nameLength: "يجب أن يتكون اسمك من 2 إلى 40 حرفًا.",
     ratingRequired: "اختر تقييمًا من نجمة واحدة إلى 5 نجوم.",
     commentLength: "يجب أن يتكون رأيك من 10 إلى 1000 حرف.",
+    noContact: "لا أرقام هاتف ولا بريد إلكتروني ولا روابط ولا حسابات تواصل في الآراء: الطلبات تمرّ عبر CeliacCare.",
     reasonRequired: "اختر سببًا.",
     messageLength: "يجب أن تتكون رسالتك من 10 إلى 1000 حرف.",
     contactInvalid: "أدخل بريدًا إلكترونيًا صحيحًا أو رقم هاتف تونسيًا من 8 أرقام.",

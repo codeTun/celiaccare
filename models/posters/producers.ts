@@ -5,7 +5,13 @@ import { and } from "@prisma/orm-postgres/orm-client";
 import { db } from "@/lib/prisma";
 import { isGovernorate } from "@/lib/tunisia";
 import { ModelError } from "@/models/errors";
-import { applyImageChange, assertVerification, chooseSlug, rethrowSlugConflict } from "@/models/fetchers/admin/helpers";
+import {
+  applyImageChange,
+  applyLogoChange,
+  assertVerification,
+  chooseSlug,
+  rethrowSlugConflict,
+} from "@/models/fetchers/admin/helpers";
 import type { ProducerInput, SlugMutationResult } from "@/types/admin-data";
 
 /**
@@ -29,7 +35,7 @@ export function assertProducerInput(input: ProducerInput) {
   assertVerification(input.verifiedAt, input.verificationSource);
 }
 
-/** The columns written by create and update (everything except slug and photo). */
+/** The columns written by create and update (everything except slug, photo and logo). */
 export function producerColumns(input: ProducerInput) {
   return {
     name: input.name,
@@ -67,9 +73,10 @@ export async function createProducer(input: ProducerInput): Promise<SlugMutation
     isTaken: (candidate) => isProducerSlugTaken(candidate),
   });
   const image = applyImageChange(input.image, null);
+  const logo = applyLogoChange(input.logo, null);
 
   try {
-    const row = await db.orm.public.Producer.create({ slug, ...producerColumns(input), ...image.fields });
+    const row = await db.orm.public.Producer.create({ slug, ...producerColumns(input), ...image.fields, ...logo.fields });
     return { id: row.id, slug: row.slug, previousSlug: null, imagesToDelete: [] };
   } catch (error) {
     rethrowSlugConflict(error);

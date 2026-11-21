@@ -1,14 +1,10 @@
-import { MapPin, Phone } from "lucide-react";
+import { MapPin } from "lucide-react";
 import Link from "next/link";
 
-import { displayPhone, telHref, whatsappHref } from "@/components/directory/links";
 import { placeLabel } from "@/components/directory/place";
-import { WhatsAppIcon } from "@/components/social-icons";
 import { Badge } from "@/components/ui/badge";
-import { buttonStyles } from "@/components/ui/button";
 import { CloudImage } from "@/components/ui/cloud-image";
 import { localePath } from "@/i18n/config";
-import { interpolate } from "@/i18n/interpolate";
 import type { CommonDict } from "@/i18n/resources/fr/common";
 import type { ProductsDict } from "@/i18n/resources/fr/products";
 import type { Locale, ProducerSummaryDTO } from "@/types";
@@ -16,25 +12,22 @@ import type { Locale, ProducerSummaryDTO } from "@/types";
 import { catalogHref } from "./catalog-params";
 
 /**
- * The small business that makes the product: name, type, town, phone / WhatsApp,
- * and links to its page and to all its products. Server Component.
+ * The small business that makes the product: name, type, town, and links to its page and
+ * to all its products. Never its phone or WhatsApp: every purchase goes through CeliacCare.
+ * Server Component.
  */
 export function ProducerBox({
   locale,
   producer,
-  productName,
   labels,
   common,
 }: {
   locale: Locale;
   producer: ProducerSummaryDTO;
-  /** Used in the pre-filled WhatsApp message */
-  productName: string;
   labels: ProductsDict["sheet"];
   common: CommonDict;
 }) {
   const producerHref = localePath(locale, `/artisans/${producer.slug}`);
-  const whatsappText = encodeURIComponent(interpolate(labels.whatsappMessage, { product: productName }));
 
   return (
     <section aria-labelledby="producer-title" className="rounded-[var(--radius-card)] border border-line bg-white p-5 shadow-soft">
@@ -64,33 +57,6 @@ export function ProducerBox({
           </p>
         </div>
       </div>
-
-      {producer.phone || producer.whatsapp ? (
-        <div className="mt-5 flex flex-wrap gap-2">
-          {producer.phone ? (
-            <a
-              href={telHref(producer.phone)}
-              aria-label={interpolate(labels.callProducer, { name: producer.name })}
-              className={buttonStyles({ variant: "outline", size: "sm" })}
-            >
-              <Phone aria-hidden="true" />
-              <span dir="ltr">{displayPhone(producer.phone)}</span>
-            </a>
-          ) : null}
-          {producer.whatsapp ? (
-            <a
-              href={`${whatsappHref(producer.whatsapp)}?text=${whatsappText}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={interpolate(labels.whatsappProducer, { name: producer.name })}
-              className={buttonStyles({ variant: "outline", size: "sm" })}
-            >
-              <WhatsAppIcon className="size-4" />
-              {common.actions.whatsapp}
-            </a>
-          ) : null}
-        </div>
-      ) : null}
 
       <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-line pt-4 text-sm font-semibold">
         <Link href={producerHref} className="text-brand-700 underline-offset-4 hover:text-brand-800 hover:underline">

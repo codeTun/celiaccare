@@ -15,8 +15,8 @@ import { ITEM_KINDS, ORDER_TYPES, PAYMENT_METHODS, type Locale } from "@/types";
 /* ==========================================================================
    Checkout Server Action (spec 5.4, EF-30 → EF-39).
    The browser sends the delivery form + the cart lines (ids and quantities only).
-   Everything is checked again here; prices, fees and the "3 orders per day"
-   rule are applied by createOrder() with the database values.
+   Everything is checked again here; prices, the delivery zone (delivery is free) and the
+   "3 orders per day" rule are applied by createOrder() with the database values.
    ========================================================================== */
 
 /** One cart line: a product or a dish and its quantity. */
@@ -123,7 +123,7 @@ export async function placeOrder(locale: Locale, _prevState: PlaceOrderState, fo
     return refusal("RATE_LIMIT");
   }
 
-  // 4. Save the order: prices, delivery fee and the daily limit are checked by the data layer.
+  // 4. Save the order: prices, delivery zone and the daily limit are checked by the data layer.
   let result: CreateOrderResult;
   try {
     result = await createOrder({

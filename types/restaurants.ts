@@ -12,10 +12,11 @@ export type RestaurantCardDTO = {
   imageUrl: string | null;
   guaranteeLevel: GuaranteeLevel;
   priceRange: number; // 1..3
-  isPartner: boolean; // convention signed -> online ordering available
-  deliveryFee: number; // millimes
+  isPartner: boolean; // convention signed -> online ordering available (delivery is free)
   deliveryTime: string;
   minOrder: number; // millimes
+  /** Dishes on the online menu (0 = the business does not publish its prices online) */
+  dishCount: number;
   ratingAvg: number | null;
   ratingCount: number;
 };
@@ -36,16 +37,14 @@ export type MenuSectionDTO = {
   dishes: DishDTO[];
 };
 
+/**
+ * A restaurant page. It never carries the restaurant's own contacts (phone, WhatsApp, e-mail,
+ * website, social networks): every order goes through CeliacCare, so they stay in the admin DTOs.
+ */
 export type RestaurantDetailDTO = RestaurantCardDTO & {
   address: string;
   latitude: number | null;
   longitude: number | null;
-  phone: string;
-  whatsapp: string | null;
-  email: string | null;
-  website: string | null;
-  instagram: string | null;
-  facebook: string | null;
   openingHours: string | null;
   dedicatedKitchen: boolean;
   dedicatedUtensils: boolean;
